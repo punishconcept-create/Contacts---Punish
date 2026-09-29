@@ -67,17 +67,33 @@ $('#loadManual').onclick=()=>{if(!current)return;call('getManualAssociations',cu
 $('#back').onclick=()=>show('start');$('#again').onclick=()=>{show('start');bootstrap()};
 let accessToken='',tokenClient;
 const scopes=['https://www.googleapis.com/auth/contacts','https://www.googleapis.com/auth/drive','https://www.googleapis.com/auth/spreadsheets','https://www.googleapis.com/auth/script.external_request'];
-$('#connectGoogle').onclick=()=>{
+function initGoogleClient(){
   if(!APP_CONFIG.clientId||!APP_CONFIG.deploymentId){$('#loginInfo').textContent='Configuration manquante : renseigne config.js.';return}
   if(!window.google?.accounts?.oauth2){$('#loginInfo').textContent='Connexion Google indisponible. Vérifie le réseau.';return}
-  tokenClient=google.accounts.oauth2.initTokenClient({client_id:APP_CONFIG.clientId,scope:scopes.join(' '),callback:async result=>{
-    if(result.error){$('#loginInfo').textContent=result.error;return}
+  if(tokenClient)return tokenClient;
+  tokenClient=google.accounts.oauth2.initTokenClient({client_id:APP_CONFIG.clientId,scope:scopes.join(' '),callback:result=>{
+    if(result.error){$('#loginInfo').textContent='Connexion automatique indisponible. Appuie sur « Se connecter avec Google ».';return}
     accessToken=result.access_token;
     $('#login').classList.add('hidden');$('#start').classList.remove('hidden');
     bootstrap();
   }});
-  tokenClient.requestAccessToken({prompt:'consent'});
+  return tokenClient;
+}
+$('#connectGoogle').onclick=()=>{
+  const client=initGoogleClient();
+  if(client)client.requestAccessToken({prompt:''});
 };
+window.addEventListener('load',()=>{
+  // Après un premier accord, Google peut redonner un jeton sans nouvelle action.
+  // Si le navigateur refuse cette reprise, le bouton de connexion reste disponible.
+  let attempts=0;
+  const retry=setInterval(()=>{
+    if(!window.google?.accounts?.oauth2&&++attempts<20)return;
+    clearInterval(retry);
+    const client=initGoogleClient();
+    if(client)try{client.requestAccessToken({prompt:''})}catch(_){/* Connexion manuelle. */}
+  },250);
+});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 
 </script></body></html>
