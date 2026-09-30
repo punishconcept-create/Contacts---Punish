@@ -710,7 +710,7 @@
     }
 
   
-#bizoukModule{font-family:Arial,sans-serif;color:#20252c;background:#f4f5f7}
+#bizoukModule{font-family:Arial,sans-serif;color:#f5f5f5;background:transparent}
 #bizoukModule \*{box-sizing:border-box}
 #bizoukModule{margin:0}
 #bizoukModule header{background:#15191f;color:#fff;padding:25px 20px 22px}
@@ -720,14 +720,14 @@
 #bizoukModule main{padding:18px 16px 36px}
 #bizoukModule h2{font-size:20px;margin:4px 0 7px}
 #bizoukModule p{line-height:1.45}
-#bizoukModule .muted{color:#697481;font-size:14px}
-#bizoukModule .panel{background:#fff;border:1px solid #e2e5e9;border-radius:16px;padding:18px;margin:16px 0}
+#bizoukModule .muted{color:#9ca3af;font-size:14px}
+#bizoukModule .panel{background:#15191f;border:1px solid #2b313b;border-radius:14px;padding:18px;margin:16px 0}
 #bizoukModule .field{margin:16px 0}
 #bizoukModule label{display:block;font-size:14px;font-weight:600;margin-bottom:8px}
-#bizoukModule input,#bizoukModule select{width:100%;border:1px solid #ccd2d9;border-radius:11px;padding:13px;background:#fff;color:#20252c;font:inherit;font-size:16px}
+#bizoukModule input,#bizoukModule select{width:100%;border:1px solid #343b46;border-radius:11px;padding:13px;background:#10141a;color:#f5f5f5;font:inherit;font-size:16px}
 #bizoukModule button{font:inherit;cursor:pointer}
-#bizoukModule .primary{width:100%;border:0;border-radius:11px;background:#1c252e;color:#fff;padding:15px;font-weight:600;font-size:16px;margin-top:8px;min-height:48px}
-#bizoukModule .secondary{border:1px solid #cbd1d8;border-radius:10px;background:#fff;color:#1c252e;padding:11px 14px;min-height:44px}
+#bizoukModule .primary{width:100%;border:0;border-radius:11px;background:#d4af37;color:#111;padding:15px;font-weight:700;font-size:16px;margin-top:8px;min-height:48px}
+#bizoukModule .secondary{border:1px solid #343b46;border-radius:10px;background:#1b2028;color:#f5f5f5;padding:11px 14px;min-height:44px}
 #bizoukModule .primary:disabled,#bizoukModule .secondary:disabled{opacity:.55;cursor:wait}
 #bizoukModule .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #e8ebef}
 #bizoukModule .row:last-child{border-bottom:0}
@@ -742,13 +742,13 @@
 #bizoukModule .inline{display:flex;gap:8px}
 #bizoukModule .inline input,#bizoukModule .inline select{flex:1;min-width:0}
 #bizoukModule .inline button{white-space:nowrap}
-#bizoukModule .small{font-size:12px;color:#697481}
+#bizoukModule .small{font-size:12px;color:#9ca3af}
 #bizoukModule .label-item{border-bottom:1px solid #e8ebef;padding:10px 0}
 #bizoukModule .label-item:last-child{border:0}
 #bizoukModule .label-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
 #bizoukModule .label-name{font-size:14px;font-weight:600}
 #bizoukModule .label-actions{display:flex;gap:5px}
-#bizoukModule .label-actions button{font-size:12px;padding:7px 9px;border:1px solid #d5dbe2;border-radius:8px;background:#fff;color:#20252c}
+#bizoukModule .label-actions button{font-size:12px;padding:7px 9px;border:1px solid #343b46;border-radius:8px;background:#1b2028;color:#f5f5f5}
 #bizoukModule .label-editor{margin-top:9px}
 #bizoukModule .label-editor p{font-size:13px;margin:5px 0 9px}
 #bizoukModule .hidden{display:none}
@@ -760,6 +760,16 @@
 #bizoukModule .history-item span{flex:1 1 100%;overflow-wrap:anywhere}
 #bizoukModule .history-item .secondary{font-size:13px;padding:8px 10px;min-height:38px}
 
+</style>
+
+
+<style id="bizouk-final-dark">
+#bizoukModule input[type="file"]{background:#10141a!important;color:#d1d5db!important}
+#bizoukModule input[type="file"]::file-selector-button{
+  background:#292f38;color:#f5f5f5;border:1px solid #3b4350;
+  border-radius:8px;padding:9px 12px;margin-right:10px
+}
+#bizoukModule details>.panel{background:#15191f!important}
 </style>
 
 </head>
@@ -935,13 +945,7 @@
 
 
 
-    <p>
 
-      Charge un fichier Bizouk pour analyser les contacts,
-
-      g&#233;rer les doublons et appliquer un libell&#233; Google Contacts.
-
-    </p>
 
 
 
