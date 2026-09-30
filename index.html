@@ -1,159 +1,4848 @@
-<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Contacts · Punish Concept</title><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#15191f"><link rel="icon" href="icon-192.png"><script src="https://accounts.google.com/gsi/client" async defer></script><script src="config.js"></script>
-<style>
-:root{font-family:Arial,sans-serif;color:#20252c;background:#f4f5f7}*{box-sizing:border-box}body{margin:0}header{background:#15191f;color:#fff;padding:25px 20px 22px}.wrap{max-width:620px;margin:auto}.brand{letter-spacing:2px;color:#dbc08d;font-size:11px;margin:0 0 9px}h1{font-size:24px;font-weight:600;margin:0}main{padding:18px 16px 36px}h2{font-size:20px;margin:4px 0 7px}p{line-height:1.45}.muted{color:#697481;font-size:14px}.panel{background:#fff;border:1px solid #e2e5e9;border-radius:16px;padding:18px;margin:16px 0}.field{margin:16px 0}label{display:block;font-size:14px;font-weight:600;margin-bottom:8px}input,select{width:100%;border:1px solid #ccd2d9;border-radius:11px;padding:13px;background:#fff;color:#20252c;font:inherit;font-size:16px}button{font:inherit;cursor:pointer}.primary{width:100%;border:0;border-radius:11px;background:#1c252e;color:#fff;padding:15px;font-weight:600;font-size:16px;margin-top:8px;min-height:48px}.secondary{border:1px solid #cbd1d8;border-radius:10px;background:#fff;color:#1c252e;padding:11px 14px;min-height:44px}.primary:disabled,.secondary:disabled{opacity:.55;cursor:wait}.row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #e8ebef}.row:last-child{border-bottom:0}.value{font-size:23px;font-weight:600}.tag{display:inline-block;padding:7px 10px;background:#f3e9d8;color:#684b20;border-radius:20px;font-size:13px}.notice{padding:12px;border-radius:10px;background:#fff5e7;color:#644316;font-size:14px}.error{padding:12px;border-radius:10px;background:#fcebec;color:#9a2033;font-size:14px}.ok{padding:12px;border-radius:10px;background:#eaf5ed;color:#206237;font-size:14px}.history{font-size:14px}.history div{border-bottom:1px solid #e8ebef;padding:11px 0}.history div:last-child{border:0}.inline{display:flex;gap:8px}.inline input,.inline select{flex:1;min-width:0}.inline button{white-space:nowrap}.small{font-size:12px;color:#697481}.label-item{border-bottom:1px solid #e8ebef;padding:10px 0}.label-item:last-child{border:0}.label-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.label-name{font-size:14px;font-weight:600}.label-actions{display:flex;gap:5px}.label-actions button{font-size:12px;padding:7px 9px;border:1px solid #d5dbe2;border-radius:8px;background:#fff;color:#20252c}.label-editor{margin-top:9px}.label-editor p{font-size:13px;margin:5px 0 9px}.hidden{display:none}details{margin:12px 0}summary{cursor:pointer;font-weight:600}li{margin:8px 0}#busy{position:sticky;top:0;background:#1c252e;color:#fff;padding:10px 16px;text-align:center;z-index:3}
-.history-item{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:11px 0;border-bottom:1px solid #e8ebef}.history-item span{flex:1 1 100%;overflow-wrap:anywhere}.history-item .secondary{font-size:13px;padding:8px 10px;min-height:38px}
-</style></head><body><div id="busy" class="hidden" role="status">Traitement en cours…</div><header><div class="wrap"><p class="brand">PUNISH CONCEPT</p><h1>Contacts</h1></div></header><main class="wrap"><section id="login" class="panel"><h2>Connexion Google</h2><p class="muted">Indique une fois le compte qui possède tes contacts et ton historique Bizouk. L’adresse sera mémorisée sur ce téléphone.</p><div class="field"><label for="googleEmail">Adresse Google</label><input id="googleEmail" type="email" inputmode="email" autocomplete="email" placeholder="nom@gmail.com"></div><button id="connectGoogle" class="primary" type="button">Se connecter avec Google</button><p id="loginInfo" class="small"></p></section>
-<section id="start" class="hidden"><h2>Nouvel import</h2><p class="muted">Choisis un fichier Bizouk et son libellé. Les contacts Google seront comparés au moment de l’analyse.</p><div class="panel"><div class="field"><label for="file">Fichier Bizouk (.xls, .xlsx, .csv)</label><input id="file" type="file" accept=".xls,.xlsx,.csv"></div><div class="field"><label for="event">Nom de l’événement</label><input id="event" type="text" placeholder="Rempli automatiquement après choix du fichier" maxlength="100"><p class="small">Tu peux corriger ce nom avant l’analyse.</p></div><div class="field"><label for="label">Libellé Google Contacts</label><div class="inline"><select id="label"></select><button id="showNewLabel" class="secondary" type="button">+ Nouveau</button></div><div id="newLabelBox" class="hidden" style="margin-top:10px"><label for="newLabel">Nom du nouveau libellé</label><div class="inline"><input id="newLabel" placeholder="L’Excès STDM" maxlength="70"><button id="addLabel" class="secondary" type="button">Créer</button></div></div></div><button id="analyse" class="primary">Analyser les contacts</button><p class="small">L’analyse ne modifie aucun contact.</p></div><details><summary>Gérer les libellés</summary><div class="panel" id="labelManager"></div></details><details><summary>Imports récents</summary><div class="panel"><div id="history" class="history"></div></div></details></section>
-<section id="review" class="hidden"><h2>Contrôle terminé</h2><p id="context" class="muted"></p><div class="panel"><div class="row"><span>Nouveaux contacts</span><span id="newCount" class="value"></span></div><div class="row"><span>Contacts déjà présents</span><span id="existingCount" class="value"></span></div><div class="row"><span>Numéros à remplacer</span><span id="replaceCount" class="value"></span></div><div class="row"><span>À vérifier</span><span id="reviewCount" class="value"></span></div></div><p id="progress" class="muted"></p><div id="pendingErrors" class="error hidden"></div><p class="notice">Le libellé choisi sera ajouté aux contacts existants sans retirer leurs autres libellés. Les fiches ambiguës sont mises de côté.</p><details id="reviewDetails"><summary>Voir les fiches à vérifier</summary><div class="panel"><ul id="reviewList"></ul><button id="chooseReviews" type="button" class="secondary">Sélectionner certaines fiches</button><div class="field"><label for="resolveFile">Réévaluer les numéros partagés avec l’e-mail</label><input id="resolveFile" type="file" accept=".xls,.xlsx,.csv"><button id="recheckReviews" type="button" class="secondary" style="width:100%;margin-top:10px">Réévaluer les fiches</button><p id="recheckResult" class="ok hidden"></p></div><div id="reviewChoices" class="hidden"><p class="small">Chaque case associe uniquement le libellé au contact Google indiqué. Son nom, son numéro et sa date restent inchangés. Les autres fiches restent de côté.</p><div id="choiceList"></div><button id="applyReviews" type="button" class="secondary" style="width:100%;margin-top:10px">Ajouter les fiches cochées au libellé</button><p id="reviewResult" class="ok hidden"></p></div></div></details><details id="manualDetails"><summary>Compléter les fiches associées manuellement</summary><div class="panel"><p class="small">Choisis le fichier Bizouk pour comparer les informations avant toute modification.</p><input id="manualFile" type="file" accept=".xls,.xlsx,.csv" style="margin-bottom:10px"><button id="loadManual" type="button" class="secondary">Afficher les associations</button><div id="manualList"></div></div></details><button id="apply" class="primary">Lancer l’import en arrière-plan</button><p class="small">Après le lancement, tu peux fermer l’application. Google traite les fiches ; rouvre-la pour consulter l’avancement.</p><button id="repair" class="secondary" style="width:100%;margin-top:10px">Vérifier et réparer le libellé</button><p id="repairResult" class="ok hidden"></p><div id="birthBox" class="panel hidden"><label for="birthFile">Compléter les dates de naissance</label><p class="small">Choisis le fichier Bizouk utilisé pour cet import. Les dates déjà présentes dans Google Contacts seront conservées.</p><input id="birthFile" type="file" accept=".xls,.xlsx,.csv"><button id="birthApply" class="secondary" style="width:100%;margin-top:10px">Ajouter les dates manquantes</button><p id="birthResult" class="ok hidden"></p></div><button id="check" class="secondary" style="width:100%;margin-top:10px">Vérifier l’état de l’import</button><button id="back" class="secondary" style="width:100%;margin-top:10px">Retour</button></section>
-<section id="done" class="hidden"><h2>Import traité</h2><p id="doneMessage" class="ok"></p><div id="errors" class="error hidden"></div><button id="doneBack" class="secondary" style="width:100%;margin-top:10px">Retour au contrôle</button><button id="again" class="primary">Nouvel import</button></section><div id="message" role="alert" class="error hidden"></div>
-</main><script>
-let current=null,autoEvent='';const $=s=>document.querySelector(s);
-function eventFromFile(name){return String(name||'').replace(/\.(xls|xlsx|csv)$/i,'').replace(/^bizouk[ _.-]*forms?[ _.-]*/i,'').replace(/[ _.-]*\d+(?:[ _.-]*\(\d+\))?$/i,'').replace(/[_.-]+/g,' ').replace(/\s+/g,' ').trim().replace(/\b\p{L}/gu,c=>c.toLocaleUpperCase())}
-$('#file').addEventListener('change',()=>{const name=$('#file').files[0]?.name||'';const suggested=eventFromFile(name);if(!$('#event').value.trim()||$('#event').value===autoEvent){$('#event').value=suggested;autoEvent=suggested}});
-function busy(on){$('#busy').classList.toggle('hidden',!on);document.querySelectorAll('button').forEach(b=>b.disabled=on)}
-function readable(v){return String(v??'').replace(/Ã[\u0080-\u00BF]|Â[\u0080-\u00BF]|â[\u0080-\u00BF]{2}/g,part=>{try{return new TextDecoder('utf-8',{fatal:true}).decode(Uint8Array.from(part,c=>c.charCodeAt(0)))}catch(_){return part}})}
-function msg(e){$('#message').textContent=readable(e.message||String(e));$('#message').classList.remove('hidden');busy(false)}
-async function call(method,...args){
-  if(!accessToken)throw Error('Reconnecte ton compte Google.');
-  busy(true);$('#message').classList.add('hidden');
-  try{
-    const response=await fetch('https://script.googleapis.com/v1/scripts/'+encodeURIComponent(APP_CONFIG.deploymentId)+':run',{
-      method:'POST',headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'application/json'},
-      body:JSON.stringify({function:method,parameters:args,devMode:false})
-    });
-    const data=await response.json();
-    if(!response.ok)throw Error(data.error?.message||'Erreur Google '+response.status);
-    if(data.error)throw Error(data.error.details?.[0]?.errorMessage||data.error.message||'Erreur du script');
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+
+  <title>Punish Concept CRM</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#090b0e">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="config.js"></script>
+
+
+  <base target="_top">
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+
+
+  <style>
+
+    :root{
+
+      --bg:#090b0e;
+
+      --card:#15191f;
+
+      --card2:#1b2028;
+
+      --gold:#d4af37;
+
+      --text:#f5f5f5;
+
+      --muted:#9ca3af;
+
+      --border:#2b313b;
+
+      --danger:#ef4444;
+
+      --green:#22c55e;
+
+    }
+
+
+
+    *{box-sizing:border-box}
+
+
+
+    body{
+
+      margin:0;
+
+      font-family:Arial,sans-serif;
+
+      background:var(--bg);
+
+      color:var(--text);
+
+    }
+
+
+
+    .container{
+
+      max-width:1450px;
+
+      margin:auto;
+
+      padding:24px;
+
+    }
+
+
+
+    /* HEADER */
+
+
+
+    .header{
+
+      display:flex;
+
+      justify-content:space-between;
+
+      align-items:center;
+
+      gap:20px;
+
+      margin-bottom:20px;
+
+    }
+
+
+
+    .brand{
+
+      font-size:27px;
+
+      font-weight:900;
+
+      letter-spacing:1px;
+
+    }
+
+
+
+    .brand span{color:var(--gold)}
+
+
+
+    .subtitle{
+
+      color:var(--muted);
+
+      font-size:13px;
+
+      margin-top:4px;
+
+    }
+
+
+
+    /* NAVIGATION */
+
+
+
+    .nav{
+
+      display:flex;
+
+      gap:7px;
+
+      flex-wrap:wrap;
+
+      margin-bottom:22px;
+
+    }
+
+
+
+    .nav button{
+
+      background:#15191f;
+
+      color:#ddd;
+
+      border:1px solid var(--border);
+
+      padding:11px 17px;
+
+      border-radius:9px;
+
+      cursor:pointer;
+
+      font-weight:bold;
+
+    }
+
+
+
+    .nav button.active{
+
+      background:var(--gold);
+
+      color:#111;
+
+      border-color:var(--gold);
+
+    }
+
+
+
+    /* STATS */
+
+
+
+    .stats{
+
+      display:grid;
+
+      grid-template-columns:repeat(4,1fr);
+
+      gap:14px;
+
+      margin-bottom:20px;
+
+    }
+
+
+
+    .stat{
+
+      background:var(--card);
+
+      border:1px solid var(--border);
+
+      border-radius:15px;
+
+      padding:19px;
+
+    }
+
+
+
+    .stat strong{
+
+      display:block;
+
+      color:var(--gold);
+
+      font-size:30px;
+
+      margin-bottom:5px;
+
+    }
+
+
+
+    .stat span{
+
+      color:var(--muted);
+
+      font-size:12px;
+
+      text-transform:uppercase;
+
+    }
+
+
+
+    /* GENERAL */
+
+
+
+    .page{display:none}
+
+    .page.active{display:block}
+
+
+
+    .panel{
+
+      background:var(--card);
+
+      border:1px solid var(--border);
+
+      border-radius:17px;
+
+      padding:22px;
+
+      margin-bottom:16px;
+
+    }
+
+
+
+    h2,h3{margin-top:0}
+
+
+
+    label{
+
+      display:block;
+
+      font-size:13px;
+
+      font-weight:bold;
+
+      margin:14px 0 7px;
+
+    }
+
+
+
+    input,select,textarea{
+
+      width:100%;
+
+      background:#10141a;
+
+      color:#fff;
+
+      border:1px solid #343b46;
+
+      border-radius:9px;
+
+      padding:12px;
+
+      font-size:14px;
+
+    }
+
+
+
+    textarea{
+
+      min-height:120px;
+
+      resize:vertical;
+
+    }
+
+
+
+    button{
+
+      border:0;
+
+      border-radius:9px;
+
+      padding:11px 16px;
+
+      font-weight:bold;
+
+      cursor:pointer;
+
+    }
+
+
+
+    .gold{
+
+      background:var(--gold);
+
+      color:#111;
+
+    }
+
+
+
+    .secondary{
+
+      background:#292f38;
+
+      color:#fff;
+
+    }
+
+
+
+    .danger{
+
+      background:#3a1719;
+
+      color:#ff8c8c;
+
+    }
+
+
+
+    .success{
+
+      color:var(--green);
+
+    }
+
+
+
+    .muted{
+
+      color:var(--muted);
+
+    }
+
+
+
+    .grid2{
+
+      display:grid;
+
+      grid-template-columns:1fr 1fr;
+
+      gap:14px;
+
+    }
+
+
+
+    /* HOME */
+
+
+
+    .welcome{
+
+      padding:12px 0 4px;
+
+    }
+
+
+
+    .welcome h2{
+
+      font-size:25px;
+
+      margin-bottom:7px;
+
+    }
+
+
+
+    /* SEGMENTS */
+
+
+
+    .segment-tools{
+
+      display:flex;
+
+      gap:9px;
+
+      flex-wrap:wrap;
+
+      margin-top:10px;
+
+    }
+
+
+
+    .segment-tools input{
+
+      flex:1;
+
+      min-width:220px;
+
+    }
+
+
+
+    .segments{
+
+      display:grid;
+
+      grid-template-columns:repeat(3,1fr);
+
+      gap:8px;
+
+      max-height:330px;
+
+      overflow-y:auto;
+
+      margin-top:11px;
+
+      padding-right:5px;
+
+    }
+
+
+
+    .seg{
+
+      display:flex;
+
+      align-items:center;
+
+      gap:9px;
+
+      padding:10px;
+
+      background:var(--card2);
+
+      border:1px solid var(--border);
+
+      border-radius:9px;
+
+      cursor:pointer;
+
+      margin:0;
+
+    }
+
+
+
+    .seg:hover{
+
+      border-color:var(--gold);
+
+    }
+
+
+
+    .seg input{
+
+      width:auto;
+
+      margin:0;
+
+    }
+
+
+
+    .seg small{
+
+      color:var(--muted);
+
+    }
+
+
+
+    .target{
+
+      background:#10141a;
+
+      border:1px solid var(--border);
+
+      border-radius:10px;
+
+      padding:15px;
+
+      margin-top:13px;
+
+      font-size:16px;
+
+    }
+
+
+
+    .target strong{
+
+      color:var(--gold);
+
+      font-size:23px;
+
+    }
+
+
+
+    /* EVENTS */
+
+
+
+    .event-list{
+
+      display:grid;
+
+      gap:10px;
+
+    }
+
+
+
+    .event-card{
+
+      background:var(--card2);
+
+      border:1px solid var(--border);
+
+      border-radius:12px;
+
+      padding:16px;
+
+      display:flex;
+
+      justify-content:space-between;
+
+      gap:15px;
+
+      align-items:center;
+
+    }
+
+
+
+    .event-name{
+
+      font-weight:bold;
+
+      font-size:17px;
+
+      color:#fff;
+
+    }
+
+
+
+    .event-info{
+
+      color:var(--muted);
+
+      margin-top:5px;
+
+      font-size:13px;
+
+    }
+
+
+
+    /* SEGMENT PAGE */
+
+
+
+    .segment-row{
+
+      display:flex;
+
+      justify-content:space-between;
+
+      padding:12px;
+
+      border-bottom:1px solid var(--border);
+
+    }
+
+
+
+    .segment-row:last-child{
+
+      border-bottom:0;
+
+    }
+
+
+
+    /* STATUS */
+
+
+
+    .status{
+
+      min-height:22px;
+
+      margin-top:13px;
+
+      color:var(--muted);
+
+    }
+
+
+
+    /* MOBILE */
+
+
+
+    @media(max-width:850px){
+
+
+
+      .container{padding:13px}
+
+
+
+      .header{
+
+        display:block;
+
+      }
+
+
+
+      .stats{
+
+        grid-template-columns:1fr 1fr;
+
+      }
+
+
+
+      .segments{
+
+        grid-template-columns:1fr;
+
+      }
+
+
+
+      .grid2{
+
+        grid-template-columns:1fr;
+
+      }
+
+
+
+      .event-card{
+
+        display:block;
+
+      }
+
+
+
+      .event-card button{
+
+        margin-top:12px;
+
+      }
+
+
+
+      .nav{
+
+        overflow-x:auto;
+
+        flex-wrap:nowrap;
+
+      }
+
+
+
+      .nav button{
+
+        white-space:nowrap;
+
+      }
+
+    }
+
+  
+#bizoukModule{font-family:Arial,sans-serif;color:#20252c;background:#f4f5f7}
+#bizoukModule \*{box-sizing:border-box}
+#bizoukModule{margin:0}
+#bizoukModule header{background:#15191f;color:#fff;padding:25px 20px 22px}
+#bizoukModule .wrap{max-width:620px;margin:auto}
+#bizoukModule .brand{letter-spacing:2px;color:#dbc08d;font-size:11px;margin:0 0 9px}
+#bizoukModule h1{font-size:24px;font-weight:600;margin:0}
+#bizoukModule main{padding:18px 16px 36px}
+#bizoukModule h2{font-size:20px;margin:4px 0 7px}
+#bizoukModule p{line-height:1.45}
+#bizoukModule .muted{color:#697481;font-size:14px}
+#bizoukModule .panel{background:#fff;border:1px solid #e2e5e9;border-radius:16px;padding:18px;margin:16px 0}
+#bizoukModule .field{margin:16px 0}
+#bizoukModule label{display:block;font-size:14px;font-weight:600;margin-bottom:8px}
+#bizoukModule input,#bizoukModule select{width:100%;border:1px solid #ccd2d9;border-radius:11px;padding:13px;background:#fff;color:#20252c;font:inherit;font-size:16px}
+#bizoukModule button{font:inherit;cursor:pointer}
+#bizoukModule .primary{width:100%;border:0;border-radius:11px;background:#1c252e;color:#fff;padding:15px;font-weight:600;font-size:16px;margin-top:8px;min-height:48px}
+#bizoukModule .secondary{border:1px solid #cbd1d8;border-radius:10px;background:#fff;color:#1c252e;padding:11px 14px;min-height:44px}
+#bizoukModule .primary:disabled,#bizoukModule .secondary:disabled{opacity:.55;cursor:wait}
+#bizoukModule .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #e8ebef}
+#bizoukModule .row:last-child{border-bottom:0}
+#bizoukModule .value{font-size:23px;font-weight:600}
+#bizoukModule .tag{display:inline-block;padding:7px 10px;background:#f3e9d8;color:#684b20;border-radius:20px;font-size:13px}
+#bizoukModule .notice{padding:12px;border-radius:10px;background:#fff5e7;color:#644316;font-size:14px}
+#bizoukModule .error{padding:12px;border-radius:10px;background:#fcebec;color:#9a2033;font-size:14px}
+#bizoukModule .ok{padding:12px;border-radius:10px;background:#eaf5ed;color:#206237;font-size:14px}
+#bizoukModule .history{font-size:14px}
+#bizoukModule .history div{border-bottom:1px solid #e8ebef;padding:11px 0}
+#bizoukModule .history div:last-child{border:0}
+#bizoukModule .inline{display:flex;gap:8px}
+#bizoukModule .inline input,#bizoukModule .inline select{flex:1;min-width:0}
+#bizoukModule .inline button{white-space:nowrap}
+#bizoukModule .small{font-size:12px;color:#697481}
+#bizoukModule .label-item{border-bottom:1px solid #e8ebef;padding:10px 0}
+#bizoukModule .label-item:last-child{border:0}
+#bizoukModule .label-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#bizoukModule .label-name{font-size:14px;font-weight:600}
+#bizoukModule .label-actions{display:flex;gap:5px}
+#bizoukModule .label-actions button{font-size:12px;padding:7px 9px;border:1px solid #d5dbe2;border-radius:8px;background:#fff;color:#20252c}
+#bizoukModule .label-editor{margin-top:9px}
+#bizoukModule .label-editor p{font-size:13px;margin:5px 0 9px}
+#bizoukModule .hidden{display:none}
+#bizoukModule details{margin:12px 0}
+#bizoukModule summary{cursor:pointer;font-weight:600}
+#bizoukModule li{margin:8px 0}
+#bizoukModule #busy{position:sticky;top:0;background:#1c252e;color:#fff;padding:10px 16px;text-align:center;z-index:3}
+#bizoukModule .history-item{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:11px 0;border-bottom:1px solid #e8ebef}
+#bizoukModule .history-item span{flex:1 1 100%;overflow-wrap:anywhere}
+#bizoukModule .history-item .secondary{font-size:13px;padding:8px 10px;min-height:38px}
+
+</style>
+
+</head>
+
+
+
+
+
+<body>
+
+<div id="pwaLogin" style="position:fixed;inset:0;z-index:99999;background:#090b0e;color:#f5f5f5;display:flex;align-items:center;justify-content:center;padding:20px;font-family:Arial,sans-serif">
+  <div style="width:min(430px,100%);background:#15191f;border:1px solid #2b313b;border-radius:18px;padding:24px">
+    <div style="font-size:12px;letter-spacing:2px;color:#d4af37;font-weight:700;margin-bottom:8px">PUNISH CONCEPT</div>
+    <div style="font-size:27px;font-weight:900;margin-bottom:8px">CRM</div>
+    <p style="color:#9ca3af;line-height:1.45;margin:0 0 18px">Connecte le compte Google autorisÃ© Ã  gÃ©rer les contacts et les donnÃ©es du CRM.</p>
+    <label for="pwaGoogleEmail" style="display:block;font-size:13px;font-weight:bold;margin:0 0 7px">Adresse Google</label>
+    <input id="pwaGoogleEmail" type="email" autocomplete="email" placeholder="nom@gmail.com" style="width:100%;background:#10141a;color:#fff;border:1px solid #343b46;border-radius:9px;padding:13px;font-size:16px;margin-bottom:12px">
+    <button id="pwaConnectGoogle" type="button" style="width:100%;border:0;border-radius:9px;padding:13px 16px;font-weight:bold;cursor:pointer;background:#d4af37;color:#111">Se connecter avec Google</button>
+    <div id="pwaLoginInfo" style="min-height:20px;margin-top:12px;color:#9ca3af;font-size:13px"></div>
+  </div>
+</div>
+
+
+
+
+<div class="container">
+
+
+
+  <!-- HEADER -->
+
+
+
+  <div class="header">
+
+
+
+    <div>
+
+      <div class="brand">
+
+        PUNISH <span>CONCEPT</span> CRM
+
+      </div>
+
+
+
+      <div class="subtitle">
+
+        Gestion &#233;v&#233;nements & communication clients
+
+      </div>
+
+    </div>
+
+
+
+  </div>
+
+
+
+
+
+  <!-- NAVIGATION -->
+
+
+
+  <div class="nav">
+
+
+
+    <button id="nav-home"
+
+            class="active"
+
+            onclick="showPage('home')">
+
+      &#128202; Accueil
+
+    </button>
+
+
+
+<button id="nav-import"
+
+        onclick="showPage('import')">
+
+  Import Bizouk
+
+</button>
+
+
+
+    <button id="nav-contacts"
+
+            onclick="showPage('contacts')">
+
+      &#128101; Contacts
+
+    </button>
+
+
+
+    <button id="nav-segments"
+
+            onclick="showPage('segmentsPage')">
+
+      &#127991;&#65039; Segments
+
+    </button>
+
+
+
+    <button id="nav-events"
+
+            onclick="showPage('events')">
+
+      &#127881; &#201;v&#233;nements
+
+    </button>
+
+
+
+    <button id="nav-campaign"
+
+            onclick="showPage('campaign')">
+
+      &#128227; Campagnes
+
+    </button>
+
+
+
+  </div>
+
+
+
+<!-- =========================
+
+     PAGE IMPORT BIZOUK
+
+\========================= -->
+
+
+
+<section id="import" class="page">
+
+
+
+  <div class="section-head">
+
+    <div>
+
+      <h2>Import Bizouk</h2>
+
+      <p>
+
+        Importation et mise &#224; jour des participants
+
+        dans Google Contacts.
+
+      </p>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="panel">
+
+    <h3>Contacts Bizouk</h3>
+
+
+
+    <p>
+
+      Charge un fichier Bizouk pour analyser les contacts,
+
+      g&#233;rer les doublons et appliquer un libell&#233; Google Contacts.
+
+    </p>
+
+
+
+    <div id="bizoukModule"><div id="busy" class="hidden" role="status">Traitement en cours...</div>
+<section id="start"><h2>Nouvel import</h2><p class="muted">Choisis un fichier Bizouk et son libell&#233;. Les contacts Google seront compar&#233;s au moment de l&#8217;analyse.</p><div class="panel"><div class="field"><label for="file">Fichier Bizouk (.xls, .xlsx, .csv)</label><input id="file" type="file" accept=".xls,.xlsx,.csv"></div><div class="field"><label for="event">Nom de l&#8217;&#233;v&#233;nement</label><input id="event" type="text" placeholder="Rempli automatiquement apr&#232;s choix du fichier" maxlength="100"><p class="small">Tu peux corriger ce nom avant l&#8217;analyse.</p></div><div class="field"><label for="label">Libell&#233; Google Contacts</label><div class="inline"><select id="label"></select><button id="showNewLabel" class="secondary" type="button">+ Nouveau</button></div><div id="newLabelBox" class="hidden" style="margin-top:10px"><label for="newLabel">Nom du nouveau libell&#233;</label><div class="inline"><input id="newLabel" placeholder="L&#8217;Exc&#232;s STDM" maxlength="70"><button id="addLabel" class="secondary" type="button">Cr&#233;er</button></div></div></div><button id="analyse" class="primary">Analyser les contacts</button><p class="small">L&#8217;analyse ne modifie aucun contact.</p></div><details><summary>G&#233;rer les libell&#233;s</summary><div class="panel" id="labelManager"></div></details><details><summary>Imports r&#233;cents</summary><div class="panel"><div id="history" class="history"></div></div></details></section>
+
+<section id="review" class="hidden"><h2>Contr&#244;le termin&#233;</h2><p id="context" class="muted"></p><div class="panel"><div class="row"><span>Nouveaux contacts</span><span id="newCount" class="value"></span></div><div class="row"><span>Contacts d&#233;j&#224; pr&#233;sents</span><span id="existingCount" class="value"></span></div><div class="row"><span>Num&#233;ros &#224; remplacer</span><span id="replaceCount" class="value"></span></div><div class="row"><span>&#192; v&#233;rifier</span><span id="reviewCount" class="value"></span></div></div><p id="progress" class="muted"></p><div id="pendingErrors" class="error hidden"></div><p class="notice">Le libell&#233; choisi sera ajout&#233; aux contacts existants sans retirer leurs autres libell&#233;s. Les fiches ambigu&#235;s sont mises de c&#244;t&#233;.</p><details id="reviewDetails"><summary>Voir les fiches &#224; v&#233;rifier</summary><div class="panel"><ul id="reviewList"></ul><button id="chooseReviews" type="button" class="secondary">S&#233;lectionner certaines fiches</button><div class="field"><label for="resolveFile">R&#233;&#233;valuer les num&#233;ros partag&#233;s avec l&#8217;e-mail</label><input id="resolveFile" type="file" accept=".xls,.xlsx,.csv"><button id="recheckReviews" type="button" class="secondary" style="width:100%;margin-top:10px">R&#233;&#233;valuer les fiches</button><p id="recheckResult" class="ok hidden"></p></div><div id="reviewChoices" class="hidden"><p class="small">Chaque case associe uniquement le libell&#233; au contact Google indiqu&#233;. Son nom, son num&#233;ro et sa date restent inchang&#233;s. Les autres fiches restent de c&#244;t&#233;.</p><div id="choiceList"></div><button id="applyReviews" type="button" class="secondary" style="width:100%;margin-top:10px">Ajouter les fiches coch&#233;es au libell&#233;</button><p id="reviewResult" class="ok hidden"></p></div></div></details><details id="manualDetails"><summary>Compl&#233;ter les fiches associ&#233;es manuellement</summary><div class="panel"><p class="small">Choisis le fichier Bizouk pour comparer les informations avant toute modification.</p><input id="manualFile" type="file" accept=".xls,.xlsx,.csv" style="margin-bottom:10px"><button id="loadManual" type="button" class="secondary">Afficher les associations</button><div id="manualList"></div></div></details><button id="apply" class="primary">Appliquer les changements</button><button id="repair" class="secondary" style="width:100%;margin-top:10px">V&#233;rifier et r&#233;parer le libell&#233;</button><p id="repairResult" class="ok hidden"></p><div id="birthBox" class="panel hidden"><label for="birthFile">Compl&#233;ter les dates de naissance</label><p class="small">Choisis le fichier Bizouk utilis&#233; pour cet import. Les dates d&#233;j&#224; pr&#233;sentes dans Google Contacts seront conserv&#233;es.</p><input id="birthFile" type="file" accept=".xls,.xlsx,.csv"><button id="birthApply" class="secondary" style="width:100%;margin-top:10px">Ajouter les dates manquantes</button><p id="birthResult" class="ok hidden"></p></div><button id="check" class="secondary" style="width:100%;margin-top:10px">V&#233;rifier l&#8217;&#233;tat de l&#8217;import</button><button id="back" class="secondary" style="width:100%;margin-top:10px">Retour</button></section>
+
+<section id="done" class="hidden"><h2>Import trait&#233;</h2><p id="doneMessage" class="ok"></p><div id="errors" class="error hidden"></div><button id="again" class="primary">Nouvel import</button></section><div id="message" role="alert" class="error hidden"></div>
+</div>
+
+
+
+  </div>
+
+
+
+</section>
+
+
+
+  <!-- STATS -->
+
+
+
+  <div class="stats">
+
+
+
+    <div class="stat">
+
+      <strong id="contactsStat">&#8212;</strong>
+
+      <span>Contacts</span>
+
+    </div>
+
+
+
+    <div class="stat">
+
+      <strong id="mobilesStat">&#8212;</strong>
+
+      <span>Mobiles FR</span>
+
+    </div>
+
+
+
+    <div class="stat">
+
+      <strong id="segmentsStat">&#8212;</strong>
+
+      <span>Segments</span>
+
+    </div>
+
+
+
+    <div class="stat">
+
+      <strong id="blockedStat">&#8212;</strong>
+
+      <span>Exclus</span>
+
+    </div>
+
+
+
+  </div>
+
+
+
+
+
+  <!-- ACCUEIL -->
+
+
+
+  <section id="home" class="page active">
+
+
+
+    <div class="panel welcome">
+
+
+
+      <h2>Tableau de bord</h2>
+
+
+
+      <p class="muted">
+
+        Ta base clients Punish Concept est connect&#233;e.
+
+        Utilise les onglets pour g&#233;rer tes &#233;v&#233;nements,
+
+        tes segments et tes campagnes.
+
+      </p>
+
+
+
+    </div>
+
+
+
+    <div class="panel">
+
+
+
+      <h3>&#201;v&#233;nements enregistr&#233;s</h3>
+
+
+
+      <div id="homeEvents" class="event-list">
+
+        <span class="muted">Chargement...</span>
+
+      </div>
+
+
+
+    </div>
+
+
+
+  </section>
+
+
+
+
+
+  <!-- CONTACTS -->
+
+
+
+  <section id="contacts" class="page">
+
+
+
+    <div class="panel">
+
+
+
+      <h2>&#128101; Contacts</h2>
+
+
+
+      <p class="muted">
+
+        La base contient actuellement
+
+        <strong id="contactsText">&#8212;</strong> contacts,
+
+        dont <strong id="mobilesText">&#8212;</strong>
+
+        mobiles fran&#231;ais exploitables.
+
+      </p>
+
+
+
+      <p class="muted">
+
+        La gestion d&#233;taill&#233;e des fiches clients sera ajout&#233;e
+
+        dans l'&#233;tape suivante.
+
+      </p>
+
+
+
+    </div>
+
+
+
+  </section>
+
+
+
+
+
+  <!-- SEGMENTS -->
+
+
+
+  <section id="segmentsPage" class="page">
+
+
+
+    <div class="panel">
+
+
+
+      <h2>&#127991;&#65039; Segments</h2>
+
+
+
+      <input
+
+        id="segmentPageSearch"
+
+        type="search"
+
+        placeholder="&#128270; Rechercher un segment..."
+
+        oninput="renderSegmentPage()"
+
+      >
+
+
+
+      <div id="segmentPageList"
+
+           style="margin-top:15px">
+
+      </div>
+
+
+
+    </div>
+
+
+
+  </section>
+
+
+
+
+
+  <!-- EVENTS -->
+
+
+
+  <section id="events" class="page">
+
+
+
+    <div class="panel">
+
+
+
+      <h2>&#127881; Nouvel &#233;v&#233;nement</h2>
+
+
+
+      <div class="grid2">
+
+
+
+        <div>
+
+          <label>Nom de l'&#233;v&#233;nement *</label>
+
+          <input id="eventName"
+
+                 placeholder="Ex : SOUND TO DI MAX">
+
+        </div>
+
+
+
+        <div>
+
+          <label>Date *</label>
+
+          <input id="eventDate"
+
+                 type="date">
+
+        </div>
+
+
+
+        <div>
+
+          <label>Lieu</label>
+
+          <input id="eventPlace"
+
+                 placeholder="Ex : L'Exc&#232;s">
+
+        </div>
+
+
+
+        <div>
+
+          <label>Lien Bizouk</label>
+
+          <input id="eventLink"
+
+                 type="url"
+
+                 placeholder="https\://...">
+
+        </div>
+
+
+
+      </div>
+
+
+
+      <label>Notes</label>
+
+
+
+      <textarea
+
+        id="eventNotes"
+
+        placeholder="Informations compl&#233;mentaires..."
+
+        style="min-height:80px">
+
+      </textarea>
+
+
+
+     <button type="button"
+
+        id="btnCreateEvent"
+
+        class="gold"
+
+        style="margin-top:14px">
+
+  + Enregistrer l'&#233;v&#233;nement
+
+</button>
+
+
+
+      <div id="eventStatus"
+
+           class="status">
+
+      </div>
+
+
+
+    </div>
+
+
+
+
+
+    <div class="panel">
+
+
+
+      <h2>&#201;v&#233;nements</h2>
+
+
+
+      <div id="eventList"
+
+           class="event-list">
+
+      </div>
+
+
+
+    </div>
+
+
+
+  </section>
+
+
+
+
+
+  <!-- CAMPAIGNS -->
+
+
+
+  <section id="campaign" class="page">
+
+
+
+    <div class="panel">
+
+
+
+      <h2>&#128227; Nouvelle campagne</h2>
+
+
+
+      <div class="grid2">
+
+
+
+        <div>
+
+
+
+          <label>&#201;v&#233;nement</label>
+
+
+
+          <select id="campaignEvent">
+
+            <option value="">
+
+              &#8212; Aucun / &#192; choisir &#8212;
+
+            </option>
+
+          </select>
+
+
+
+        </div>
+
+
+
+        <div>
+
+
+
+          <label>Canal</label>
+
+
+
+          <select id="channel">
+
+            <option value="WHATSAPP">
+
+              WhatsApp
+
+            </option>
+
+
+
+            <option value="SMS">
+
+              SMS
+
+            </option>
+
+          </select>
+
+
+
+        </div>
+
+
+
+      </div>
+
+
+
+
+
+      <label>Segments cibl&#233;s</label>
+
+
+
+      <div class="segment-tools">
+
+
+
+        <input
+
+          id="searchSegment"
+
+          type="search"
+
+          placeholder="&#128270; Rechercher un segment..."
+
+          oninput="filterCampaignSegments()"
+
+        >
+
+
+
+        <button class="secondary"
+
+                onclick="selectVisibleSegments()">
+
+          Tout s&#233;lectionner
+
+        </button>
+
+
+
+        <button class="secondary"
+
+                onclick="clearSegments()">
+
+          Tout d&#233;s&#233;lectionner
+
+        </button>
+
+
+
+      </div>
+
+
+
+
+
+      <div id="campaignSegments"
+
+           class="segments">
+
+      </div>
+
+
+
+
+
+      <div class="target">
+
+
+
+        Cible r&#233;elle :
+
+
+
+        <strong id="target">
+
+          0
+
+        </strong>
+
+
+
+        destinataire(s)
+
+
+
+        <span id="targetLoading"
+
+              class="muted">
+
+        </span>
+
+
+
+      </div>
+
+
+
+
+
+      <label>Message</label>
+
+
+
+      <textarea
+
+        id="campaignMessage"
+
+        placeholder="Ton message WhatsApp ou SMS...">
+
+      </textarea>
+
+
+
+
+
+      <label>Lien Bizouk / billetterie</label>
+
+
+
+      <input
+
+        id="campaignLink"
+
+        type="url"
+
+        placeholder="https\://..."
+
+      >
+
+<button class="secondary"
+
+        style="width:100%;margin-top:17px"
+
+        onclick="previewCampaign()">
+
+  &#128065;&#65039; Aper&#231;u de la campagne
+
+</button>
+
+
+
+<div id="campaignPreview"
+
+     style="display:none;margin-top:15px;
+
+            padding:18px;background:#10141a;
+
+            border:1px solid #343b46;
+
+            border-radius:12px;">
+
+</div>
+
+
+
+      <button class="gold"
+
+              style="width:100%;margin-top:17px"
+
+              onclick="saveCampaign()">
+
+
+
+        Enregistrer la campagne
+
+
+
+      </button>
+
+
+
+
+
+      <div id="campaignStatus"
+
+           class="status">
+
+      </div>
+
+
+
+    </div>
+
+
+
+    <div class="panel">
+
+
+
+  <h2>&#128203; Campagnes enregistr&#233;es</h2>
+
+
+
+  <div id="campaignList">
+
+    <span class="muted">Chargement...</span>
+
+  </div>
+
+
+
+<div id="campaignManager"
+
+     style="display:none;margin-top:18px;
+
+            padding:18px;background:#10141a;
+
+            border:1px solid #343b46;
+
+            border-radius:12px;">
+
+
+
+  <div style="display:flex;
+
+              justify-content:space-between;
+
+              align-items:center;
+
+              gap:10px;">
+
+
+
+    <strong id="managerTitle"
+
+            style="color:#d4af37;font-size:18px;">
+
+      Gestion campagne
+
+    </strong>
+
+
+
+    <button type="button"
+
+            class="secondary"
+
+            onclick="closeCampaignManager()">
+
+      Fermer
+
+    </button>
+
+
+
+  </div>
+
+
+
+  <div id="managerStats"
+
+       style="margin-top:15px;">
+
+  </div>
+
+
+
+<div id="managerErrorActions"
+
+     style="display:none;margin-top:12px;">
+
+
+
+  <button type="button"
+
+          id="btnShowErrors"
+
+          class="danger">
+
+    &#128308; Voir les erreurs
+
+  </button>
+
+
+
+</div>
+
+
+
+<div id="managerErrors"
+
+     style="display:none;margin-top:12px;">
+
+</div>
+
+
+
+  <div id="managerMessage"
+
+       style="margin-top:15px;
+
+              padding:12px;
+
+              background:#15191f;
+
+              border-radius:8px;
+
+              white-space:pre-wrap;">
+
+  </div>
+
+
+
+  <div id="managerLink"
+
+     style="margin-top:12px;">
+
+</div>
+
+
+
+
+
+<!-- SUPPRESSION CAMPAGNE -->
+
+
+
+<div id="managerDeleteActions"
+
+     style="margin-top:20px;
+
+            padding-top:15px;
+
+            border-top:1px solid #2b313b;">
+
+
+
+  <button type="button"
+
+          id="btnDeleteCampaign"
+
+          class="danger">
+
+    Supprimer la campagne
+
+  </button>
+
+
+
+</div>
+
+
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+  </section>
+
+
+
+</div>
+
+
+
+
+
+
+<script>
+(function () {
+  const scopes = [
+    'https://www.googleapis.com/auth/contacts',
+    'https://www.googleapis.com/auth/drive',
+    'https://www.googleapis.com/auth/spreadsheets',
+    'https://www.googleapis.com/auth/script.external_request',
+    'https://www.googleapis.com/auth/script.scriptapp'
+  ];
+  const emailKey = 'punishCrmGoogleEmail';
+  let accessToken = '';
+  let tokenClient = null;
+  const waitingCalls = [];
+
+  window.google = window.google || {};
+  window.google.script = window.google.script || {};
+
+  async function apiRun(functionName, parameters) {
+    if (!accessToken) {
+      return new Promise((resolve, reject) => {
+        waitingCalls.push({functionName, parameters, resolve, reject});
+      });
+    }
+
+    const response = await fetch(
+      'https://script.googleapis.com/v1/scripts/' +
+      encodeURIComponent(APP_CONFIG.deploymentId) + ':run',
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + accessToken,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          function: functionName,
+          parameters: parameters || [],
+          devMode: false
+        })
+      }
+    );
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error?.message || ('Erreur Google ' + response.status));
+    if (data.error) throw new Error(data.error.details?.[0]?.errorMessage || data.error.message || 'Erreur du script');
     return data.response?.result;
-  }finally{busy(false)}
-}
-
-const appHistoryKey='contactsPunish';
-let activeView='start';
-try{history.replaceState({app:appHistoryKey,view:'start',depth:0},'',location.href)}catch(_){}
-function paintView(id){activeView=id;['start','review','done'].forEach(x=>$('#'+x).classList.toggle('hidden',x!==id));window.scrollTo(0,0)}
-function show(id){
-  if(id==='start'&&activeView!=='start'){
-    const depth=history.state?.app===appHistoryKey?history.state.depth:0;
-    paintView('start');
-    if(depth>0){history.go(-depth);return}
-    history.replaceState({app:appHistoryKey,view:'start',depth:0},'',location.href);
-    return;
   }
-  if(id!==activeView){
-    const depth=(history.state?.app===appHistoryKey?history.state.depth:0)+1;
-    history.pushState({app:appHistoryKey,view:id,depth},'',location.href);
-  }
-  paintView(id);
-}
-window.addEventListener('popstate',event=>{
-  const target=event.state?.app===appHistoryKey?event.state.view:'start';
-  if((target==='review'||target==='done')&&!current){history.replaceState({app:appHistoryKey,view:'start',depth:0},'',location.href);paintView('start');return}
-  paintView(['start','review','done'].includes(target)?target:'start');
-});
-function goBack(){if(history.state?.app===appHistoryKey&&history.state.depth>0)history.back();else show('start')}
 
-function displayData(d,selected){$('#label').replaceChildren(...d.labels.map(s=>new Option(s,s)));if(d.labels.includes(selected))$('#label').value=selected;$('#history').replaceChildren(...d.imports.map(i=>{const el=document.createElement('div');el.className='history-item';const title=document.createElement('span');title.textContent=`${readable(i.event)} · ${readable(i.label)} · ${readable(i.status)}`;el.append(title);const open=document.createElement('button');open.type='button';open.className='secondary';open.textContent='Ouvrir';open.onclick=()=>call('getImport',i.id).then(render).catch(msg);el.append(open);if(i.status==='À valider'){const del=document.createElement('button');del.type='button';del.className='secondary';del.textContent='Supprimer';del.onclick=()=>{const confirm=document.createElement('button');confirm.type='button';confirm.className='secondary';confirm.textContent='Confirmer la suppression';confirm.onclick=()=>call('deletePendingImport',i.id).then(x=>displayData(x,$('#label').value)).catch(msg);el.replaceChild(confirm,del)};el.append(del)}return el}));if(!d.imports.length)$('#history').textContent='Aucun import pour le moment.';renderLabels(d.labels)}
-function bootstrap(){const selected=$('#label').value;return call('bootstrap').then(d=>displayData(d,selected)).catch(msg)}
-function renderLabels(labels){const box=$('#labelManager');box.replaceChildren();if(!labels.length){box.textContent='Aucun libellé enregistré.';return}labels.forEach(name=>{const row=document.createElement('div');row.className='label-item';const head=document.createElement('div');head.className='label-head';const title=document.createElement('span');title.className='label-name';title.textContent=name;const actions=document.createElement('div');actions.className='label-actions';const edit=document.createElement('button');edit.type='button';edit.textContent='Renommer';const del=document.createElement('button');del.type='button';del.textContent='Supprimer';actions.append(edit,del);head.append(title,actions);const editor=document.createElement('div');editor.className='label-editor hidden';row.append(head,editor);box.append(row);edit.onclick=()=>{editor.replaceChildren();const input=document.createElement('input');input.value=name;input.setAttribute('aria-label','Nouveau nom du libellé');const save=document.createElement('button');save.type='button';save.className='secondary';save.textContent='Enregistrer';save.style.marginTop='7px';save.onclick=()=>{const next=input.value.trim();if(!next){msg('Indique un nom.');return}call('renameLabel',name,next).then(d=>displayData(d,$('#label').value===name?next:$('#label').value)).catch(msg)};editor.append(input,save);editor.classList.remove('hidden');input.focus()};del.onclick=()=>{editor.replaceChildren();const note=document.createElement('p');note.textContent='Supprimer ce libellé de Google Contacts ? Les contacts seront conservés.';const confirm=document.createElement('button');confirm.type='button';confirm.className='secondary';confirm.textContent='Confirmer la suppression';confirm.onclick=()=>call('deleteLabel',name).then(d=>displayData(d,$('#label').value===name?'':$('#label').value)).catch(msg);editor.append(note,confirm);editor.classList.remove('hidden')}})}
-$('#showNewLabel').onclick=()=>{$('#newLabelBox').classList.toggle('hidden');if(!$('#newLabelBox').classList.contains('hidden'))$('#newLabel').focus()};
-$('#addLabel').onclick=()=>{const s=$('#newLabel').value.trim();if(!s){msg('Indique un nom de libellé.');return}call('addLabel',s).then(d=>{displayData(d,d.labels.find(x=>x.toLocaleLowerCase()===s.toLocaleLowerCase())||s);$('#newLabel').value='';$('#newLabelBox').classList.add('hidden')}).catch(msg)};
-$('#analyse').onclick=()=>{const f=$('#file').files[0],event=$('#event').value.trim(),label=$('#label').value;if(!f||!event||!label){msg('Choisis un fichier, un événement et un libellé.');return}if(f.size>10*1024*1024){msg('Fichier limité à 10 Mo.');return}const reader=new FileReader();reader.onload=()=>{const data=String(reader.result).split(',')[1];call('analyzeUpload',{name:f.name,data},event,label).then(render).catch(e=>{msg(e);$('#message').textContent='Connexion interrompue. Recherche d’une analyse enregistrée…';call('recoverAnalysis',{name:f.name,data},event,label).then(found=>{if(found)render(found);else{$('#message').textContent='Analyse introuvable pour le moment. Ouvre « Imports récents » ou réessaie sans changer le fichier, l’événement ni le libellé.'}}).catch(()=>{$('#message').textContent='Connexion interrompue. Vérifie « Imports récents » avant de relancer l’analyse.'})})};reader.onerror=()=>msg('Lecture du fichier impossible.');reader.readAsDataURL(f)};
-function render(result){const changed=!current||current.id!==result.id;current=result;if(changed){$('#manualList').replaceChildren();$('#manualFile').value='';$('#resolveFile').value='';$('#recheckResult').classList.add('hidden');$('#manualDetails').open=false;$('#reviewDetails').open=false;$('#birthFile').value='';$('#birthResult').classList.add('hidden');$('#repairResult').classList.add('hidden')}$('#file').value='';$('#context').textContent=`${result.event} · ${result.label}`;$('#newCount').textContent=result.counts.new;$('#existingCount').textContent=result.counts.existing;$('#replaceCount').textContent=result.counts.replace;$('#reviewCount').textContent=result.review.length;$('#reviewList').replaceChildren(...result.review.map(r=>{const li=document.createElement('li');li.textContent=`${r.first} ${r.last} — ${readable(r.reason)}`;return li}));$('#reviewDetails').classList.toggle('hidden',!result.review.length);$('#reviewChoices').classList.add('hidden');$('#progress').textContent=result.applied?`${result.applied} fiche(s) déjà traitée(s), ${result.remaining} restante(s).`:'';$('#pendingErrors').textContent=(result.errors||[]).map(readable).join(' | ');$('#pendingErrors').classList.toggle('hidden',!result.errors?.length);$('#apply').textContent=result.applied?'Reprendre les fiches restantes':'Lancer l’import en arrière-plan';$('#apply').classList.toggle('hidden',result.background||result.status==='Terminé'||result.remaining===0);$('#repair').classList.toggle('hidden',!result.applied);$('#birthBox').classList.toggle('hidden',!result.applied);show('review')}
-function done(r){clearPendingImport();if(!current||current.id!==r.id)render(r);else current=r;$('#doneMessage').textContent=r.remaining?`Traitement partiel : ${r.remaining} fiche(s) à reprendre.`:`Terminé. ${r.counts.new} nouveaux, ${r.counts.existing} existants, ${r.counts.replace} numéros prévus pour remplacement. ${r.counts.review} à vérifier.`;$('#errors').classList.toggle('hidden',!r.errors?.length);$('#errors').textContent=(r.errors||[]).join('\n');show('done')}
-const pendingImportKey='contactsPunishPendingImport';
-let importPoll=null;
-function pendingImport(){try{return localStorage.getItem(pendingImportKey)||''}catch(_){return ''}}
-function savePendingImport(id){try{localStorage.setItem(pendingImportKey,id)}catch(_){}}
-function clearPendingImport(){try{localStorage.removeItem(pendingImportKey)}catch(_){}if(importPoll){clearInterval(importPoll);importPoll=null}}
-async function callQuiet(method,...args){
-  const response=await fetch('https://script.googleapis.com/v1/scripts/'+encodeURIComponent(APP_CONFIG.deploymentId)+':run',{
-    method:'POST',headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},
-    body:JSON.stringify({function:method,parameters:args,devMode:false})
+  function makeRunner(successHandler, failureHandler) {
+    const base = {
+      withSuccessHandler(fn) { return makeRunner(fn, failureHandler); },
+      withFailureHandler(fn) { return makeRunner(successHandler, fn); }
+    };
+
+    return new Proxy(base, {
+      get(target, prop) {
+        if (prop in target) return target[prop];
+        return (...args) => {
+          apiRun(String(prop), args)
+            .then(result => { if (successHandler) successHandler(result); })
+            .catch(error => {
+              if (failureHandler) failureHandler(error);
+              else console.error(error);
+            });
+        };
+      }
+    });
+  }
+
+  window.google.script.run = makeRunner(null, null);
+
+  function flushWaitingCalls() {
+    const calls = waitingCalls.splice(0);
+    calls.forEach(c => apiRun(c.functionName, c.parameters).then(c.resolve).catch(c.reject));
+  }
+
+  function loginElements() {
+    return {
+      overlay: document.getElementById('pwaLogin'),
+      email: document.getElementById('pwaGoogleEmail'),
+      button: document.getElementById('pwaConnectGoogle'),
+      info: document.getElementById('pwaLoginInfo')
+    };
+  }
+
+  function initTokenClient() {
+    const el = loginElements();
+
+    if (!window.APP_CONFIG?.clientId || !window.APP_CONFIG?.deploymentId) {
+      el.info.textContent = 'Configuration manquante dans config.js.';
+      return null;
+    }
+
+    if (!window.google?.accounts?.oauth2) {
+      el.info.textContent = 'Connexion Google indisponible. VÃ©rifie le rÃ©seau.';
+      return null;
+    }
+
+    if (tokenClient) return tokenClient;
+
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: APP_CONFIG.clientId,
+      scope: scopes.join(' '),
+      callback: result => {
+        if (result.error) {
+          el.info.textContent = 'Connexion Google refusÃ©e ou interrompue.';
+          return;
+        }
+        accessToken = result.access_token || '';
+        if (!accessToken) {
+          el.info.textContent = 'Aucun jeton Google reÃ§u.';
+          return;
+        }
+        el.overlay.style.display = 'none';
+        flushWaitingCalls();
+      }
+    });
+
+    return tokenClient;
+  }
+
+  function requestLogin(promptValue) {
+    const el = loginElements();
+    const email = (el.email.value || '').trim();
+
+    if (!email || !el.email.checkValidity()) {
+      el.info.textContent = 'Indique une adresse Google valide.';
+      el.email.focus();
+      return;
+    }
+
+    try { localStorage.setItem(emailKey, email); } catch (_) {}
+
+    const client = initTokenClient();
+    if (client) {
+      el.info.textContent = 'Connexion en cours...';
+      client.requestAccessToken({prompt: promptValue, login_hint: email});
+    }
+  }
+
+  window.addEventListener('load', () => {
+    const el = loginElements();
+    try { el.email.value = localStorage.getItem(emailKey) || ''; } catch (_) {}
+
+    el.button.addEventListener('click', () => requestLogin(''));
+
+    if (!el.email.value) return;
+
+    let attempts = 0;
+    const timer = setInterval(() => {
+      if (!window.google?.accounts?.oauth2 && ++attempts < 30) return;
+      clearInterval(timer);
+      if (!window.google?.accounts?.oauth2) {
+        el.info.textContent = 'Appuie sur Â« Se connecter avec Google Â».';
+        return;
+      }
+      try { requestLogin('none'); }
+      catch (_) { el.info.textContent = 'Appuie sur Â« Se connecter avec Google Â». '; }
+    }, 250);
   });
-  const data=await response.json();
-  if(!response.ok)throw Error(data.error?.message||'Erreur Google '+response.status);
-  if(data.error)throw Error(data.error.details?.[0]?.errorMessage||data.error.message||'Erreur du script');
-  return data.response?.result;
-}
-async function pollBackgroundImport(id){
-  if(document.visibilityState!=='visible'||!accessToken)return;
-  try{
-    const r=await callQuiet('etatImportEnArrierePlan',id);
-    if(r.status==='Terminé'||r.remaining===0){done(r);return}
-    if(!current||current.id!==id||r.background!==Boolean(current.background))render(r);
-    else{
-      current=r;
-      $('#progress').textContent=`${r.applied} fiche(s) traitée(s), ${r.remaining} restante(s).`;
-      $('#pendingErrors').textContent=(r.errors||[]).map(readable).join(' | ');
-      $('#pendingErrors').classList.toggle('hidden',!r.errors?.length);
-    }
-    if(r.background){$('#progress').textContent+= ' Traitement en cours chez Google : tu peux fermer l’application.'}
-    else{
-      clearInterval(importPoll);importPoll=null;
-      $('#progress').textContent+=r.backgroundError?' Traitement arrêté : '+readable(r.backgroundError):' Traitement interrompu. Appuie sur « Reprendre les fiches restantes ».';
-    }
-  }catch(_){$('#progress').textContent='Suivi indisponible pour le moment. Le traitement continue chez Google ; réessaie plus tard.'}
-}
-function startImportPolling(id){if(importPoll)clearInterval(importPoll);pollBackgroundImport(id);importPoll=setInterval(()=>pollBackgroundImport(id),15000)}
-async function resumePendingImport(){
-  const id=pendingImport();if(!id)return;
-  try{const r=await call('etatImportEnArrierePlan',id);if(r.status==='Terminé'||r.remaining===0){done(r);return}render(r);if(r.background)startImportPolling(id);else $('#progress').textContent+=r.backgroundError?' Traitement arrêté : '+readable(r.backgroundError):' Appuie sur « Reprendre les fiches restantes ».'}
-  catch(_){$('#loginInfo').textContent='Import en attente : vérifie son état après la reconnexion.'}
-}
-$('#apply').onclick=async()=>{
-  if(!current)return;
-  const id=current.id;
-  try{
-    const r=await call('demarrerImportEnArrierePlan',id);
-    savePendingImport(id);render(r);
-    $('#progress').textContent='Import lancé chez Google. Tu peux fermer l’application.';
-    startImportPolling(id);
-  }catch(e){msg(e)}
-};
-$('#check').onclick=()=>{if(!current)return;call('getImport',current.id).then(r=>r.status==='Terminé'?done(r):render(r)).catch(msg)};
-$('#repair').onclick=()=>{if(!current)return;call('repairImportLabels',current.id).then(r=>{$('#repairResult').textContent=`Libellé vérifié sur ${r.checked} fiche(s) ; ajouté à ${r.added} fiche(s).${r.errors.length?' Erreurs : '+r.errors.join(' | '):''}`;$('#repairResult').classList.remove('hidden')}).catch(msg)};
-$('#birthApply').onclick=()=>{const f=$('#birthFile').files[0];if(!current||!f){msg('Choisis le fichier Bizouk de cet import.');return}if(f.size>10*1024*1024){msg('Fichier limité à 10 Mo.');return}const reader=new FileReader();reader.onload=()=>{call('backfillBirthdays',{name:f.name,data:String(reader.result).split(',')[1]},current.id).then(r=>{$('#birthResult').textContent=`Dates ajoutées : ${r.added}. Déjà présentes : ${r.already}. Dates différentes ou fiches non concordantes : ${r.conflicts}. Sans date exploitable : ${r.missing}.${r.errors.length?' Erreurs : '+r.errors.join(' | '):''}`;$('#birthResult').classList.remove('hidden');$('#birthFile').value=''}).catch(msg)};reader.onerror=()=>msg('Lecture du fichier impossible.');reader.readAsDataURL(f)};
-$('#recheckReviews').onclick=()=>{const f=$('#resolveFile').files[0];if(!current||!f){msg('Choisis le même fichier Bizouk que pour cet import.');return}const reader=new FileReader();reader.onload=()=>call('reevaluateReviews',{name:f.name,data:String(reader.result).split(',')[1]},current.id).then(v=>{render(v.import);$('#reviewDetails').open=true;$('#recheckResult').textContent=`${v.proposed} fiche(s) à appliquer, ${v.ignored} inscription(s) avec les coordonnées de l’acheteur écartée(s). Vérifie le récapitulatif avant d’appliquer.`;$('#recheckResult').classList.remove('hidden')}).catch(msg);reader.onerror=()=>msg('Lecture du fichier impossible.');reader.readAsDataURL(f)};
-$('#chooseReviews').onclick=()=>{if(!current)return;call('getReviewOptions',current.id).then(rows=>{const box=$('#choiceList');box.replaceChildren(...rows.map(r=>{const item=document.createElement('div');item.className='label-item';if(r.selectable){const label=document.createElement('label');label.style.display='flex';label.style.alignItems='start';label.style.gap='10px';const check=document.createElement('input');check.type='checkbox';check.value=r.key;check.className='reviewCheck';check.style.width='auto';label.append(check,document.createTextNode(`${r.first} ${r.last} → ${r.googleName} (Google) — ${readable(r.reason)}`));item.append(label)}else item.textContent=`${r.first} ${r.last} — ${readable(r.reason)} · Choix indisponible : correspondance Google ambiguë.`;return item}));$('#reviewChoices').classList.remove('hidden')}).catch(msg)};
-$('#applyReviews').onclick=()=>{if(!current)return;const keys=[...document.querySelectorAll('.reviewCheck:checked')].map(x=>x.value);if(!keys.length){msg('Coche au moins une fiche.');return}call('applySelectedReviews',current.id,keys).then(r=>{call('getImport',current.id).then(x=>{render(x);$('#reviewDetails').open=true;$('#reviewResult').textContent=`${r.added} fiche(s) ajoutée(s) au libellé, ${r.skipped} ignorée(s).${r.errors.length?' Erreurs : '+r.errors.join(' | '):''}`;$('#reviewResult').classList.remove('hidden');$('#reviewChoices').classList.remove('hidden')}).catch(msg)}).catch(msg)};
-$('#loadManual').onclick=()=>{if(!current)return;call('getManualAssociations',current.id).then(rows=>{const box=$('#manualList');box.replaceChildren(...rows.map(r=>{const item=document.createElement('div');item.className='label-item';const line=document.createElement('p');line.textContent=`Google : ${r.googleName} → Bizouk : ${r.first} ${r.last}`;item.append(line);if(!r.error){const choose=document.createElement('button');choose.type='button';choose.className='secondary';choose.textContent='Comparer toutes les infos';choose.onclick=()=>{const f=$('#manualFile').files[0];if(!f){msg('Choisis le fichier Bizouk de cet import.');return}const reader=new FileReader();reader.onload=()=>call('previewManualUpdate',{name:f.name,data:String(reader.result).split(',')[1]},current.id,r.key).then(v=>{const box=document.createElement('div');box.className='notice';const lines=[['Nom',v.current.name,v.desired.name],['Téléphone',v.current.phones.join(' / '),v.desired.phone],['E-mail',v.current.emails.join(' / '),v.desired.email||'(conservé)'],['Naissance',v.current.birth,v.desired.birth||'(conservée)']];box.append(...lines.map(x=>{const p=document.createElement('p');p.textContent=`${x[0]} : ${x[1]||'(vide)'} → ${x[2]}`;return p}));const confirm=document.createElement('button');confirm.type='button';confirm.className='secondary';confirm.textContent=`Confirmer les informations Bizouk pour ${r.first} ${r.last}`;confirm.onclick=()=>call('applyManualUpdate',v.token).then(x=>{box.textContent=`Fiche mise à jour : ${x.after.name}. Nom, téléphone, e-mail et date Bizouk disponibles appliqués.`}).catch(msg);box.append(confirm);item.append(box)}).catch(msg);reader.onerror=()=>msg('Lecture du fichier impossible.');reader.readAsDataURL(f)};item.append(choose)}return item}));if(!rows.length)box.textContent='Aucune association manuelle.'}).catch(msg)};
-$('#back').onclick=goBack;$('#doneBack').onclick=goBack;$('#again').onclick=()=>{show('start');bootstrap()};
-let accessToken='',tokenClient;
-const scopes=['https://www.googleapis.com/auth/contacts','https://www.googleapis.com/auth/drive','https://www.googleapis.com/auth/spreadsheets','https://www.googleapis.com/auth/script.external_request','https://www.googleapis.com/auth/script.scriptapp'];
-const emailKey='contactsPunishGoogleEmail';
-try{$('#googleEmail').value=localStorage.getItem(emailKey)||''}catch(_){/* Stockage indisponible. */}
-function loginHint(){return $('#googleEmail').value.trim()}
-function rememberEmail(){const email=loginHint();if(!email||!$('#googleEmail').checkValidity()){ $('#loginInfo').textContent='Indique une adresse Google valide.';$('#googleEmail').focus();return null}try{localStorage.setItem(emailKey,email)}catch(_){/* Connexion toujours possible. */}return email}
-function initGoogleClient(){
-  if(!APP_CONFIG.clientId||!APP_CONFIG.deploymentId){$('#loginInfo').textContent='Configuration manquante : renseigne config.js.';return}
-  if(!window.google?.accounts?.oauth2){$('#loginInfo').textContent='Connexion Google indisponible. Vérifie le réseau.';return}
-  if(tokenClient)return tokenClient;
-  tokenClient=google.accounts.oauth2.initTokenClient({client_id:APP_CONFIG.clientId,scope:scopes.join(' '),callback:result=>{
-    if(result.error){$('#loginInfo').textContent='Connexion automatique indisponible. Appuie sur « Se connecter avec Google ».';return}
-    accessToken=result.access_token;
-    $('#login').classList.add('hidden');$('#start').classList.remove('hidden');
-    bootstrap().then(resumePendingImport);
-  }});
-  return tokenClient;
-}
-$('#connectGoogle').onclick=()=>{
-  const email=rememberEmail();if(!email)return;
-  const client=initGoogleClient();
-  if(client)client.requestAccessToken({prompt:'',login_hint:email});
-};
-window.addEventListener('load',()=>{
-  // L'adresse mémorisée évite de choisir à nouveau le compte Google.
-  // Un renouvellement silencieux peut échouer selon le navigateur ou l'état du compte.
-  const email=loginHint();if(!email)return;
-  let attempts=0;
-  const retry=setInterval(()=>{
-    if(!window.google?.accounts?.oauth2&&++attempts<20)return;
-    clearInterval(retry);
-    const client=initGoogleClient();
-    if(client)try{client.requestAccessToken({prompt:'none',login_hint:email})}catch(_){$('#loginInfo').textContent='Appuie sur « Se connecter avec Google » pour reprendre.'}
-  },250);
-});
-if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 
-</script></body></html>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+})();
+</script>
+
+<script>
+
+
+
+var APP = {
+
+  segments: [],
+
+  events: []
+
+};
+
+
+
+var previewTimer = null;
+
+
+
+
+
+/* =========================
+
+   OUTILS
+
+\========================= */
+
+
+
+function setText(id, value) {
+
+  var el = document.getElementById(id);
+
+  if (el) {
+
+    el.textContent = value;
+
+  }
+
+}
+
+
+
+function getError(error) {
+
+  if (error && error.message) {
+
+    return error.message;
+
+  }
+
+  return String(error || "Erreur inconnue");
+
+}
+
+
+
+function containsText(text, search) {
+
+  return String(text).toLowerCase().indexOf(String(search).toLowerCase()) !== -1;
+
+}
+
+
+
+
+
+/* =========================
+
+   NAVIGATION
+
+\========================= */
+
+
+
+function loadBizoukImporter() { return; }
+
+function showPage(id) {
+
+
+
+  var pages = document.querySelectorAll(".page");
+
+  var i;
+
+
+
+  for (i = 0; i < pages.length; i++) {
+
+    pages[i].classList.remove("active");
+
+  }
+
+
+
+  var page = document.getElementById(id);
+
+
+
+  if (page) {
+
+    page.classList.add("active");
+
+  }
+
+
+
+  var buttons = document.querySelectorAll(".nav button");
+
+
+
+  for (i = 0; i < buttons.length; i++) {
+
+    buttons[i].classList.remove("active");
+
+  }
+
+
+
+  var map = {
+
+  home: 'nav-home',
+
+  import: 'nav-import',
+
+  contacts: 'nav-contacts',
+
+  segmentsPage: 'nav-segments',
+
+  events: 'nav-events',
+
+  campaign: 'nav-campaign'
+
+};
+
+
+
+  var navButton = document.getElementById(map[id]);
+
+
+
+  if (navButton) {
+
+    navButton.classList.add("active");
+
+  }
+
+
+  if (id === "import") {
+    loadBizoukImporter();
+  }
+}
+
+
+
+
+
+/* =========================
+
+   CHARGEMENT
+
+\========================= */
+
+
+
+function loadApp() {
+
+
+
+  google.script.run
+
+    .withSuccessHandler(function(data) {
+
+
+
+      data = data || {};
+
+
+
+      APP.segments = data.segments || [];
+
+      APP.events = data.events || [];
+
+
+
+      var stats = data.stats || {};
+
+
+
+      setText("contactsStat", stats.contacts || 0);
+
+      setText("mobilesStat", stats.mobiles || 0);
+
+      setText("segmentsStat", APP.segments.length);
+
+      setText("blockedStat", stats.blocked || 0);
+
+
+
+      setText("contactsText", stats.contacts || 0);
+
+      setText("mobilesText", stats.mobiles || 0);
+
+
+
+      renderCampaignSegments();
+
+      renderSegmentPage();
+
+      renderEvents();
+
+      renderEventSelect();
+
+
+
+    })
+
+    .withFailureHandler(function(error) {
+
+
+
+      alert(
+
+        "Erreur de chargement : " +
+
+        getError(error)
+
+      );
+
+
+
+    })
+
+    .getAppData();
+
+}
+
+
+
+
+
+/* =========================
+
+   SEGMENTS
+
+\========================= */
+
+
+
+function getSegmentName(s) {
+
+
+
+  if (!s) {
+
+    return "";
+
+  }
+
+
+
+  return s.name || s["Segment"] || "";
+
+}
+
+
+
+function getSegmentCount(s) {
+
+
+
+  if (!s) {
+
+    return 0;
+
+  }
+
+
+
+  return Number(
+
+    s.count ||
+
+    s["Nombre d'occurrences dans la base"] ||
+
+    0
+
+  );
+
+}
+
+
+
+function renderCampaignSegments() {
+
+
+
+  var box = document.getElementById("campaignSegments");
+
+
+
+  if (!box) {
+
+    return;
+
+  }
+
+
+
+  box.innerHTML = "";
+
+
+
+  var i;
+
+
+
+  for (i = 0; i < APP.segments.length; i++) {
+
+
+
+    var s = APP.segments[i];
+
+
+
+    var name = getSegmentName(s);
+
+    var count = getSegmentCount(s);
+
+
+
+    if (!name) {
+
+      continue;
+
+    }
+
+
+
+    var label = document.createElement("label");
+
+
+
+    label.className = "seg";
+
+    label.setAttribute(
+
+      "data-search",
+
+      name.toLowerCase()
+
+    );
+
+
+
+    var cb = document.createElement("input");
+
+
+
+    cb.type = "checkbox";
+
+    cb.value = name;
+
+    cb.onchange = schedulePreview;
+
+
+
+    var txt = document.createElement("span");
+
+
+
+    txt.textContent =
+
+      name + " (" + count + ")";
+
+
+
+    label.appendChild(cb);
+
+    label.appendChild(txt);
+
+
+
+    box.appendChild(label);
+
+  }
+
+}
+
+
+
+function filterCampaignSegments() {
+
+
+
+  var search =
+
+    document.getElementById("searchSegment");
+
+
+
+  var q = "";
+
+
+
+  if (search) {
+
+    q = search.value.toLowerCase();
+
+  }
+
+
+
+  var elements =
+
+    document.querySelectorAll(
+
+      "#campaignSegments .seg"
+
+    );
+
+
+
+  var i;
+
+
+
+  for (i = 0; i < elements.length; i++) {
+
+
+
+    var value =
+
+      elements[i].getAttribute("data-search") || "";
+
+
+
+    if (
+
+      q === "" ||
+
+      containsText(value, q)
+
+    ) {
+
+      elements[i].style.display = "flex";
+
+    } else {
+
+      elements[i].style.display = "none";
+
+    }
+
+  }
+
+}
+
+
+
+function selectedSegments() {
+
+
+
+  var elements =
+
+    document.querySelectorAll(
+
+      '#campaignSegments input[type="checkbox"]:checked'
+
+    );
+
+
+
+  var result = [];
+
+  var i;
+
+
+
+  for (i = 0; i < elements.length; i++) {
+
+    result.push(elements[i].value);
+
+  }
+
+
+
+  return result;
+
+}
+
+
+
+function selectVisibleSegments() {
+
+
+
+  var elements =
+
+    document.querySelectorAll(
+
+      "#campaignSegments .seg"
+
+    );
+
+
+
+  var i;
+
+
+
+  for (i = 0; i < elements.length; i++) {
+
+
+
+    if (elements[i].style.display !== "none") {
+
+
+
+      var cb =
+
+        elements[i].querySelector("input");
+
+
+
+      if (cb) {
+
+        cb.checked = true;
+
+      }
+
+    }
+
+  }
+
+
+
+  previewTarget();
+
+}
+
+
+
+function clearSegments() {
+
+
+
+  var elements =
+
+    document.querySelectorAll(
+
+      '#campaignSegments input[type="checkbox"]'
+
+    );
+
+
+
+  var i;
+
+
+
+  for (i = 0; i < elements.length; i++) {
+
+    elements[i].checked = false;
+
+  }
+
+
+
+  setText("target", 0);
+
+  setText("targetLoading", "");
+
+}
+
+
+
+function renderSegmentPage() {
+
+
+
+  var box =
+
+    document.getElementById("segmentPageList");
+
+
+
+  if (!box) {
+
+    return;
+
+  }
+
+
+
+  var search =
+
+    document.getElementById("segmentPageSearch");
+
+
+
+  var q = "";
+
+
+
+  if (search) {
+
+    q = search.value.toLowerCase();
+
+  }
+
+
+
+  box.innerHTML = "";
+
+
+
+  var i;
+
+
+
+  for (i = 0; i < APP.segments.length; i++) {
+
+
+
+    var s = APP.segments[i];
+
+
+
+    var segmentName = getSegmentName(s);
+
+
+
+    if (
+
+      q !== "" &&
+
+      !containsText(segmentName, q)
+
+    ) {
+
+      continue;
+
+    }
+
+
+
+    var row =
+
+      document.createElement("div");
+
+
+
+    row.className = "segment-row";
+
+
+
+    var name =
+
+      document.createElement("span");
+
+
+
+    name.textContent = segmentName;
+
+
+
+    var count =
+
+      document.createElement("strong");
+
+
+
+    count.textContent =
+
+      getSegmentCount(s);
+
+
+
+    row.appendChild(name);
+
+    row.appendChild(count);
+
+
+
+    box.appendChild(row);
+
+  }
+
+}
+
+
+
+
+
+/* =========================
+
+   CIBLAGE
+
+\========================= */
+
+
+
+function schedulePreview() {
+
+
+
+  if (previewTimer) {
+
+    clearTimeout(previewTimer);
+
+  }
+
+
+
+  previewTimer =
+
+    setTimeout(function() {
+
+      previewTarget();
+
+    }, 350);
+
+}
+
+
+
+function previewTarget() {
+
+
+
+  var segments =
+
+    selectedSegments();
+
+
+
+  if (!segments.length) {
+
+
+
+    setText("target", 0);
+
+    setText("targetLoading", "");
+
+
+
+    return;
+
+  }
+
+
+
+  setText(
+
+    "targetLoading",
+
+    " \u2022 calcul..."
+
+  );
+
+
+
+  google.script.run
+
+    .withSuccessHandler(function(result) {
+
+
+
+      result = result || {};
+
+
+
+      setText(
+
+        "target",
+
+        result.total || 0
+
+      );
+
+
+
+      setText(
+
+        "targetLoading",
+
+        ""
+
+      );
+
+
+
+    })
+
+    .withFailureHandler(function(error) {
+
+
+
+      setText(
+
+        "targetLoading",
+
+        " \u2022 erreur"
+
+      );
+
+
+
+      setText(
+
+        "campaignStatus",
+
+        "\u274C " + getError(error)
+
+      );
+
+
+
+    })
+
+    .previewTarget(segments);
+
+}
+
+
+
+
+
+/* =========================
+
+   EVENEMENTS
+
+\========================= */
+
+
+
+function createEvent() {
+
+
+
+  var nameInput =
+
+    document.getElementById("eventName");
+
+
+
+  var dateInput =
+
+    document.getElementById("eventDate");
+
+
+
+  if (!nameInput || !dateInput) {
+
+    alert("Erreur : champs \u00E9v\u00E9nement introuvables.");
+
+    return;
+
+  }
+
+
+
+  var name =
+
+    nameInput.value.replace(/^\s+|\s+$/g, "");
+
+
+
+  var date =
+
+    dateInput.value;
+
+
+
+  if (!name) {
+
+
+
+    setText(
+
+      "eventStatus",
+
+      "\u26A0\uFE0F Indique le nom de l'\u00E9v\u00E9nement."
+
+    );
+
+
+
+    return;
+
+  }
+
+
+
+  if (!date) {
+
+
+
+    setText(
+
+      "eventStatus",
+
+      "\u26A0\uFE0F Indique la date de l'\u00E9v\u00E9nement."
+
+    );
+
+
+
+    return;
+
+  }
+
+
+
+  var placeEl =
+
+    document.getElementById("eventPlace");
+
+
+
+  var linkEl =
+
+    document.getElementById("eventLink");
+
+
+
+  var notesEl =
+
+    document.getElementById("eventNotes");
+
+
+
+  var payload = {
+
+
+
+    name: name,
+
+
+
+    date: date,
+
+
+
+    place:
+
+      placeEl
+
+        ? placeEl.value.replace(/^\s+|\s+$/g, "")
+
+        : "",
+
+
+
+    link:
+
+      linkEl
+
+        ? linkEl.value.replace(/^\s+|\s+$/g, "")
+
+        : "",
+
+
+
+    notes:
+
+      notesEl
+
+        ? notesEl.value.replace(/^\s+|\s+$/g, "")
+
+        : ""
+
+  };
+
+
+
+  setText(
+
+    "eventStatus",
+
+    "\u23F3 Enregistrement en cours..."
+
+  );
+
+
+
+  google.script.run
+
+    .withSuccessHandler(function(result) {
+
+
+
+      if (
+
+        result &&
+
+        result.success
+
+      ) {
+
+
+
+        setText(
+
+          "eventStatus",
+
+          "\u2705 \u00C9v\u00E9nement enregistr\u00E9 : " +
+
+          result.name
+
+        );
+
+
+
+        clearEventForm();
+
+        refreshEvents();
+
+
+
+      } else {
+
+
+
+        setText(
+
+          "eventStatus",
+
+          "\u274C R\u00E9ponse incorrecte du serveur."
+
+        );
+
+      }
+
+
+
+    })
+
+    .withFailureHandler(function(error) {
+
+
+
+      setText(
+
+        "eventStatus",
+
+        "\u274C " + getError(error)
+
+      );
+
+
+
+    })
+
+    .saveEvent(payload);
+
+}
+
+
+
+function clearEventForm() {
+
+
+
+  var ids = [
+
+    "eventName",
+
+    "eventDate",
+
+    "eventPlace",
+
+    "eventLink",
+
+    "eventNotes"
+
+  ];
+
+
+
+  var i;
+
+
+
+  for (i = 0; i < ids.length; i++) {
+
+
+
+    var el =
+
+      document.getElementById(ids[i]);
+
+
+
+    if (el) {
+
+      el.value = "";
+
+    }
+
+  }
+
+}
+
+
+
+function refreshEvents() {
+
+
+
+  google.script.run
+
+    .withSuccessHandler(function(events) {
+
+
+
+      APP.events =
+
+        events || [];
+
+
+
+      renderEvents();
+
+      renderEventSelect();
+
+
+
+    })
+
+    .withFailureHandler(function(error) {
+
+
+
+      setText(
+
+        "eventStatus",
+
+        "\u274C " + getError(error)
+
+      );
+
+
+
+    })
+
+    .getEvents();
+
+}
+
+
+
+function renderEvents() {
+
+
+
+  var box =
+
+    document.getElementById("eventList");
+
+
+
+  var home =
+
+    document.getElementById("homeEvents");
+
+
+
+  if (!box || !home) {
+
+    return;
+
+  }
+
+
+
+  box.innerHTML = "";
+
+  home.innerHTML = "";
+
+
+
+  if (!APP.events.length) {
+
+
+
+    box.innerHTML =
+
+      '<span class="muted">Aucun \u00E9v\u00E9nement enregistr\u00E9.</span>';
+
+
+
+    home.innerHTML =
+
+      '<span class="muted">Aucun \u00E9v\u00E9nement enregistr\u00E9.</span>';
+
+
+
+    return;
+
+  }
+
+
+
+  var i;
+
+
+
+  for (i = 0; i < APP.events.length; i++) {
+
+
+
+    var e =
+
+      APP.events[i];
+
+
+
+    box.appendChild(
+
+      buildEventCard(e, true)
+
+    );
+
+
+
+    home.appendChild(
+
+      buildEventCard(e, false)
+
+    );
+
+  }
+
+}
+
+
+
+function buildEventCard(e, withActions) {
+
+
+
+  var card = document.createElement("div");
+
+  card.className = "event-card";
+
+
+
+  var info = document.createElement("div");
+
+
+
+  var title = document.createElement("div");
+
+  title.className = "event-name";
+
+
+
+  title.textContent =
+
+    e.name ||
+
+    e["Nom \u00E9v\u00E9nement"] ||
+
+    "\u00C9v\u00E9nement";
+
+
+
+  var details = document.createElement("div");
+
+  details.className = "event-info";
+
+
+
+  var date =
+
+    e.date ||
+
+    e["Date"] ||
+
+    "";
+
+
+
+  var place =
+
+    e.place ||
+
+    e["Lieu"] ||
+
+    "";
+
+
+
+  var detailParts = [];
+
+
+
+  if (date) {
+
+    detailParts.push(date);
+
+  }
+
+
+
+  if (place) {
+
+    detailParts.push(place);
+
+  }
+
+
+
+  details.textContent = detailParts.join(" \u2022 ");
+
+
+
+  info.appendChild(title);
+
+  info.appendChild(details);
+
+  card.appendChild(info);
+
+
+
+
+
+  if (withActions) {
+
+
+
+    var actions = document.createElement("div");
+
+
+
+    actions.style.display = "flex";
+
+    actions.style.gap = "8px";
+
+    actions.style.flexWrap = "wrap";
+
+
+
+
+
+    /* PREPARER CAMPAGNE */
+
+
+
+    var campaignBtn =
+
+      document.createElement("button");
+
+
+
+    campaignBtn.className = "gold";
+
+    campaignBtn.textContent = "\uD83D\uDCE3 Pr\u00E9parer campagne";
+
+
+
+    campaignBtn.onclick = function() {
+
+      prepareCampaign(e);
+
+    };
+
+
+
+    actions.appendChild(campaignBtn);
+
+
+
+
+
+        /* SUPPRIMER */
+
+
+
+    var deleteBtn =
+
+      document.createElement("button");
+
+
+
+    deleteBtn.className = "danger";
+
+    deleteBtn.textContent = "Supprimer";
+
+deleteBtn.onclick = function() {
+
+
+
+  var eventId =
+
+    e.id ||
+
+    e["ID \u00E9v\u00E9nement"] ||
+
+    e["ID"] ||
+
+    "";
+
+
+
+  if (!eventId) {
+
+    setText(
+
+      "eventStatus",
+
+      "\u274C ID \u00E9v\u00E9nement introuvable."
+
+    );
+
+    return;
+
+  }
+
+
+
+  /* Premier clic */
+
+  if (deleteBtn.textContent === "Supprimer") {
+
+
+
+    deleteBtn.textContent = "Confirmer";
+
+
+
+    var cancelBtn =
+
+      document.createElement("button");
+
+
+
+    cancelBtn.className = "secondary";
+
+    cancelBtn.textContent = "Annuler";
+
+
+
+    cancelBtn.onclick = function() {
+
+
+
+      deleteBtn.textContent = "Supprimer";
+
+
+
+      if (cancelBtn.parentNode) {
+
+        cancelBtn.parentNode.removeChild(cancelBtn);
+
+      }
+
+    };
+
+
+
+    actions.appendChild(cancelBtn);
+
+
+
+    return;
+
+  }
+
+
+
+  /* Deuxi\u00E8me clic */
+
+  deleteBtn.disabled = true;
+
+  deleteBtn.textContent = "Suppression...";
+
+
+
+  deleteEventItem(eventId);
+
+};
+
+
+
+    actions.appendChild(deleteBtn);
+
+
+
+    card.appendChild(actions);
+
+  }
+
+
+
+  return card;
+
+}
+
+function prepareCampaign(e) {
+
+
+
+  var eventId =
+
+  e.id ||
+
+  e["ID \u00E9v\u00E9nement"] ||
+
+  e["ID"] ||
+
+  "";
+
+  var eventName = e.name || e["Nom \u00E9v\u00E9nement"] || "";
+
+
+
+  showPage("campaign");
+
+
+
+  setText("campaignStatus", "\u23F3 R\u00E9cup\u00E9ration des informations...");
+
+
+
+  google.script.run
+
+    .withSuccessHandler(function(events) {
+
+
+
+      events = events || [];
+
+
+
+      var found = null;
+
+      var i;
+
+
+
+      for (i = 0; i < events.length; i++) {
+
+
+
+        var currentId =
+
+  events[i].id ||
+
+  events[i]["ID \u00E9v\u00E9nement"] ||
+
+  events[i]["ID"] ||
+
+  "";
+
+
+
+        var currentName =
+
+          events[i].name ||
+
+          events[i]["Nom \u00E9v\u00E9nement"] ||
+
+          "";
+
+
+
+        if (
+
+          (eventId && currentId === eventId) ||
+
+          (eventName && currentName === eventName)
+
+        ) {
+
+          found = events[i];
+
+          break;
+
+        }
+
+      }
+
+
+
+      if (!found) {
+
+        setText(
+
+          "campaignStatus",
+
+          "\u274C \u00C9v\u00E9nement introuvable dans la feuille."
+
+        );
+
+        return;
+
+      }
+
+
+
+      var select =
+
+        document.getElementById("campaignEvent");
+
+
+
+      if (select) {
+
+
+
+  var foundId =
+
+    found.id ||
+
+    found["ID \u00E9v\u00E9nement"] ||
+
+    found["ID"] ||
+
+    "";
+
+
+
+  var foundName =
+
+    found.name ||
+
+    found["Nom \u00E9v\u00E9nement"] ||
+
+    "";
+
+
+
+  var optionFound = false;
+
+  var i;
+
+
+
+  for (i = 0; i < select.options.length; i++) {
+
+
+
+    if (
+
+      select.options[i].value === foundId ||
+
+      select.options[i].text === foundName
+
+    ) {
+
+      select.selectedIndex = i;
+
+      optionFound = true;
+
+      break;
+
+    }
+
+  }
+
+
+
+  if (!optionFound) {
+
+
+
+    var option = document.createElement("option");
+
+
+
+    option.value = foundId;
+
+    option.textContent = foundName;
+
+    option.selected = true;
+
+
+
+    select.appendChild(option);
+
+  }
+
+}
+
+
+
+      var link =
+
+        found.link ||
+
+        found["Lien"] ||
+
+        "";
+
+
+
+      var linkInput =
+
+        document.getElementById("campaignLink");
+
+
+
+      if (linkInput) {
+
+        linkInput.value = link;
+
+      }
+
+
+
+      setText(
+
+  "campaignStatus",
+
+  "\u2705 Campagne pr\u00EAte pour " +
+
+  (found.name || found["Nom \u00E9v\u00E9nement"] || eventName)
+
+);
+
+
+
+      window.scrollTo(0, 0);
+
+
+
+    })
+
+    .withFailureHandler(function(error) {
+
+
+
+      setText(
+
+        "campaignStatus",
+
+        "\u274C ERREUR SERVEUR : " + getError(error)
+
+      );
+
+
+
+    })
+
+    .getEvents();
+
+}
+
+
+
+function deleteEventItem(id) {
+
+
+
+  if (!id) {
+
+    return;
+
+  }
+
+
+
+  google.script.run
+
+    .withSuccessHandler(function() {
+
+      refreshEvents();
+
+    })
+
+    .withFailureHandler(function(error) {
+
+      setText(
+
+        "eventStatus",
+
+        "\u274C " + getError(error)
+
+      );
+
+    })
+
+    .deleteEvent(id);
+
+}
+
+
+
+function renderEventSelect() {
+
+
+
+  var select = document.getElementById("campaignEvent");
+
+
+
+  if (!select) {
+
+    return;
+
+  }
+
+
+
+  select.innerHTML =
+
+    '<option value="">\u2014 Aucun / \u00C0 choisir \u2014</option>';
+
+
+
+  var i;
+
+
+
+  for (i = 0; i < APP.events.length; i++) {
+
+
+
+    var e = APP.events[i];
+
+
+
+    var id =
+
+      e.id ||
+
+      e["ID \u00E9v\u00E9nement"] ||
+
+      e["ID"] ||
+
+      "";
+
+
+
+    var name =
+
+      e.name ||
+
+      e["Nom \u00E9v\u00E9nement"] ||
+
+      "";
+
+
+
+    var option = document.createElement("option");
+
+
+
+    option.value = id;
+
+    option.textContent = name;
+
+
+
+    select.appendChild(option);
+
+  }
+
+}
+
+
+
+
+
+/* =========================
+
+   CAMPAGNES
+
+\========================= */
+
+function previewCampaign() {
+
+
+
+  var segments = selectedSegments();
+
+
+
+  if (!segments.length) {
+
+    setText(
+
+      "campaignStatus",
+
+      "\u26A0\uFE0F S\u00E9lectionne au moins un segment."
+
+    );
+
+    return;
+
+  }
+
+
+
+  var eventEl = document.getElementById("campaignEvent");
+
+  var channelEl = document.getElementById("channel");
+
+  var messageEl = document.getElementById("campaignMessage");
+
+  var linkEl = document.getElementById("campaignLink");
+
+  var targetEl = document.getElementById("target");
+
+  var preview = document.getElementById("campaignPreview");
+
+
+
+  var eventName = "Aucun \u00E9v\u00E9nement";
+
+
+
+  if (
+
+    eventEl &&
+
+    eventEl.selectedIndex >= 0 &&
+
+    eventEl.options[eventEl.selectedIndex]
+
+  ) {
+
+    eventName =
+
+      eventEl.options[eventEl.selectedIndex].text;
+
+  }
+
+
+
+  var message =
+
+    messageEl ? messageEl.value : "";
+
+
+
+  var link =
+
+    linkEl ? linkEl.value : "";
+
+
+
+  var target =
+
+    targetEl ? targetEl.textContent : "0";
+
+
+
+  var channel =
+
+    channelEl ? channelEl.value : "WHATSAPP";
+
+
+
+  preview.innerHTML = "";
+
+
+
+  var content = document.createElement("div");
+
+
+
+  content.innerHTML =
+
+    "<strong style='color:#d4af37;font-size:18px'>" +
+
+    "APER\u00C7U CAMPAGNE</strong><br><br>" +
+
+
+
+    "<strong>\u00C9v\u00E9nement :</strong> " +
+
+    eventName + "<br>" +
+
+
+
+    "<strong>Canal :</strong> " +
+
+    channel + "<br>" +
+
+
+
+    "<strong>Segments :</strong> " +
+
+    segments.join(", ") + "<br>" +
+
+
+
+    "<strong>Destinataires :</strong> " +
+
+    target + "<br><br>" +
+
+
+
+    "<strong>Message :</strong><br>";
+
+
+
+  preview.appendChild(content);
+
+
+
+  var messageBox = document.createElement("div");
+
+
+
+  messageBox.style.whiteSpace = "pre-wrap";
+
+  messageBox.style.marginTop = "8px";
+
+  messageBox.style.padding = "12px";
+
+  messageBox.style.background = "#15191f";
+
+  messageBox.style.borderRadius = "8px";
+
+
+
+  messageBox.textContent =
+
+    message || "(aucun message)";
+
+
+
+  preview.appendChild(messageBox);
+
+
+
+  if (link) {
+
+
+
+    var linkBox = document.createElement("div");
+
+
+
+    linkBox.style.marginTop = "12px";
+
+
+
+    var strong = document.createElement("strong");
+
+    strong.textContent = "Lien : ";
+
+
+
+    var a = document.createElement("a");
+
+    a.href = link;
+
+    a.target = "_blank";
+
+    a.style.color = "#d4af37";
+
+    a.textContent = link;
+
+
+
+    linkBox.appendChild(strong);
+
+    linkBox.appendChild(a);
+
+
+
+    preview.appendChild(linkBox);
+
+  }
+
+
+
+  preview.style.display = "block";
+
+
+
+  setText(
+
+    "campaignStatus",
+
+    "\u2705 Aper\u00E7u g\u00E9n\u00E9r\u00E9."
+
+  );
+
+}
+
+
+
+function loadCampaigns() {
+
+
+
+  var box =
+
+    document.getElementById("campaignList");
+
+
+
+  if (!box) {
+
+    return;
+
+  }
+
+
+
+  box.innerHTML =
+
+    '<span class="muted">Chargement...</span>';
+
+
+
+  google.script.run
+
+    .withSuccessHandler(function(campaigns) {
+
+
+
+      renderCampaigns(campaigns || []);
+
+
+
+    })
+
+    .withFailureHandler(function(error) {
+
+
+
+      box.innerHTML = "";
+
+
+
+      var msg =
+
+        document.createElement("div");
+
+
+
+      msg.className = "status";
+
+      msg.textContent =
+
+        "\u274C " + getError(error);
+
+
+
+      box.appendChild(msg);
+
+
+
+    })
+
+    .getCampaigns();
+
+}
+
+
+
+
+
+function renderCampaigns(campaigns) {
+
+
+
+  var box =
+
+    document.getElementById("campaignList");
+
+
+
+  if (!box) {
+
+    return;
+
+  }
+
+
+
+  box.innerHTML = "";
+
+
+
+  if (!campaigns.length) {
+
+
+
+    box.innerHTML =
+
+      '<span class="muted">' +
+
+      'Aucune campagne enregistr\u00E9e.' +
+
+      '</span>';
+
+
+
+    return;
+
+  }
+
+
+
+  var i;
+
+
+
+  for (i = 0; i < campaigns.length; i++) {
+
+
+
+    var c = campaigns[i];
+
+
+
+    var card =
+
+      document.createElement("div");
+
+
+
+    card.className = "event-card";
+
+    card.style.marginBottom = "10px";
+
+
+
+
+
+    /* INFORMATIONS */
+
+
+
+    var info =
+
+      document.createElement("div");
+
+
+
+    var title =
+
+      document.createElement("div");
+
+
+
+    title.className = "event-name";
+
+
+
+    title.textContent =
+
+  c.event || "Campagne";
+
+
+
+    info.appendChild(title);
+
+
+
+var campaignId =
+
+  document.createElement("div");
+
+
+
+campaignId.className = "event-info";
+
+campaignId.textContent = c.id || "";
+
+
+
+info.appendChild(campaignId);
+
+
+
+    var details =
+
+      document.createElement("div");
+
+
+
+    details.className = "event-info";
+
+
+
+    details.textContent =
+
+      (c.channel || "WHATSAPP") +
+
+      " \u2022 " +
+
+      (c.total || 0) +
+
+      " destinataire(s)";
+
+
+
+    info.appendChild(details);
+
+
+
+
+
+    /* ETAT DES ENVOIS */
+
+
+
+    var progress =
+
+      document.createElement("div");
+
+
+
+    progress.style.marginTop = "8px";
+
+    progress.style.fontSize = "13px";
+
+
+
+    progress.textContent =
+
+      "\uD83D\uDFE0 " +
+
+      (c.pending || 0) +
+
+      " \u00E0 envoyer  \u2022  " +
+
+      "\uD83D\uDFE2 " +
+
+      (c.sent || 0) +
+
+      " envoy\u00E9(s)  \u2022  " +
+
+      "\uD83D\uDD34 " +
+
+      (c.errors || 0) +
+
+      " erreur(s)";
+
+
+
+    info.appendChild(progress);
+
+
+
+
+
+    /* STATUT CAMPAGNE */
+
+
+
+    var status =
+
+      document.createElement("div");
+
+
+
+    status.style.marginTop = "7px";
+
+    status.style.color = "#d4af37";
+
+    status.style.fontWeight = "bold";
+
+    status.style.fontSize = "12px";
+
+
+
+    status.textContent =
+
+      c.status || "BROUILLON";
+
+
+
+    info.appendChild(status);
+
+
+
+
+
+   var actions =
+
+  document.createElement("div");
+
+
+
+var manageBtn =
+
+  document.createElement("button");
+
+
+
+manageBtn.className = "gold";
+
+manageBtn.textContent = "G\u00E9rer";
+
+
+
+manageBtn.onclick = (function(campaign) {
+
+
+
+  return function() {
+
+    manageCampaign(campaign);
+
+  };
+
+
+
+})(c);
+
+
+
+actions.appendChild(manageBtn);
+
+
+
+card.appendChild(info);
+
+card.appendChild(actions);
+
+
+
+box.appendChild(card);
+
+  }
+
+}
+
+
+
+function manageCampaign(c) {
+  var manager = document.getElementById("campaignManager");
+  if (!manager) return;
+  setText("managerTitle", "Gestion \u2014 " + (c.id || "Campagne"));
+
+  var stats = document.getElementById("managerStats");
+  if (stats) {
+    stats.innerHTML = "";
+    ["Destinataires : " + (c.total || 0), "\uD83D\uDFE0 \u00C0 envoyer : " + (c.pending || 0), "\uD83D\uDFE2 Envoy\u00E9s : " + (c.sent || 0), "\uD83D\uDD34 Erreurs : " + (c.errors || 0)].forEach(function(text) {
+      var div = document.createElement("div"); div.textContent = text; stats.appendChild(div);
+    });
+  }
+
+  var message = document.getElementById("managerMessage");
+  if (message) message.textContent = c.message || "(Aucun message enregistr\u00E9)";
+
+  var linkBox = document.getElementById("managerLink");
+  if (linkBox) {
+    linkBox.innerHTML = "";
+    if (c.link) {
+      var label = document.createElement("strong"); label.textContent = "Lien : ";
+      var link = document.createElement("a"); link.href = c.link; link.target = "_blank"; link.style.color = "#d4af37"; link.textContent = c.link;
+      linkBox.appendChild(label); linkBox.appendChild(link);
+    }
+  }
+
+  var errorActions = document.getElementById("managerErrorActions");
+  var errorBtn = document.getElementById("btnShowErrors");
+  var errorBox = document.getElementById("managerErrors");
+  if (errorBox) { errorBox.style.display = "none"; errorBox.innerHTML = ""; }
+  if (errorActions && errorBtn) {
+    if ((c.errors || 0) > 0) {
+      errorActions.style.display = "block";
+      errorBtn.textContent = "\uD83D\uDD34 Voir les erreurs (" + c.errors + ")";
+      errorBtn.onclick = function() { loadCampaignErrors(c.id); };
+    } else { errorActions.style.display = "none"; }
+  }
+
+  var deleteBtn = document.getElementById("btnDeleteCampaign");
+  if (deleteBtn) {
+    deleteBtn.disabled = false; deleteBtn.textContent = "Supprimer la campagne";
+    deleteBtn.onclick = function() {
+      if (deleteBtn.textContent === "Supprimer la campagne") { deleteBtn.textContent = "Confirmer la suppression"; return; }
+      deleteBtn.disabled = true; deleteBtn.textContent = "Suppression...";
+      google.script.run
+        .withSuccessHandler(function() { closeCampaignManager(); loadCampaigns(); setText("campaignStatus", "\u2705 Campagne supprim\u00E9e."); })
+        .withFailureHandler(function(error) { deleteBtn.disabled = false; deleteBtn.textContent = "Supprimer la campagne"; setText("campaignStatus", "\u274C " + getError(error)); })
+        .deleteCampaign(c.id);
+    };
+  }
+  manager.style.display = "block";
+  manager.scrollIntoView();
+}
+
+function loadCampaignErrors(campaignId) {
+  var box = document.getElementById("managerErrors");
+  if (!box) return;
+  box.style.display = "block";
+  box.innerHTML = '<span class="muted">Chargement...</span>';
+  google.script.run
+    .withSuccessHandler(function(errors) {
+      errors = errors || []; box.innerHTML = "";
+      if (!errors.length) { box.innerHTML = '<span class="muted">Aucune erreur enregistr\u00E9e.</span>'; return; }
+      errors.forEach(function(item) {
+        var row = document.createElement("div"); row.style.padding = "10px"; row.style.marginBottom = "6px"; row.style.background = "#15191f"; row.style.borderRadius = "8px";
+        var mobile = document.createElement("strong"); mobile.textContent = item.mobile || "";
+        var reason = document.createElement("div"); reason.className = "muted"; reason.style.marginTop = "4px"; reason.textContent = item.error || "Erreur";
+        row.appendChild(mobile); row.appendChild(reason); box.appendChild(row);
+      });
+    })
+    .withFailureHandler(function(error) { box.textContent = "\u274C " + getError(error); })
+    .getCampaignErrors(campaignId);
+}
+
+function closeCampaignManager() {
+
+
+
+  var manager =
+
+    document.getElementById("campaignManager");
+
+
+
+  if (manager) {
+
+    manager.style.display = "none";
+
+  }
+
+}
+
+
+
+function saveCampaign() {
+
+
+
+  var segments =
+
+    selectedSegments();
+
+
+
+  if (!segments.length) {
+
+
+
+    setText(
+
+      "campaignStatus",
+
+      "\u26A0\uFE0F S\u00E9lectionne au moins un segment."
+
+    );
+
+
+
+    return;
+
+  }
+
+
+
+  var messageEl =
+
+    document.getElementById(
+
+      "campaignMessage"
+
+    );
+
+
+
+  var message = "";
+
+
+
+  if (messageEl) {
+
+    message =
+
+      messageEl.value.replace(/^\s+|\s+$/g, "");
+
+  }
+
+
+
+  if (!message) {
+
+
+
+    setText(
+
+      "campaignStatus",
+
+      "\u26A0\uFE0F \u00C9cris le message de la campagne."
+
+    );
+
+
+
+    return;
+
+  }
+
+
+
+  var eventEl =
+
+    document.getElementById(
+
+      "campaignEvent"
+
+    );
+
+
+
+  var channelEl =
+
+    document.getElementById(
+
+      "channel"
+
+    );
+
+
+
+  var linkEl =
+
+    document.getElementById(
+
+      "campaignLink"
+
+    );
+
+
+
+  var payload = {
+
+
+
+    event:
+
+  eventEl && eventEl.selectedIndex >= 0
+
+    ? eventEl.options[eventEl.selectedIndex].text
+
+    : "",
+
+
+
+    channel:
+
+      channelEl
+
+        ? channelEl.value
+
+        : "WHATSAPP",
+
+
+
+    segments:
+
+      segments,
+
+
+
+    message:
+
+      message,
+
+
+
+    link:
+
+      linkEl
+
+        ? linkEl.value.replace(/^\s+|\s+$/g, "")
+
+        : ""
+
+  };
+
+
+
+  setText(
+
+    "campaignStatus",
+
+    "\u23F3 Enregistrement..."
+
+  );
+
+
+
+  google.script.run
+
+    .withSuccessHandler(function(result) {
+
+
+
+      if (!result) {
+
+
+
+        setText(
+
+          "campaignStatus",
+
+          "\u274C R\u00E9ponse incorrecte du serveur."
+
+        );
+
+
+
+        return;
+
+      }
+
+
+
+      setText(
+
+        "campaignStatus",
+
+        "\u2705 Campagne " +
+
+        result.id +
+
+        " enregistr\u00E9e \u2014 " +
+
+        result.total +
+
+        " destinataire(s)."
+
+      );
+
+
+
+loadCampaigns();
+
+
+
+    })
+
+    .withFailureHandler(function(error) {
+
+
+
+      setText(
+
+        "campaignStatus",
+
+        "\u274C " + getError(error)
+
+      );
+
+
+
+    })
+
+    .saveCampaign(payload);
+
+}
+
+
+
+
+
+/* =========================
+
+   DEMARRAGE
+
+\========================= */
+
+
+
+function startApp() {
+
+
+
+  var btn = document.getElementById("btnCreateEvent");
+
+
+
+  if (btn) {
+
+    btn.onclick = function() {
+
+      createEvent();
+
+    };
+
+  }
+
+
+
+  loadApp();
+
+  loadCampaigns();
+
+}
+
+
+
+if (document.readyState === "loading") {
+
+
+
+  document.addEventListener(
+
+    "DOMContentLoaded",
+
+    startApp
+
+  );
+
+
+
+} else {
+
+
+
+  startApp();
+
+}
+
+
+
+
+/* ===== IMPORT BIZOUK INTEGRE ===== */
+(function () {
+
+let current=null,autoEvent='';const bizRoot=document.getElementById('bizoukModule');const $=s=>bizRoot.querySelector(s);
+
+function eventFromFile(name){return String(name||'').replace(/\\.(xls|xlsx|csv)$/i,'').replace(/^bizouk[ _.-]\*forms?[ _.-]\*/i,'').replace(/[ _.-]\*\d+(?:[ _.-]\*\\(\d+\\))?$/i,'').replace(/[_.-]+/g,' ').replace(/\s+/g,' ').trim().replace(/\b\p{L}/gu,c=>c.toLocaleUpperCase())}
+
+$('#file').addEventListener('change',()=>{const name=$('#file').files[0]?.name||'';const suggested=eventFromFile(name);if(!$('#event').value.trim()||$('#event').value===autoEvent){$('#event').value=suggested;autoEvent=suggested}});
+
+function busy(on){$('#busy').classList.toggle('hidden',!on);bizRoot.querySelectorAll('button').forEach(b=>b.disabled=on)}
+
+function readable(v){return String(v??'').replace(/\u00c3[\u0080-\u00BF]|\u00c2[\u0080-\u00BF]|\u00e2[\u0080-\u00BF]{2}/g,part=>{try{return new TextDecoder('utf-8',{fatal:true}).decode(Uint8Array.from(part,c=>c.charCodeAt(0)))}catch(_){return part}})}
+
+function msg(e){$('#message').textContent=readable(e.message||String(e));$('#message').classList.remove('hidden');busy(false)}
+
+function call(method,...args){busy(true);$('#message').classList.add('hidden');return new Promise((resolve,reject)=>google.script.run.withSuccessHandler(v=>{busy(false);resolve(v)}).withFailureHandler(e=>{busy(false);reject(e)})[method](...args))}
+
+function show(id){['start','review','done'].forEach(x=>$('#'+x).classList.toggle('hidden',x!==id));bizRoot.scrollIntoView({block:'start'})}
+
+function displayData(d,selected){$('#label').replaceChildren(...d.labels.map(s=>new Option(s,s)));if(d.labels.includes(selected))$('#label').value=selected;$('#history').replaceChildren(...d.imports.map(i=>{const el=document.createElement('div');el.className='history-item';const title=document.createElement('span');title.textContent=`${readable(i.event)} \u00b7 ${readable(i.label)} \u00b7 ${readable(i.status)}`;el.append(title);const open=document.createElement('button');open.type='button';open.className='secondary';open.textContent='Ouvrir';open.onclick=()=>call('getImport',i.id).then(render).catch(msg);el.append(open);if(i.status==='\u00c0 valider'){const del=document.createElement('button');del.type='button';del.className='secondary';del.textContent='Supprimer';del.onclick=()=>{const confirm=document.createElement('button');confirm.type='button';confirm.className='secondary';confirm.textContent='Confirmer la suppression';confirm.onclick=()=>call('deletePendingImport',i.id).then(x=>displayData(x,$('#label').value)).catch(msg);el.replaceChild(confirm,del)};el.append(del)}return el}));if(!d.imports.length)$('#history').textContent='Aucun import pour le moment.';renderLabels(d.labels)}
+
+function bootstrap(){const selected=$('#label').value;call('bootstrap').then(d=>displayData(d,selected)).catch(msg)}
+
+function renderLabels(labels){const box=$('#labelManager');box.replaceChildren();if(!labels.length){box.textContent='Aucun libell\u00e9 enregistr\u00e9.';return}labels.forEach(name=>{const row=document.createElement('div');row.className='label-item';const head=document.createElement('div');head.className='label-head';const title=document.createElement('span');title.className='label-name';title.textContent=name;const actions=document.createElement('div');actions.className='label-actions';const edit=document.createElement('button');edit.type='button';edit.textContent='Renommer';const del=document.createElement('button');del.type='button';del.textContent='Supprimer';actions.append(edit,del);head.append(title,actions);const editor=document.createElement('div');editor.className='label-editor hidden';row.append(head,editor);box.append(row);edit.onclick=()=>{editor.replaceChildren();const input=document.createElement('input');input.value=name;input.setAttribute('aria-label','Nouveau nom du libell\u00e9');const save=document.createElement('button');save.type='button';save.className='secondary';save.textContent='Enregistrer';save.style.marginTop='7px';save.onclick=()=>{const next=input.value.trim();if(!next){msg('Indique un nom.');return}call('renameLabel',name,next).then(d=>displayData(d,$('#label').value===name?next:$('#label').value)).catch(msg)};editor.append(input,save);editor.classList.remove('hidden');input.focus()};del.onclick=()=>{editor.replaceChildren();const note=document.createElement('p');note.textContent='Supprimer ce libell\u00e9 de Google Contacts ? Les contacts seront conserv\u00e9s.';const confirm=document.createElement('button');confirm.type='button';confirm.className='secondary';confirm.textContent='Confirmer la suppression';confirm.onclick=()=>call('deleteLabel',name).then(d=>displayData(d,$('#label').value===name?'':$('#label').value)).catch(msg);editor.append(note,confirm);editor.classList.remove('hidden')}})}
+
+$('#showNewLabel').onclick=()=>{$('#newLabelBox').classList.toggle('hidden');if(!$('#newLabelBox').classList.contains('hidden'))$('#newLabel').focus()};
+
+$('#addLabel').onclick=()=>{const s=$('#newLabel').value.trim();if(!s){msg('Indique un nom de libell\u00e9.');return}call('addLabel',s).then(d=>{displayData(d,d.labels.find(x=>x.toLocaleLowerCase()===s.toLocaleLowerCase())||s);$('#newLabel').value='';$('#newLabelBox').classList.add('hidden')}).catch(msg)};
+
+$('#analyse').onclick=()=>{const f=$('#file').files[0],event=$('#event').value.trim(),label=$('#label').value;if(!f||!event||!label){msg('Choisis un fichier, un \u00e9v\u00e9nement et un libell\u00e9.');return}if(f.size>10*1024*1024){msg('Fichier limit\u00e9 \u00e0 10 Mo.');return}const reader=new FileReader();reader.onload=()=>{const data=String(reader.result).split(',')[1];call('analyzeUpload',{name:f.name,data},event,label).then(render).catch(e=>{msg(e);$('#message').textContent='Connexion interrompue. Recherche d\u2019une analyse enregistr\u00e9e\u2026';call('recoverAnalysis',{name:f.name,data},event,label).then(found=>{if(found)render(found);else{$('#message').textContent='Analyse introuvable pour le moment. Ouvre \u00ab Imports r\u00e9cents \u00bb ou r\u00e9essaie sans changer le fichier, l\u2019\u00e9v\u00e9nement ni le libell\u00e9.'}}).catch(()=>{$('#message').textContent='Connexion interrompue. V\u00e9rifie \u00ab Imports r\u00e9cents \u00bb avant de relancer l\u2019analyse.'})})};reader.onerror=()=>msg('Lecture du fichier impossible.');reader.readAsDataURL(f)};
+
+function render(result){const changed=!current||current.id!==result.id;current=result;if(changed){$('#manualList').replaceChildren();$('#manualFile').value='';$('#resolveFile').value='';$('#recheckResult').classList.add('hidden');$('#manualDetails').open=false;$('#reviewDetails').open=false;$('#birthFile').value='';$('#birthResult').classList.add('hidden');$('#repairResult').classList.add('hidden')}$('#file').value='';$('#context').textContent=`${result.event} \u00b7 ${result.label}`;$('#newCount').textContent=result.counts.new;$('#existingCount').textContent=result.counts.existing;$('#replaceCount').textContent=result.counts.replace;$('#reviewCount').textContent=result.review.length;$('#reviewList').replaceChildren(...result.review.map(r=>{const li=document.createElement('li');li.textContent=`${r.first} ${r.last} \u2014 ${readable(r.reason)}`;return li}));$('#reviewDetails').classList.toggle('hidden',!result.review.length);$('#reviewChoices').classList.add('hidden');$('#progress').textContent=result.applied?`${result.applied} fiche(s) d\u00e9j\u00e0 trait\u00e9e(s), ${result.remaining} restante(s).`:'';$('#pendingErrors').textContent=(result.errors||[]).map(readable).join(' | ');$('#pendingErrors').classList.toggle('hidden',!result.errors?.length);$('#apply').textContent=result.applied?'Reprendre les fiches restantes':'Appliquer les changements';$('#apply').classList.toggle('hidden',result.status==='Termin\u00e9'||result.remaining===0);$('#repair').classList.toggle('hidden',!result.applied);$('#birthBox').classList.toggle('hidden',!result.applied);show('review')}
+
+function done(r){$('#doneMessage').textContent=r.remaining?`Traitement partiel : ${r.remaining} fiche(s) \u00e0 reprendre.`:`Termin\u00e9. ${r.counts.new} nouveaux, ${r.counts.existing} existants, ${r.counts.replace} num\u00e9ros pr\u00e9vus pour remplacement. ${r.counts.review} \u00e0 v\u00e9rifier.`;$('#errors').classList.toggle('hidden',!r.errors?.length);$('#errors').textContent=(r.errors||[]).join('\n');show('done')}
+
+async function applyInBatches(){
+
+  if(!current)return;
+
+  const id=current.id;let previous=-1;
+
+  try{
+
+    while(true){
+
+      const r=await call('applyImport',id);
+
+      if(r.status==='Termin\u00e9'||r.remaining===0){done(r);return}
+
+      if(r.remaining===previous){render(r);msg('Ces fiches restent en attente. Le d\u00e9tail de l\u2019erreur est affich\u00e9 au-dessus.');return}
+
+      previous=r.remaining;current=r;
+
+      $('#progress').textContent=`${r.applied} fiche(s) trait\u00e9e(s), ${r.remaining} restante(s).`;
+
+      $('#busy').textContent=`Import en cours : ${r.applied} fiche(s) trait\u00e9e(s), ${r.remaining} restante(s)\u2026`;
+
+      await new Promise(resolve=>setTimeout(resolve,150));
+
+    }
+
+  }catch(e){
+
+    try{const r=await call('getImport',id);render(r);if(r.status==='Termin\u00e9'||r.remaining===0){done(r);return}}
+
+    catch(_){/\* Le bouton de v\u00e9rification reste disponible. \*/}
+
+    msg('Connexion interrompue. Ouvre cet import dans \u00ab Imports r\u00e9cents \u00bb ou appuie sur \u00ab V\u00e9rifier l\u2019\u00e9tat de l\u2019import \u00bb avant de reprendre.');
+
+  }finally{$('#busy').textContent='Traitement en cours\u2026'}
+
+}
+
+$('#apply').onclick=applyInBatches;
+
+$('#check').onclick=()=>{if(!current)return;call('getImport',current.id).then(r=>r.status==='Termin\u00e9'?done(r):render(r)).catch(msg)};
+
+$('#repair').onclick=()=>{if(!current)return;call('repairImportLabels',current.id).then(r=>{$('#repairResult').textContent=`Libell\u00e9 v\u00e9rifi\u00e9 sur ${r.checked} fiche(s) ; ajout\u00e9 \u00e0 ${r.added} fiche(s).${r.errors.length?' Erreurs : '+r.errors.join(' | '):''}`;$('#repairResult').classList.remove('hidden')}).catch(msg)};
+
+$('#birthApply').onclick=()=>{const f=$('#birthFile').files[0];if(!current||!f){msg('Choisis le fichier Bizouk de cet import.');return}if(f.size>10*1024*1024){msg('Fichier limit\u00e9 \u00e0 10 Mo.');return}const reader=new FileReader();reader.onload=()=>{call('backfillBirthdays',{name:f.name,data:String(reader.result).split(',')[1]},current.id).then(r=>{$('#birthResult').textContent=`Dates ajout\u00e9es : ${r.added}. D\u00e9j\u00e0 pr\u00e9sentes : ${r.already}. Dates diff\u00e9rentes ou fiches non concordantes : ${r.conflicts}. Sans date exploitable : ${r.missing}.${r.errors.length?' Erreurs : '+r.errors.join(' | '):''}`;$('#birthResult').classList.remove('hidden');$('#birthFile').value=''}).catch(msg)};reader.onerror=()=>msg('Lecture du fichier impossible.');reader.readAsDataURL(f)};
+
+$('#recheckReviews').onclick=()=>{const f=$('#resolveFile').files[0];if(!current||!f){msg('Choisis le m\u00eame fichier Bizouk que pour cet import.');return}const reader=new FileReader();reader.onload=()=>call('reevaluateReviews',{name:f.name,data:String(reader.result).split(',')[1]},current.id).then(v=>{render(v.import);$('#reviewDetails').open=true;$('#recheckResult').textContent=`${v.proposed} fiche(s) \u00e0 appliquer, ${v.ignored} inscription(s) avec les coordonn\u00e9es de l\u2019acheteur \u00e9cart\u00e9e(s). V\u00e9rifie le r\u00e9capitulatif avant d\u2019appliquer.`;$('#recheckResult').classList.remove('hidden')}).catch(msg);reader.onerror=()=>msg('Lecture du fichier impossible.');reader.readAsDataURL(f)};
+
+$('#chooseReviews').onclick=()=>{if(!current)return;call('getReviewOptions',current.id).then(rows=>{const box=$('#choiceList');box.replaceChildren(...rows.map(r=>{const item=document.createElement('div');item.className='label-item';if(r.selectable){const label=document.createElement('label');label.style.display='flex';label.style.alignItems='start';label.style.gap='10px';const check=document.createElement('input');check.type='checkbox';check.value=r.key;check.className='reviewCheck';check.style.width='auto';label.append(check,document.createTextNode(`${r.first} ${r.last} \u2192 ${r.googleName} (Google) \u2014 ${readable(r.reason)}`));item.append(label)}else item.textContent=`${r.first} ${r.last} \u2014 ${readable(r.reason)} \u00b7 Choix indisponible : correspondance Google ambigu\u00eb ou num\u00e9ro Bizouk partag\u00e9.`;return item}));$('#reviewChoices').classList.remove('hidden')}).catch(msg)};
+
+$('#applyReviews').onclick=()=>{if(!current)return;const keys=[...bizRoot.querySelectorAll('.reviewCheck:checked')].map(x=>x.value);if(!keys.length){msg('Coche au moins une fiche.');return}call('applySelectedReviews',current.id,keys).then(r=>{call('getImport',current.id).then(x=>{render(x);$('#reviewDetails').open=true;$('#reviewResult').textContent=`${r.added} fiche(s) ajout\u00e9e(s) au libell\u00e9, ${r.skipped} ignor\u00e9e(s).${r.errors.length?' Erreurs : '+r.errors.join(' | '):''}`;$('#reviewResult').classList.remove('hidden');$('#reviewChoices').classList.remove('hidden')}).catch(msg)}).catch(msg)};
+
+$('#loadManual').onclick=()=>{if(!current)return;call('getManualAssociations',current.id).then(rows=>{const box=$('#manualList');box.replaceChildren(...rows.map(r=>{const item=document.createElement('div');item.className='label-item';const line=document.createElement('p');line.textContent=`Google : ${r.googleName} \u2192 Bizouk : ${r.first} ${r.last}`;item.append(line);if(!r.error){const choose=document.createElement('button');choose.type='button';choose.className='secondary';choose.textContent='Comparer toutes les infos';choose.onclick=()=>{const f=$('#manualFile').files[0];if(!f){msg('Choisis le fichier Bizouk de cet import.');return}const reader=new FileReader();reader.onload=()=>call('previewManualUpdate',{name:f.name,data:String(reader.result).split(',')[1]},current.id,r.key).then(v=>{const box=document.createElement('div');box.className='notice';const lines=[['Nom',v.current.name,v.desired.name],['T\u00e9l\u00e9phone',v.current.phones.join(' / '),v.desired.phone],['E-mail',v.current.emails.join(' / '),v.desired.email||'(conserv\u00e9)'],['Naissance',v.current.birth,v.desired.birth||'(conserv\u00e9e)']];box.append(...lines.map(x=>{const p=document.createElement('p');p.textContent=`${x[0]} : ${x[1]||'(vide)'} \u2192 ${x[2]}`;return p}));const confirm=document.createElement('button');confirm.type='button';confirm.className='secondary';confirm.textContent=`Confirmer les informations Bizouk pour ${r.first} ${r.last}`;confirm.onclick=()=>call('applyManualUpdate',v.token).then(x=>{box.textContent=`Fiche mise \u00e0 jour : ${x.after.name}. Nom, t\u00e9l\u00e9phone, e-mail et date Bizouk disponibles appliqu\u00e9s.`}).catch(msg);box.append(confirm);item.append(box)}).catch(msg);reader.onerror=()=>msg('Lecture du fichier impossible.');reader.readAsDataURL(f)};item.append(choose)}return item}));if(!rows.length)box.textContent='Aucune association manuelle.'}).catch(msg)};
+
+$('#back').onclick=()=>show('start');$('#again').onclick=()=>{show('start');bootstrap()};bootstrap();
+
+
+})();
+
+</script>
+
+
+
+</body>
+
+</html>
