@@ -2222,6 +2222,144 @@ try {
   );
 
 } catch (e) {}
+
+  /* ============================================================
+   NAVIGATION PAR SWIPE
+   Gauche  = onglet suivant
+   Droite  = onglet précédent
+============================================================ */
+
+var swipePages = [
+  "home",
+  "import",
+  "contacts",
+  "segmentsPage",
+  "events",
+  "campaign"
+];
+
+var swipeStartX = 0;
+var swipeStartY = 0;
+var swipeEndX = 0;
+var swipeEndY = 0;
+var swipeBlocked = false;
+
+document.addEventListener("touchstart", function(e) {
+
+  if (!e.touches || e.touches.length !== 1) {
+    swipeBlocked = true;
+    return;
+  }
+
+  var target = e.target;
+
+  // Ne pas déclencher le swipe depuis un élément interactif
+  if (
+    target.closest(
+      "input, textarea, select, button, label, " +
+      "#segmentManager, #crmContactEditor, " +
+      "#campaignManager, details"
+    )
+  ) {
+    swipeBlocked = true;
+    return;
+  }
+
+  swipeBlocked = false;
+
+  swipeStartX = e.touches[0].clientX;
+  swipeStartY = e.touches[0].clientY;
+
+}, { passive: true });
+
+
+document.addEventListener("touchend", function(e) {
+
+  if (swipeBlocked) {
+    swipeBlocked = false;
+    return;
+  }
+
+  if (!e.changedTouches || !e.changedTouches.length) {
+    return;
+  }
+
+  swipeEndX = e.changedTouches[0].clientX;
+  swipeEndY = e.changedTouches[0].clientY;
+
+  var diffX = swipeEndX - swipeStartX;
+  var diffY = swipeEndY - swipeStartY;
+
+  // Il faut un vrai mouvement horizontal d'au moins 70 px
+  if (Math.abs(diffX) < 70) {
+    return;
+  }
+
+  // Évite qu'un scroll vertical soit pris pour un swipe
+  if (Math.abs(diffY) > Math.abs(diffX) * 0.65) {
+    return;
+  }
+
+  var activePage = document.querySelector(".page.active");
+
+  if (!activePage) {
+    return;
+  }
+
+  var currentIndex = swipePages.indexOf(activePage.id);
+
+  if (currentIndex === -1) {
+    return;
+  }
+
+
+  // ==========================
+  // SWIPE VERS LA GAUCHE
+  // Onglet suivant
+  // ==========================
+
+  if (diffX < 0) {
+
+    if (currentIndex < swipePages.length - 1) {
+
+      showPage(
+        swipePages[currentIndex + 1]
+      );
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
+    }
+
+    return;
+  }
+
+
+  // ==========================
+  // SWIPE VERS LA DROITE
+  // Onglet précédent
+  // ==========================
+
+  if (diffX > 0) {
+
+    if (currentIndex > 0) {
+
+      showPage(
+        swipePages[currentIndex - 1]
+      );
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
+    }
+
+  }
+
+}, { passive: true });
   
 function showPage(id) {
 
