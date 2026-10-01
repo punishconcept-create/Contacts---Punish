@@ -5461,20 +5461,46 @@ function openSegmentManager(name) {
 
   var panel = document.getElementById('segmentManager');
   var message = document.getElementById('segmentManagerMessage');
+  var membersBox = document.getElementById('segmentMembers');
+
+  // IMPORTANT :
+  // on vide immédiatement l'ancien segment.
+  currentSegment = null;
+  currentSegmentMembers = [];
+
+  document.getElementById('segmentResource').value = '';
+  document.getElementById('segmentMemberSearch').value = '';
+  document.getElementById('segmentAddResults').replaceChildren();
+
+  document.getElementById('segmentAddBox')
+    .classList.add('hidden');
 
   panel.classList.remove('hidden');
 
-  document.getElementById('segmentManagerTitle').textContent = name;
+  document.getElementById('segmentManagerTitle').textContent =
+    name + ' · 0';
+
   document.getElementById('segmentRename').value = name;
 
-  message.textContent = 'Chargement...';
+  membersBox.innerHTML =
+    '<span class="muted">Chargement...</span>';
+
+  message.textContent = '';
 
   google.script.run
 
     .withSuccessHandler(function(seg) {
 
       if (!seg) {
-        message.textContent = 'Erreur : aucune donnée reçue.';
+
+        currentSegment = null;
+        currentSegmentMembers = [];
+
+        membersBox.innerHTML =
+          '<span class="muted">Aucun contact.</span>';
+
+        message.textContent = '';
+
         return;
       }
 
@@ -5488,12 +5514,9 @@ function openSegmentManager(name) {
         seg.name || name;
 
       document.getElementById('segmentManagerTitle').textContent =
-        (seg.name || name) + ' · ' + (seg.count || 0);
-
-      document.getElementById('segmentMemberSearch').value = '';
-
-      document.getElementById('segmentAddBox')
-        .classList.add('hidden');
+        (seg.name || name) +
+        ' · ' +
+        (seg.count || 0);
 
       message.textContent = '';
 
@@ -5513,14 +5536,38 @@ function openSegmentManager(name) {
         error
       );
 
+      // Le segment CRM existe mais n'a pas encore
+      // de groupe Google Contacts : il est simplement vide.
+      currentSegment = {
+        resourceName: '',
+        name: name,
+        count: 0,
+        contacts: []
+      };
+
+      currentSegmentMembers = [];
+
+      document.getElementById('segmentResource').value = '';
+      document.getElementById('segmentRename').value = name;
+
+      document.getElementById('segmentManagerTitle').textContent =
+        name + ' · 0';
+
+      membersBox.innerHTML =
+        '<span class="muted">Aucun contact.</span>';
+
       message.textContent =
-        'Erreur : ' + getError(error);
+        'Segment prêt pour un prochain import.';
+
+      panel.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
 
     })
 
     .crmGetSegmentByName(name);
 }
-
 function renderSegmentMembers(){
   const box=document.getElementById('segmentMembers');
   const q=document.getElementById('segmentMemberSearch').value.trim().toLowerCase();
