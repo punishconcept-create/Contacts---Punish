@@ -2584,119 +2584,309 @@ function clearSegments() {
 
 function renderSegmentPage() {
 
+  var box = document.getElementById("segmentPageList");
+  if (!box) return;
 
-
-  var box =
-
-    document.getElementById("segmentPageList");
-
-
-
-  if (!box) {
-
-    return;
-
-  }
-
-
-
-  var search =
-
-    document.getElementById("segmentPageSearch");
-
-
-
-  var q = "";
-
-
-
-  if (search) {
-
-    q = search.value.toLowerCase();
-
-  }
-
-
+  var search = document.getElementById("segmentPageSearch");
+  var q = search ? search.value.trim().toLowerCase() : "";
 
   box.innerHTML = "";
 
+  // Favoris enregistrés sur l'appareil
+  var favorites = [];
 
+  try {
+    favorites = JSON.parse(
+      localStorage.getItem("punish_segment_favorites") || "[]"
+    );
+  } catch (e) {
+    favorites = [];
+  }
 
-  var i;
+  function isFavorite(name) {
+    return favorites.indexOf(name) !== -1;
+  }
 
+  function saveFavorites() {
+    localStorage.setItem(
+      "punish_segment_favorites",
+      JSON.stringify(favorites)
+    );
+  }
 
-
-  for (i = 0; i < APP.segments.length; i++) {
-
-
-
-    var s = APP.segments[i];
-
-
+  function createSegmentRow(s) {
 
     var segmentName = getSegmentName(s);
 
-
-
-    if (
-
-      q !== "" &&
-
-      !containsText(segmentName, q)
-
-    ) {
-
-      continue;
-
-    }
-
-
-
-    var row =
-
-      document.createElement("div");
-
-
-
+    var row = document.createElement("div");
     row.className = "segment-row";
-
     row.style.cursor = "pointer";
-    row.onclick = (function(n){ return function(){ openSegmentManager(n); }; })(segmentName);
 
+    // -----------------------------
+    // ETOILE
+    // -----------------------------
 
+    var star = document.createElement("button");
 
-    var name =
+    star.type = "button";
+    star.textContent =
+      isFavorite(segmentName) ? "★" : "☆";
 
-      document.createElement("span");
+    star.style.background = "transparent";
+    star.style.border = "0";
+    star.style.fontSize = "24px";
+    star.style.padding = "0 12px 0 0";
+    star.style.width = "auto";
+    star.style.cursor = "pointer";
+    star.style.flexShrink = "0";
 
+    star.onclick = function(e) {
 
+      e.stopPropagation();
+
+      var index =
+        favorites.indexOf(segmentName);
+
+      if (index === -1) {
+
+        favorites.push(segmentName);
+
+      } else {
+
+        favorites.splice(index, 1);
+
+      }
+
+      saveFavorites();
+      renderSegmentPage();
+    };
+function openSegmentMerge() {
+
+  alert(
+    "Sélection multiple des segments : prochaine étape."
+  );
+
+}
+
+    // -----------------------------
+    // NOM
+    // -----------------------------
+
+    var name = document.createElement("span");
 
     name.textContent = segmentName;
+    name.style.flex = "1";
 
 
+    // -----------------------------
+    // COMPTEUR
+    // -----------------------------
 
-    var count =
-
-      document.createElement("strong");
-
-
+    var count = document.createElement("strong");
 
     count.textContent =
-
       getSegmentCount(s);
 
+    count.style.marginLeft = "10px";
 
 
+    row.appendChild(star);
     row.appendChild(name);
-
     row.appendChild(count);
 
 
+    row.onclick = function() {
+      openSegmentManager(segmentName);
+    };
 
-    box.appendChild(row);
+    return row;
+  }
+
+
+  // ==========================================================
+  // RECHERCHE
+  // Si on recherche : on affiche directement tous les résultats
+  // ==========================================================
+
+  if (q !== "") {
+
+    APP.segments.forEach(function(s) {
+
+      var segmentName =
+        getSegmentName(s);
+
+      if (
+        containsText(segmentName, q)
+      ) {
+
+        box.appendChild(
+          createSegmentRow(s)
+        );
+
+      }
+
+    });
+
+    return;
+  }
+
+
+  // ==========================================================
+  // SEPARATION FAVORIS / AUTRES
+  // ==========================================================
+
+  var favoriteSegments = [];
+  var otherSegments = [];
+
+  APP.segments.forEach(function(s) {
+
+    if (
+      isFavorite(getSegmentName(s))
+    ) {
+
+      favoriteSegments.push(s);
+
+    } else {
+
+      otherSegments.push(s);
+
+    }
+
+  });
+
+
+  // ==========================================================
+  // FAVORIS
+  // ==========================================================
+
+  var favoriteTitle =
+    document.createElement("div");
+
+  favoriteTitle.innerHTML =
+    "⭐ <strong>FAVORIS</strong>";
+
+  favoriteTitle.style.margin =
+    "18px 0 8px 0";
+
+  favoriteTitle.style.fontSize =
+    "14px";
+
+  box.appendChild(favoriteTitle);
+
+
+  if (!favoriteSegments.length) {
+
+    var empty =
+      document.createElement("div");
+
+    empty.textContent =
+      "Aucun segment favori.";
+
+    empty.className = "muted";
+
+    empty.style.padding =
+      "15px 20px";
+
+    box.appendChild(empty);
+
+  } else {
+
+    favoriteSegments.forEach(
+      function(s) {
+
+        box.appendChild(
+          createSegmentRow(s)
+        );
+
+      }
+    );
 
   }
 
+
+  // ==========================================================
+  // AUTRES SEGMENTS - FERME PAR DEFAUT
+  // ==========================================================
+
+  var toggle =
+    document.createElement("div");
+
+  toggle.style.marginTop = "20px";
+  toggle.style.padding = "16px 10px";
+  toggle.style.cursor = "pointer";
+  toggle.style.borderTop =
+    "1px solid rgba(255,255,255,.12)";
+
+  toggle.style.fontWeight = "600";
+
+  toggle.innerHTML =
+    "▶ AUTRES SEGMENTS (" +
+    otherSegments.length +
+    ")";
+
+
+  var otherBox =
+    document.createElement("div");
+
+  otherBox.style.display = "none";
+
+
+  otherSegments.forEach(
+    function(s) {
+
+      otherBox.appendChild(
+        createSegmentRow(s)
+      );
+
+    }
+  );
+
+
+  toggle.onclick = function() {
+
+    var opened =
+      otherBox.style.display !== "none";
+
+    otherBox.style.display =
+      opened ? "none" : "block";
+
+    toggle.innerHTML =
+      (opened ? "▶" : "▼") +
+      " AUTRES SEGMENTS (" +
+      otherSegments.length +
+      ")";
+
+  };
+
+
+  box.appendChild(toggle);
+  box.appendChild(otherBox);
+
+
+  // ==========================================================
+  // FUSION
+  // ==========================================================
+
+  var mergeBtn =
+    document.createElement("button");
+
+  mergeBtn.type = "button";
+
+  mergeBtn.textContent =
+    "🔀 Fusionner des segments";
+
+  mergeBtn.className = "secondary";
+
+  mergeBtn.style.width = "100%";
+  mergeBtn.style.marginTop = "20px";
+
+  mergeBtn.onclick = function() {
+
+    openSegmentMerge();
+
+  };
+
+  box.appendChild(mergeBtn);
 }
 
 
