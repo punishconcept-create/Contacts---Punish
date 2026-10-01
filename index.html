@@ -2759,27 +2759,73 @@ function openSegmentMerge() {
 
   .withSuccessHandler(function(result) {
 
-    result = result || {};
+  result = result || {};
 
-    status.textContent =
-      "✅ Fusion terminée : " +
-      (result.contacts || 0) +
-      " contact(s) dans « " +
-      (result.name || newName) +
-      " ».";
+  var mergedName = result.name || newName;
+  var mergedCount = Number(result.contacts || 0);
 
-    status.style.color = "#22c55e";
+  status.textContent =
+    "✅ Fusion terminée : " +
+    mergedCount +
+    " contact(s) dans « " +
+    mergedName +
+    " ».";
+
+  status.style.color = "#22c55e";
 
 
-    setTimeout(function() {
+  // Si suppression cochée :
+  // retirer immédiatement les anciens segments de l'affichage
+  if (deleteCheckbox.checked) {
 
-      overlay.remove();
+    APP.segments = APP.segments.filter(function(s) {
+      return selected.indexOf(getSegmentName(s)) === -1;
+    });
 
-      loadApp();
+  }
 
-    }, 1200);
 
-  })
+  // Chercher le segment final dans APP.segments
+  var mergedSegment = null;
+
+  APP.segments.forEach(function(s) {
+
+    if (getSegmentName(s) === mergedName) {
+      mergedSegment = s;
+    }
+
+  });
+
+
+  // Mettre son compteur à jour immédiatement
+  if (mergedSegment) {
+
+    mergedSegment.count = mergedCount;
+    mergedSegment["Nombre d'occurrences dans la base"] = mergedCount;
+
+  } else {
+
+    // Nouveau segment : l'ajouter directement
+    APP.segments.push({
+      name: mergedName,
+      count: mergedCount
+    });
+
+  }
+
+
+  setTimeout(function() {
+
+    overlay.remove();
+
+    renderSegmentPage();
+    renderCampaignSegments();
+
+    setText("segmentsStat", APP.segments.length);
+
+  }, 1200);
+
+})
 
   .withFailureHandler(function(error) {
 
