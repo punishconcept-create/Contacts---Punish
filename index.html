@@ -1951,7 +1951,13 @@
           return;
         }
         el.overlay.style.display = 'none';
-        flushWaitingCalls();
+flushWaitingCalls();
+
+setTimeout(function () {
+  if (typeof loadApp === 'function') {
+    loadApp();
+  }
+}, 100);
       }
     });
 
