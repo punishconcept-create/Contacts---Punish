@@ -5108,12 +5108,15 @@ function crmOpenContact(resource){
     info.textContent = 'Chargement de la fiche...';
   }
 
-  call('crmGetContact', resource)
+  google.script.run
 
-    .then(function(data){
+    .withSuccessHandler(function(data){
 
       if(!data || !data.contact){
-        throw new Error('Aucune fiche contact reçue.');
+        if(info){
+          info.textContent = 'ERREUR : aucune fiche contact reçue.';
+        }
+        return;
       }
 
       const c = data.contact;
@@ -5135,7 +5138,6 @@ function crmOpenContact(resource){
       );
 
       const groups = document.getElementById('crmContactGroups');
-
       groups.replaceChildren();
 
       crmContactGroupsCache.forEach(function(g){
@@ -5178,18 +5180,19 @@ function crmOpenContact(resource){
 
     })
 
-    .catch(function(error){
+    .withFailureHandler(function(error){
 
-      console.error('crmOpenContact', error);
+      console.error('crmGetContact', error);
 
       if(info){
         info.textContent =
           'ERREUR OUVERTURE CONTACT : ' + getError(error);
       }
 
-    });
-}
+    })
 
+    .crmGetContact(resource);
+}
 function crmSaveContact(){
   const groups=[...document.querySelectorAll('#crmContactGroups input[type="checkbox"]:checked')].map(x=>x.value);
   const data={
