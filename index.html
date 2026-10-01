@@ -2660,35 +2660,52 @@ function openSegmentMerge() {
     status.style.color = "#9ca3af";
 
 
-    call(
-  "crmMergeSegments",
-  selected,
-  newName,
-  deleteCheckbox.checked
-)
+    google.script.run
 
-.then(function(result) {
+  .withSuccessHandler(function(result) {
 
-  result = result || {};
+    result = result || {};
 
-  status.textContent =
-    "✅ Fusion terminée : " +
-    (result.contacts || 0) +
-    " contact(s) dans « " +
-    (result.name || newName) +
-    " ».";
+    status.textContent =
+      "✅ Fusion terminée : " +
+      (result.contacts || 0) +
+      " contact(s) dans « " +
+      (result.name || newName) +
+      " ».";
 
-  status.style.color = "#22c55e";
+    status.style.color = "#22c55e";
 
-  setTimeout(function() {
 
-    overlay.remove();
+    setTimeout(function() {
 
-    loadApp();
+      overlay.remove();
 
-  }, 1200);
+      loadApp();
 
-})
+    }, 1200);
+
+  })
+
+  .withFailureHandler(function(error) {
+
+    confirm.disabled = false;
+    cancel.disabled = false;
+
+    confirm.textContent =
+      "Fusionner";
+
+    status.textContent =
+      "❌ " + getError(error);
+
+    status.style.color = "#ef4444";
+
+  })
+
+  .crmMergeSegments(
+    selected,
+    newName,
+    deleteCheckbox.checked
+  );
 
 .catch(function(error) {
 
