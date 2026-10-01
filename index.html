@@ -2442,6 +2442,20 @@ function showPage(id) {
 
 if (navButton) {
   navButton.classList.add("active");
+
+  var navBar = navButton.parentElement;
+
+  if (navBar) {
+    var targetLeft =
+      navButton.offsetLeft -
+      (navBar.clientWidth / 2) +
+      (navButton.offsetWidth / 2);
+
+    navBar.scrollTo({
+      left: Math.max(0, targetLeft),
+      behavior: "smooth"
+    });
+  }
 }
 
 if (id === "import") {
