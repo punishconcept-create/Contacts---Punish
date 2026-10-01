@@ -3137,7 +3137,6 @@ function renderCampaignSegments() {
 
   box.innerHTML = "";
 
-  // Récupérer les mêmes favoris que dans la page Segments
   var favorites = [];
 
   try {
@@ -3148,7 +3147,6 @@ function renderCampaignSegments() {
     favorites = [];
   }
 
-  // Séparer favoris et autres segments
   var favoriteSegments = [];
   var otherSegments = [];
 
@@ -3168,8 +3166,7 @@ function renderCampaignSegments() {
 
   });
 
-
-  function createCampaignSegment(s, favorite) {
+  function addSegment(s, isFavorite) {
 
     var name = getSegmentName(s);
     var count = getSegmentCount(s);
@@ -3177,7 +3174,6 @@ function renderCampaignSegments() {
     var label = document.createElement("label");
 
     label.className = "seg";
-
     label.setAttribute(
       "data-search",
       name.toLowerCase()
@@ -3192,46 +3188,27 @@ function renderCampaignSegments() {
     var txt = document.createElement("span");
 
     txt.textContent =
-      (favorite ? "⭐ " : "") +
+      (isFavorite ? "⭐ " : "") +
       name +
-      " (" +
-      count +
-      ")";
+      " (" + count + ")";
 
     label.appendChild(cb);
     label.appendChild(txt);
 
-    return label;
+    box.appendChild(label);
   }
 
-
-  // =========================
   // FAVORIS EN PREMIER
-  // =========================
-
   favoriteSegments.forEach(function(s) {
-
-    box.appendChild(
-      createCampaignSegment(s, true)
-    );
-
+    addSegment(s, true);
   });
 
-
-  // =========================
-  // AUTRES SEGMENTS
-  // =========================
-
+  // PUIS TOUS LES AUTRES
   otherSegments.forEach(function(s) {
-
-    box.appendChild(
-      createCampaignSegment(s, false)
-    );
-
+    addSegment(s, false);
   });
 
 }
-
 
 
 function filterCampaignSegments() {
