@@ -2446,21 +2446,23 @@ function showPage(id) {
 if (navButton) {
   navButton.classList.add("active");
 
-  var navBar = navButton.parentElement;
+  if (window.innerWidth <= 850) {
+    var navBar = document.querySelector(".nav");
 
-  if (navBar) {
-    var targetLeft =
-      navButton.offsetLeft -
-      (navBar.clientWidth / 2) +
-      (navButton.offsetWidth / 2);
+    if (navBar) {
+      var buttonCenter =
+        navButton.getBoundingClientRect().left +
+        (navButton.offsetWidth / 2);
 
-    navBar.scrollTo({
-      left: Math.max(0, targetLeft),
-      behavior: "auto"
-    });
+      var navCenter =
+        navBar.getBoundingClientRect().left +
+        (navBar.clientWidth / 2);
+
+      navBar.scrollLeft += buttonCenter - navCenter;
+    }
   }
 }
-
+  
 if (id === "import") {
   loadBizoukImporter();
 }
