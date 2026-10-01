@@ -4785,7 +4785,7 @@ function restoreRememberedImport(){
 
 function eventFromFile(name){return String(name||'').replace(/\\.(xls|xlsx|csv)$/i,'').replace(/^bizouk[ _.-]\*forms?[ _.-]\*/i,'').replace(/[ _.-]\*\d+(?:[ _.-]\*\\(\d+\\))?$/i,'').replace(/[_.-]+/g,' ').replace(/\s+/g,' ').trim().replace(/\b\p{L}/gu,c=>c.toLocaleUpperCase())}
 
-$('#file').addEventListener('change',()=>{const name=$('#file').files[0]?.name||'';const suggested=eventFromFile(name);if(!$('#event').value.trim()||$('#event').value=cleanBizoukEventName(file.files[0].name);autoEvent=suggested}});
+$('#file').addEventListener('change',()=>{const name=$('#file').files[0]?.name||'';const suggested=cleanBizoukEventName(name);if(!$('#event').value.trim()||$('#event').value===autoEvent){$('#event').value=suggested;}autoEvent=suggested;});
 
 function busy(on){$('#busy').classList.toggle('hidden',!on);bizRoot.querySelectorAll('button').forEach(b=>b.disabled=on)}
 
