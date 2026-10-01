@@ -5145,7 +5145,12 @@ function openSegmentManager(name){
     message.textContent='';
     renderSegmentMembers();
     panel.scrollIntoView({behavior:'smooth',block:'start'});
-  }).catch(msg);
+  }).catch(function(error){
+  document.getElementById('segmentManagerMessage').textContent =
+    'ERREUR : ' + (error && error.message ? error.message : String(error));
+
+  console.error('SEGMENT ERROR', error);
+});
 }
 
 function renderSegmentMembers(){
