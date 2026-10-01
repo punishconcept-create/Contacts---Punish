@@ -1155,6 +1155,23 @@
       <div class="field">
         <label>Segments / libell&#233;s Google Contacts</label>
         <div id="crmContactGroups" style="display:grid;gap:8px;margin-top:8px;"></div>
+
+<button id="crmToggleOtherGroups"
+        type="button"
+        class="secondary"
+        style="width:100%;margin-top:12px;display:none;">
+  + Ajouter / modifier les segments
+</button>
+
+<div id="crmOtherGroupsBox" class="hidden" style="margin-top:12px;">
+  <input id="crmGroupSearch"
+         type="search"
+         placeholder="Rechercher un segment..."
+         style="margin-bottom:10px;">
+
+  <div id="crmOtherGroups"
+       style="display:grid;gap:8px;"></div>
+</div>
       </div>
 
       <button id="crmContactSave" type="button" class="primary" style="width:100%;">Enregistrer les modifications</button>
@@ -5137,8 +5154,111 @@ function crmOpenContact(resource){
         })
       );
 
-      const groups = document.getElementById('crmContactGroups');
-      groups.replaceChildren();
+     const groups = document.getElementById('crmContactGroups');
+const otherGroups = document.getElementById('crmOtherGroups');
+const otherBox = document.getElementById('crmOtherGroupsBox');
+const toggle = document.getElementById('crmToggleOtherGroups');
+const search = document.getElementById('crmGroupSearch');
+
+groups.replaceChildren();
+otherGroups.replaceChildren();
+
+otherBox.classList.add('hidden');
+search.value = '';
+
+function createGroupCheckbox(g, checked){
+
+  const label = document.createElement('label');
+
+  label.style.display = 'flex';
+  label.style.alignItems = 'center';
+  label.style.gap = '9px';
+  label.style.padding = '9px 0';
+  label.dataset.name = String(g.name || '').toLowerCase();
+
+  const cb = document.createElement('input');
+
+  cb.type = 'checkbox';
+  cb.value = g.resourceName;
+  cb.checked = checked;
+  cb.style.width = 'auto';
+
+  const span = document.createElement('span');
+  span.textContent = g.name || '';
+
+  label.append(cb, span);
+
+  return label;
+}
+
+const currentGroups = crmContactGroupsCache.filter(function(g){
+  return selected.has(g.resourceName);
+});
+
+const availableGroups = crmContactGroupsCache.filter(function(g){
+  return !selected.has(g.resourceName);
+});
+
+currentGroups.forEach(function(g){
+  groups.append(
+    createGroupCheckbox(g, true)
+  );
+});
+
+if(!currentGroups.length){
+
+  const empty = document.createElement('div');
+
+  empty.className = 'muted';
+  empty.textContent = 'Aucun segment actuellement.';
+
+  groups.append(empty);
+}
+
+availableGroups.forEach(function(g){
+  otherGroups.append(
+    createGroupCheckbox(g, false)
+  );
+});
+
+toggle.style.display = availableGroups.length ? 'block' : 'none';
+
+toggle.textContent =
+  '+ Ajouter / modifier les segments (' +
+  availableGroups.length +
+  ')';
+
+toggle.onclick = function(){
+
+  const opening =
+    otherBox.classList.contains('hidden');
+
+  otherBox.classList.toggle('hidden');
+
+  toggle.textContent = opening
+    ? '− Refermer les autres segments'
+    : '+ Ajouter / modifier les segments (' +
+      availableGroups.length +
+      ')';
+};
+
+search.oninput = function(){
+
+  const q = search.value
+    .trim()
+    .toLowerCase();
+
+  otherGroups
+    .querySelectorAll('label')
+    .forEach(function(label){
+
+      label.style.display =
+        !q || label.dataset.name.includes(q)
+          ? 'flex'
+          : 'none';
+
+    });
+};
 
       crmContactGroupsCache.forEach(function(g){
 
@@ -5194,7 +5314,7 @@ function crmOpenContact(resource){
     .crmGetContact(resource);
 }
 function crmSaveContact(){
-  const groups=[...document.querySelectorAll('#crmContactGroups input[type="checkbox"]:checked')].map(x=>x.value);
+  const groups=[...document.querySelectorAll('#crmContactGroups input[type="checkbox"]:checked, #crmOtherGroups input[type="checkbox"]:checked')].map(x=>x.value);
   const data={
     resourceName:document.getElementById('crmContactResource').value,
     first:document.getElementById('crmContactFirst').value,
