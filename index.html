@@ -2177,9 +2177,70 @@ function containsText(text, search) {
 
 function loadBizoukImporter() { return; }
 
+  var pwaBackToHome = false;
+
+window.addEventListener("popstate", function() {
+
+  var activePage = document.querySelector(".page.active");
+
+  // Si on n'est pas sur l'accueil :
+  // Retour Android = revenir à l'accueil
+  if (activePage && activePage.id !== "home") {
+
+    pwaBackToHome = true;
+
+    showPage("home");
+
+    // On remet l'accueil dans l'historique.
+    history.pushState(
+      { punishCrmPage: "home" },
+      "",
+      location.href
+    );
+
+    return;
+  }
+
+  // Si on est déjà sur l'accueil,
+  // on ne bloque pas le retour suivant.
+});
+
+
+// État initial de la PWA
+try {
+
+  history.replaceState(
+    { punishCrmPage: "home" },
+    "",
+    location.href
+  );
+
+  history.pushState(
+    { punishCrmPage: "home" },
+    "",
+    location.href
+  );
+
+} catch (e) {}
+  
 function showPage(id) {
 
+  // Quand l'utilisateur ouvre une rubrique normalement,
+  // on crée un cran permettant au Retour Android
+  // de revenir d'abord à l'accueil.
+  if (id !== "home" && !pwaBackToHome) {
 
+    try {
+      history.pushState(
+        { punishCrmPage: id },
+        "",
+        location.href
+      );
+    } catch (e) {}
+
+  }
+
+  pwaBackToHome = false;
 
   var pages = document.querySelectorAll(".page");
 
