@@ -5099,37 +5099,95 @@ function crmSearchContact(){
 }
 
 function crmOpenContact(resource){
-  call('crmGetContact',resource).then(function(data){
-    const c=data.contact;
-    crmContactGroupsCache=data.groups||[];
-    document.getElementById('crmContactResource').value=c.resourceName||'';
-    document.getElementById('crmContactFirst').value=c.first||'';
-    document.getElementById('crmContactLast').value=c.last||'';
-    document.getElementById('crmContactPhone').value=c.phone||'';
-    document.getElementById('crmContactEmail').value=c.email||'';
-    document.getElementById('crmContactBirth').value=(c.birth||'').replace(/^0000-/,'');
-    const selected=new Set((c.labels||[]).map(x=>x.resourceName));
-    const groups=document.getElementById('crmContactGroups');
-    groups.replaceChildren();
-    crmContactGroupsCache.forEach(function(g){
-      const label=document.createElement('label');
-      label.style.display='flex';
-      label.style.alignItems='center';
-      label.style.gap='9px';
-      const cb=document.createElement('input');
-      cb.type='checkbox';
-      cb.value=g.resourceName;
-      cb.checked=selected.has(g.resourceName);
-      cb.style.width='auto';
-      const span=document.createElement('span');
-      span.textContent=g.name;
-      label.append(cb,span);
-      groups.append(label);
+
+  const info = document.getElementById('crmContactSearchInfo');
+  const editor = document.getElementById('crmContactEditor');
+  const results = document.getElementById('crmContactResults');
+
+  if(info){
+    info.textContent = 'Chargement de la fiche...';
+  }
+
+  call('crmGetContact', resource)
+
+    .then(function(data){
+
+      if(!data || !data.contact){
+        throw new Error('Aucune fiche contact reçue.');
+      }
+
+      const c = data.contact;
+
+      crmContactGroupsCache = data.groups || [];
+
+      document.getElementById('crmContactResource').value = c.resourceName || '';
+      document.getElementById('crmContactFirst').value = c.first || '';
+      document.getElementById('crmContactLast').value = c.last || '';
+      document.getElementById('crmContactPhone').value = c.phone || '';
+      document.getElementById('crmContactEmail').value = c.email || '';
+      document.getElementById('crmContactBirth').value =
+        (c.birth || '').replace(/^0000-/, '');
+
+      const selected = new Set(
+        (c.labels || []).map(function(x){
+          return x.resourceName;
+        })
+      );
+
+      const groups = document.getElementById('crmContactGroups');
+
+      groups.replaceChildren();
+
+      crmContactGroupsCache.forEach(function(g){
+
+        const label = document.createElement('label');
+
+        label.style.display = 'flex';
+        label.style.alignItems = 'center';
+        label.style.gap = '9px';
+
+        const cb = document.createElement('input');
+
+        cb.type = 'checkbox';
+        cb.value = g.resourceName;
+        cb.checked = selected.has(g.resourceName);
+        cb.style.width = 'auto';
+
+        const span = document.createElement('span');
+        span.textContent = g.name || '';
+
+        label.append(cb, span);
+        groups.append(label);
+
+      });
+
+      if(results){
+        results.classList.add('hidden');
+      }
+
+      editor.classList.remove('hidden');
+
+      if(info){
+        info.textContent = '';
+      }
+
+      editor.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+
+    })
+
+    .catch(function(error){
+
+      console.error('crmOpenContact', error);
+
+      if(info){
+        info.textContent =
+          'ERREUR OUVERTURE CONTACT : ' + getError(error);
+      }
+
     });
-    document.getElementById('crmContactResults').classList.add('hidden');
-    document.getElementById('crmContactEditor').classList.remove('hidden');
-    document.getElementById('crmContactEditor').scrollIntoView({behavior:'smooth',block:'start'});
-  }).catch(msg);
 }
 
 function crmSaveContact(){
