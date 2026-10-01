@@ -1013,7 +1013,33 @@
 
 
     <div id="bizoukModule"><div id="busy" class="hidden" role="status">Traitement en cours...</div>
-<section id="start"><h2>Nouvel import</h2><p class="muted">Choisis un fichier Bizouk et son libell&#233;. Les contacts Google seront compar&#233;s au moment de l&#8217;analyse.</p><div class="panel"><div class="field"><label for="file">Fichier Bizouk (.xls, .xlsx, .csv)</label><input id="file" type="file" accept=".xls,.xlsx,.csv"></div><div class="field"><label for="event">Nom de l&#8217;&#233;v&#233;nement</label><input id="event" type="text" placeholder="Rempli automatiquement apr&#232;s choix du fichier" maxlength="100"><p class="small">Tu peux corriger ce nom avant l&#8217;analyse.</p></div><div class="field"><label for="label">Libell&#233; Google Contacts</label><div class="inline"><select id="label"></select><button id="showNewLabel" class="secondary" type="button">+ Nouveau</button></div><div id="newLabelBox" class="hidden" style="margin-top:10px"><label for="newLabel">Nom du nouveau libell&#233;</label><div class="inline"><input id="newLabel" placeholder="L&#8217;Exc&#232;s STDM" maxlength="70"><button id="addLabel" class="secondary" type="button">Cr&#233;er</button></div></div></div><button id="analyse" class="primary">Analyser les contacts</button><p class="small">L&#8217;analyse ne modifie aucun contact.</p></div><details><summary>G&#233;rer les libell&#233;s</summary><div class="panel" id="labelManager"></div></details><details><summary>Imports r&#233;cents</summary><div class="panel"><div id="history" class="history"></div></div></details></section>
+<section id="start"><h2>Nouvel import</h2><p class="muted">Choisis un fichier Bizouk et son libell&#233;. Les contacts Google seront compar&#233;s au moment de l&#8217;analyse.</p><div class="panel"><div class="field"><label for="file">Fichier Bizouk (.xls, .xlsx, .csv)</label><input id="file" type="file" accept=".xls,.xlsx,.csv"></div><div class="field"><label for="event">Nom de l&#8217;&#233;v&#233;nement</label><input id="event" type="text" placeholder="Rempli automatiquement apr&#232;s choix du fichier" maxlength="100"><p class="small">Tu peux corriger ce nom avant l&#8217;analyse.</p></div><div class="field"><label for="label">Libell&#233; Google Contacts</label><div class="inline"><select id="label"></select><button id="showNewLabel" class="secondary" type="button">+ Nouveau</button></div><div id="newLabelBox" class="hidden" style="margin-top:10px"><label for="newLabel">Nom du nouveau libell&#233;</label><div class="inline"><input id="newLabel" placeholder="L&#8217;Exc&#232;s STDM" maxlength="70"><button id="addLabel" class="secondary" type="button">Cr&#233;er</button></div></div></div><button id="analyse" class="primary">Analyser les contacts</button><p class="small">L&#8217;analyse ne modifie aucun contact.</p></div><details><summary>G&#233;rer les libell&#233;s</summary><div class="panel" id="labelManager"></div></details><details>
+  <summary>Imports r&#233;cents</summary>
+
+  <div class="panel">
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+
+      <button
+        id="selectAllImports"
+        type="button"
+        class="secondary">
+        Tout sélectionner
+      </button>
+
+      <button
+        id="deleteSelectedImports"
+        type="button"
+        class="danger">
+        Supprimer la sélection
+      </button>
+
+    </div>
+
+    <div id="history" class="history"></div>
+
+  </div>
+</details>
 
 <section id="review" class="hidden"><h2>Contr&#244;le termin&#233;</h2><p id="context" class="muted"></p><div class="panel"><div class="row"><span>Nouveaux contacts</span><span id="newCount" class="value"></span></div><div class="row"><span>Contacts d&#233;j&#224; pr&#233;sents</span><span id="existingCount" class="value"></span></div><div class="row"><span>Num&#233;ros &#224; remplacer</span><span id="replaceCount" class="value"></span></div><div class="row"><span>&#192; v&#233;rifier</span><span id="reviewCount" class="value"></span></div></div><p id="progress" class="muted"></p><div id="pendingErrors" class="error hidden"></div><p class="notice">Le libell&#233; choisi sera ajout&#233; aux contacts existants sans retirer leurs autres libell&#233;s. Les fiches ambigu&#235;s sont mises de c&#244;t&#233;.</p><details id="reviewDetails"><summary>Voir les fiches &#224; v&#233;rifier</summary><div class="panel"><ul id="reviewList"></ul><button id="chooseReviews" type="button" class="secondary">S&#233;lectionner certaines fiches</button><div class="field"><label for="resolveFile">R&#233;&#233;valuer les num&#233;ros partag&#233;s avec l&#8217;e-mail</label><input id="resolveFile" type="file" accept=".xls,.xlsx,.csv"><button id="recheckReviews" type="button" class="secondary" style="width:100%;margin-top:10px">R&#233;&#233;valuer les fiches</button><p id="recheckResult" class="ok hidden"></p></div><div id="reviewChoices" class="hidden"><p class="small">Chaque case associe uniquement le libell&#233; au contact Google indiqu&#233;. Son nom, son num&#233;ro et sa date restent inchang&#233;s. Les autres fiches restent de c&#244;t&#233;.</p><div id="choiceList"></div><button id="applyReviews" type="button" class="secondary" style="width:100%;margin-top:10px">Ajouter les fiches coch&#233;es au libell&#233;</button><p id="reviewResult" class="ok hidden"></p></div></div></details><details id="manualDetails"><summary>Compl&#233;ter les fiches associ&#233;es manuellement</summary><div class="panel"><p class="small">Choisis le fichier Bizouk pour comparer les informations avant toute modification.</p><input id="manualFile" type="file" accept=".xls,.xlsx,.csv" style="margin-bottom:10px"><button id="loadManual" type="button" class="secondary">Afficher les associations</button><div id="manualList"></div></div></details><button id="apply" class="primary">Appliquer les changements</button><button id="repair" class="secondary" style="width:100%;margin-top:10px">V&#233;rifier et r&#233;parer le libell&#233;</button><p id="repairResult" class="ok hidden"></p><button id="check" class="secondary" style="width:100%;margin-top:10px">V&#233;rifier l&#8217;&#233;tat de l&#8217;import</button><button id="back" class="secondary" style="width:100%;margin-top:10px">Retour</button></section>
 
@@ -5957,9 +5983,207 @@ function renderHomeImports(imports){
   if(!(imports||[]).length)box.innerHTML='<span class="muted">Aucun import pour le moment.</span>';
 }
 
-function displayData(d,selected){$('#label').replaceChildren(...d.labels.map(s=>new Option(s,s)));if(d.labels.includes(selected))$('#label').value=selected;$('#history').replaceChildren(...d.imports.map(i=>{const el=document.createElement('div');el.className='history-item';const title=document.createElement('span');title.textContent=`${readable(i.event)} \u00b7 ${readable(i.label)} \u00b7 ${readable(i.status)}`;el.append(title);const open=document.createElement('button');open.type='button';open.className='secondary';open.textContent='Ouvrir';open.onclick=()=>call('getImport',i.id).then(render).catch(msg);el.append(open);if(i.status==='\u00c0 valider'){const del=document.createElement('button');del.type='button';del.className='secondary';del.textContent='Supprimer';del.onclick=()=>{const confirm=document.createElement('button');confirm.type='button';confirm.className='secondary';confirm.textContent='Confirmer la suppression';confirm.onclick=()=>call('deletePendingImport',i.id).then(x=>displayData(x,$('#label').value)).catch(msg);el.replaceChild(confirm,del)};el.append(del)}return el}));if(!d.imports.length)$('#history').textContent='Aucun import pour le moment.';renderHomeImports(d.imports);renderLabels(d.labels)}
+function displayData(d, selected) {
 
-function bootstrap(){
+  $('#label').replaceChildren(
+    ...d.labels.map(function(s) {
+      return new Option(s, s);
+    })
+  );
+
+  if (d.labels.includes(selected)) {
+    $('#label').value = selected;
+  }
+
+  var history = $('#history');
+
+  history.replaceChildren();
+
+  (d.imports || []).forEach(function(i) {
+
+    var el = document.createElement('div');
+
+    el.className = 'history-item';
+
+
+    /* CASE DE SELECTION */
+
+    var check = document.createElement('input');
+
+    check.type = 'checkbox';
+    check.className = 'import-select';
+    check.value = i.id;
+
+    check.style.width = '20px';
+    check.style.height = '20px';
+    check.style.flex = '0 0 auto';
+
+
+    /* TITRE */
+
+    var title = document.createElement('span');
+
+    title.style.flex = '1';
+
+    title.textContent =
+      readable(i.event) +
+      ' · ' +
+      readable(i.label) +
+      ' · ' +
+      readable(i.status);
+
+
+    /* OUVRIR */
+
+    var open = document.createElement('button');
+
+    open.type = 'button';
+    open.className = 'secondary';
+    open.textContent = 'Ouvrir';
+
+    open.onclick = function() {
+
+      call('getImport', i.id)
+        .then(function(r) {
+
+          if (
+            r.status === 'Terminé' &&
+            !(r.review?.length || r.counts?.review)
+          ) {
+            done(r);
+          } else {
+            render(r);
+          }
+
+        })
+        .catch(msg);
+
+    };
+
+
+    el.append(check);
+    el.append(title);
+    el.append(open);
+
+    history.append(el);
+
+  });
+
+
+  if (!(d.imports || []).length) {
+
+    history.innerHTML =
+      '<span class="muted">Aucun import pour le moment.</span>';
+
+  }
+
+
+  renderHomeImports(d.imports);
+  renderLabels(d.labels);
+
+}
+
+  $('#selectAllImports').onclick = function() {
+
+  var checks =
+    bizRoot.querySelectorAll('.import-select');
+
+  var allSelected = true;
+
+  checks.forEach(function(cb) {
+
+    if (!cb.checked) {
+      allSelected = false;
+    }
+
+  });
+
+  checks.forEach(function(cb) {
+    cb.checked = !allSelected;
+  });
+
+  this.textContent =
+    allSelected
+      ? 'Tout sélectionner'
+      : 'Tout désélectionner';
+
+};
+
+
+$('#deleteSelectedImports').onclick = function() {
+
+  var selected = [];
+
+  bizRoot
+    .querySelectorAll('.import-select:checked')
+    .forEach(function(cb) {
+
+      selected.push(cb.value);
+
+    });
+
+
+  if (!selected.length) {
+
+    msg({
+      message: 'Sélectionne au moins un import.'
+    });
+
+    return;
+  }
+
+
+  var button = this;
+
+
+  /* PREMIER CLIC */
+
+  if (button.textContent !== 'Confirmer la suppression') {
+
+    button.textContent =
+      'Confirmer la suppression';
+
+    return;
+  }
+
+
+  button.disabled = true;
+  button.textContent = 'Suppression...';
+
+
+  call('deleteImports', selected)
+
+    .then(function(d) {
+
+      rememberImport('');
+
+      displayData(
+        d,
+        $('#label').value
+      );
+
+      button.disabled = false;
+      button.textContent =
+        'Supprimer la sélection';
+
+      $('#selectAllImports').textContent =
+        'Tout sélectionner';
+
+    })
+
+    .catch(function(e) {
+
+      button.disabled = false;
+      button.textContent =
+        'Supprimer la sélection';
+
+      msg(e);
+
+    });
+
+};
+  
+  function bootstrap(){
   const selected=$('#label').value;
   call('bootstrap')
     .then(d=>{
