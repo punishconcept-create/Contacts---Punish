@@ -770,6 +770,10 @@
   border-radius:8px;padding:9px 12px;margin-right:10px
 }
 #bizoukModule details>.panel{background:#15191f!important}
+
+/* CRM contact visibility */
+#crmContactResults.hidden,
+#crmContactEditor.hidden { display:none !important; }
 </style>
 
 </head>
@@ -1064,7 +1068,7 @@
       <h2>&#128101; Gestion des contacts</h2>
       <p class="muted">Recherche directement dans Google Contacts puis ouvre une fiche pour la modifier.</p>
       <div class="field">
-        <label for="crmContactSearch">Nom, prÃ©nom, tÃ©lÃ©phone ou e-mail</label>
+        <label for="crmContactSearch">Nom, pr&#233;nom, t&#233;l&#233;phone ou e-mail</label>
         <div class="inline">
           <input id="crmContactSearch" type="search" placeholder="Ex. Dimitri, 06..., nom@email.fr" autocomplete="off">
           <button id="crmContactSearchBtn" type="button" class="primary">Rechercher</button>
@@ -1083,14 +1087,14 @@
 
       <input id="crmContactResource" type="hidden">
 
-      <div class="field"><label for="crmContactFirst">PrÃ©nom</label><input id="crmContactFirst"></div>
+      <div class="field"><label for="crmContactFirst">Pr&#233;nom</label><input id="crmContactFirst"></div>
       <div class="field"><label for="crmContactLast">Nom</label><input id="crmContactLast"></div>
-      <div class="field"><label for="crmContactPhone">TÃ©lÃ©phone</label><input id="crmContactPhone" inputmode="tel"></div>
+      <div class="field"><label for="crmContactPhone">T&#233;l&#233;phone</label><input id="crmContactPhone" inputmode="tel"></div>
       <div class="field"><label for="crmContactEmail">E-mail</label><input id="crmContactEmail" type="email"></div>
       <div class="field"><label for="crmContactBirth">Date de naissance</label><input id="crmContactBirth" type="date"></div>
 
       <div class="field">
-        <label>Segments / libellÃ©s Google Contacts</label>
+        <label>Segments / libell&#233;s Google Contacts</label>
         <div id="crmContactGroups" style="display:grid;gap:8px;margin-top:8px;"></div>
       </div>
 
@@ -4975,7 +4979,7 @@ function crmRenderContactResults(data){
   crmContactGroupsCache=data.groups||[];
   box.replaceChildren();
   const list=data.contacts||[];
-  info.textContent=list.length ? `${list.length} rÃ©sultat(s)` : 'Aucun contact trouvÃ©.';
+  info.textContent=list.length ? `${list.length} r\u00e9sultat(s)` : 'Aucun contact trouv\u00e9.';
   if(!list.length){ box.classList.add('hidden'); return; }
   list.forEach(function(c){
     const row=document.createElement('div');
@@ -5006,7 +5010,7 @@ function crmRenderContactResults(data){
 function crmSearchContact(){
   const q=document.getElementById('crmContactSearch').value.trim();
   const info=document.getElementById('crmContactSearchInfo');
-  if(q.length<2){info.textContent='Saisis au moins 2 caractÃ¨res.';return;}
+  if(q.length<2){info.textContent='Saisis au moins 2 caract\u00e8res.';return;}
   info.textContent='Recherche...';
   call('crmSearchContacts',q).then(crmRenderContactResults).catch(function(e){
     info.textContent='';
@@ -5063,7 +5067,7 @@ function crmSaveContact(){
   result.textContent='Enregistrement...';
   result.classList.remove('hidden');
   call('crmSaveContact',data).then(function(){
-    result.textContent='Contact mis Ã  jour dans Google Contacts.';
+    result.textContent='Contact mis \u00e0 jour dans Google Contacts.';
     crmSearchContact();
   }).catch(msg);
 }
@@ -5075,7 +5079,7 @@ function crmDeleteContact(){
   if(document.getElementById('crmContactDelete').dataset.confirm!=='1'){
     document.getElementById('crmContactDelete').dataset.confirm='1';
     document.getElementById('crmContactDelete').textContent='Confirmer la suppression';
-    result.textContent='Appuie une seconde fois pour supprimer dÃ©finitivement ce contact.';
+    result.textContent='Appuie une seconde fois pour supprimer d\u00e9finitivement ce contact.';
     result.classList.remove('hidden');
     return;
   }
