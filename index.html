@@ -2242,7 +2242,483 @@ function loadApp() {
 
 }
 
+function openSegmentMerge() {
 
+  var selectedNames = {};
+
+  // =========================
+  // FOND DE LA FENÊTRE
+  // =========================
+
+  var overlay = document.createElement("div");
+
+  overlay.style.position = "fixed";
+  overlay.style.inset = "0";
+  overlay.style.background = "rgba(0,0,0,.82)";
+  overlay.style.zIndex = "99999";
+  overlay.style.display = "flex";
+  overlay.style.alignItems = "center";
+  overlay.style.justifyContent = "center";
+  overlay.style.padding = "20px";
+
+
+  // =========================
+  // FENÊTRE
+  // =========================
+
+  var modal = document.createElement("div");
+
+  modal.style.width = "min(600px,100%)";
+  modal.style.maxHeight = "90vh";
+  modal.style.overflowY = "auto";
+  modal.style.background = "#15191f";
+  modal.style.border = "1px solid #343b46";
+  modal.style.borderRadius = "18px";
+  modal.style.padding = "22px";
+  modal.style.color = "#fff";
+
+
+  // =========================
+  // TITRE
+  // =========================
+
+  var title = document.createElement("h2");
+
+  title.textContent = "🔀 Fusionner des segments";
+  title.style.marginTop = "0";
+
+  modal.appendChild(title);
+
+
+  var intro = document.createElement("p");
+
+  intro.textContent =
+    "Sélectionne au moins 2 segments. Les contacts en double ne seront ajoutés qu’une seule fois.";
+
+  intro.style.color = "#9ca3af";
+  intro.style.fontSize = "14px";
+
+  modal.appendChild(intro);
+
+
+  // =========================
+  // RECHERCHE
+  // =========================
+
+  var search = document.createElement("input");
+
+  search.type = "search";
+  search.placeholder = "Rechercher un segment...";
+  search.style.marginBottom = "12px";
+
+  modal.appendChild(search);
+
+
+  // =========================
+  // LISTE
+  // =========================
+
+  var list = document.createElement("div");
+
+  list.style.maxHeight = "300px";
+  list.style.overflowY = "auto";
+  list.style.border = "1px solid #2b313b";
+  list.style.borderRadius = "10px";
+  list.style.padding = "6px";
+
+  modal.appendChild(list);
+
+
+  function drawList(query) {
+
+    query = String(query || "")
+      .trim()
+      .toLowerCase();
+
+    list.innerHTML = "";
+
+    APP.segments.forEach(function(s) {
+
+      var name = getSegmentName(s);
+
+      if (!name) {
+        return;
+      }
+
+      if (
+        query &&
+        name.toLowerCase().indexOf(query) === -1
+      ) {
+        return;
+      }
+
+
+      var row = document.createElement("label");
+
+      row.style.display = "flex";
+      row.style.alignItems = "center";
+      row.style.gap = "12px";
+      row.style.padding = "11px 8px";
+      row.style.cursor = "pointer";
+      row.style.borderBottom =
+        "1px solid rgba(255,255,255,.08)";
+
+
+      var checkbox =
+        document.createElement("input");
+
+      checkbox.type = "checkbox";
+      checkbox.value = name;
+
+      checkbox.style.width = "20px";
+      checkbox.style.height = "20px";
+      checkbox.style.flexShrink = "0";
+
+
+      // Conserver la sélection pendant une recherche
+      checkbox.checked =
+        !!selectedNames[name];
+
+
+      checkbox.onchange = function() {
+
+        if (checkbox.checked) {
+
+          selectedNames[name] = true;
+
+        } else {
+
+          delete selectedNames[name];
+
+        }
+
+        updateSelectionCount();
+      };
+
+
+      var text = document.createElement("span");
+
+      text.style.flex = "1";
+      text.textContent = name;
+
+
+      var count = document.createElement("strong");
+
+      count.textContent =
+        getSegmentCount(s);
+
+      count.style.color = "#d4af37";
+
+
+      row.appendChild(checkbox);
+      row.appendChild(text);
+      row.appendChild(count);
+
+      list.appendChild(row);
+
+    });
+
+  }
+
+
+  // =========================
+  // COMPTEUR SÉLECTION
+  // =========================
+
+  var selectionInfo =
+    document.createElement("div");
+
+  selectionInfo.style.marginTop = "10px";
+  selectionInfo.style.fontSize = "13px";
+  selectionInfo.style.color = "#d4af37";
+
+  modal.appendChild(selectionInfo);
+
+
+  function updateSelectionCount() {
+
+    var total =
+      Object.keys(selectedNames).length;
+
+    selectionInfo.textContent =
+      total +
+      " segment" +
+      (total > 1 ? "s" : "") +
+      " sélectionné" +
+      (total > 1 ? "s" : "");
+
+  }
+
+
+  search.oninput = function() {
+
+    drawList(search.value);
+
+  };
+
+
+  drawList("");
+  updateSelectionCount();
+
+
+  // =========================
+  // NOM DU SEGMENT FINAL
+  // =========================
+
+  var nameLabel =
+    document.createElement("label");
+
+  nameLabel.textContent =
+    "Nom du segment final";
+
+  nameLabel.style.marginTop = "18px";
+
+  modal.appendChild(nameLabel);
+
+
+  var finalName =
+    document.createElement("input");
+
+  finalName.type = "text";
+  finalName.placeholder =
+    "Ex. Clients Punish";
+
+  modal.appendChild(finalName);
+
+
+  // =========================
+  // SUPPRESSION DES SOURCES
+  // =========================
+
+  var deleteLabel =
+    document.createElement("label");
+
+  deleteLabel.style.display = "flex";
+  deleteLabel.style.alignItems = "center";
+  deleteLabel.style.gap = "10px";
+  deleteLabel.style.marginTop = "18px";
+  deleteLabel.style.cursor = "pointer";
+
+
+  var deleteCheckbox =
+    document.createElement("input");
+
+  deleteCheckbox.type = "checkbox";
+
+  deleteCheckbox.style.width = "20px";
+  deleteCheckbox.style.height = "20px";
+
+
+  var deleteText =
+    document.createElement("span");
+
+  deleteText.textContent =
+    "Supprimer les anciens segments après la fusion";
+
+
+  deleteLabel.appendChild(deleteCheckbox);
+  deleteLabel.appendChild(deleteText);
+
+  modal.appendChild(deleteLabel);
+
+
+  var warning =
+    document.createElement("p");
+
+  warning.textContent =
+    "Les contacts eux-mêmes ne seront pas supprimés.";
+
+  warning.style.fontSize = "12px";
+  warning.style.color = "#9ca3af";
+  warning.style.marginTop = "6px";
+
+  modal.appendChild(warning);
+
+
+  // =========================
+  // STATUS
+  // =========================
+
+  var status =
+    document.createElement("div");
+
+  status.style.minHeight = "22px";
+  status.style.marginTop = "15px";
+  status.style.fontSize = "14px";
+
+  modal.appendChild(status);
+
+
+  // =========================
+  // BOUTONS
+  // =========================
+
+  var buttons =
+    document.createElement("div");
+
+  buttons.style.display = "flex";
+  buttons.style.gap = "10px";
+  buttons.style.marginTop = "15px";
+
+
+  var cancel =
+    document.createElement("button");
+
+  cancel.type = "button";
+  cancel.className = "secondary";
+  cancel.textContent = "Annuler";
+  cancel.style.flex = "1";
+
+
+  var confirm =
+    document.createElement("button");
+
+  confirm.type = "button";
+  confirm.className = "gold";
+  confirm.textContent = "Fusionner";
+  confirm.style.flex = "1";
+
+
+  buttons.appendChild(cancel);
+  buttons.appendChild(confirm);
+
+  modal.appendChild(buttons);
+
+
+  // =========================
+  // ANNULER
+  // =========================
+
+  cancel.onclick = function() {
+
+    overlay.remove();
+
+  };
+
+
+  // =========================
+  // FUSIONNER
+  // =========================
+
+  confirm.onclick = function() {
+
+    var selected =
+      Object.keys(selectedNames);
+
+    var newName =
+      finalName.value.trim();
+
+
+    if (selected.length < 2) {
+
+      status.textContent =
+        "⚠️ Sélectionne au moins 2 segments.";
+
+      status.style.color = "#f59e0b";
+
+      return;
+    }
+
+
+    if (!newName) {
+
+      status.textContent =
+        "⚠️ Indique le nom du segment final.";
+
+      status.style.color = "#f59e0b";
+
+      return;
+    }
+
+
+    if (deleteCheckbox.checked) {
+
+      var ok = window.confirm(
+        "Les " +
+        selected.length +
+        " segments sélectionnés seront fusionnés dans « " +
+        newName +
+        " » puis les anciens segments seront supprimés.\n\nContinuer ?"
+      );
+
+      if (!ok) {
+        return;
+      }
+
+    }
+
+
+    confirm.disabled = true;
+    cancel.disabled = true;
+
+    confirm.textContent =
+      "Fusion en cours...";
+
+    status.textContent =
+      "Fusion des contacts en cours...";
+
+    status.style.color = "#9ca3af";
+
+
+    google.script.run
+
+      .withSuccessHandler(function(result) {
+
+        result = result || {};
+
+        status.textContent =
+          "✅ Fusion terminée : " +
+          (result.contacts || 0) +
+          " contact(s) dans « " +
+          (result.name || newName) +
+          " ».";
+
+        status.style.color = "#22c55e";
+
+
+        setTimeout(function() {
+
+          overlay.remove();
+
+          loadApp();
+
+        }, 1200);
+
+      })
+
+      .withFailureHandler(function(error) {
+
+        confirm.disabled = false;
+        cancel.disabled = false;
+
+        confirm.textContent =
+          "Fusionner";
+
+        status.textContent =
+          "❌ " + getError(error);
+
+        status.style.color = "#ef4444";
+
+      })
+
+      .crmMergeSegments(
+        selected,
+        newName,
+        deleteCheckbox.checked
+      );
+
+  };
+
+
+  // =========================
+  // AFFICHAGE
+  // =========================
+
+  overlay.appendChild(modal);
+
+  document.body.appendChild(overlay);
+
+}
 
 
 
@@ -2673,21 +3149,7 @@ star.style.color =
   // on ne recharge PAS la liste ici.
   // Le segment reste donc à sa place pendant la sélection.
 };
-AVANT
 
-function renderSegmentPage() {
-   ...
-}
-
-function openSegmentMerge() {
-
-  alert(
-    "Sélection multiple des segments : prochaine étape."
-  );
-
-}
-
-... suite de ton code
 
     // -----------------------------
     // NOM
