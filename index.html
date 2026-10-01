@@ -774,6 +774,11 @@
 /* CRM contact visibility */
 #crmContactResults.hidden,
 #crmContactEditor.hidden { display:none !important; }
+
+#segmentManager.hidden,#segmentAddBox.hidden{display:none!important}
+.segment-member{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.segment-member input[type="checkbox"]{width:auto}
+.segment-member-main{flex:1;min-width:0}
 </style>
 
 </head>
@@ -1113,43 +1118,61 @@
 
 
   <section id="segmentsPage" class="page">
-
-
-
     <div class="panel">
-
-
-
       <h2>&#127991;&#65039; Segments</h2>
-
-
-
-      <input
-
-        id="segmentPageSearch"
-
-        type="search"
-
-        placeholder="&#128270; Rechercher un segment..."
-
-        oninput="renderSegmentPage()"
-
-      >
-
-
-
-      <div id="segmentPageList"
-
-           style="margin-top:15px">
-
-      </div>
-
-
-
+      <input id="segmentPageSearch" type="search"
+             placeholder="&#128270; Rechercher un segment..."
+             oninput="renderSegmentPage()">
+      <div id="segmentPageList" style="margin-top:15px"></div>
     </div>
 
+    <div id="segmentManager" class="panel hidden">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+        <h3 id="segmentManagerTitle" style="margin:0">Segment</h3>
+        <button id="segmentManagerClose" class="secondary" type="button">Fermer</button>
+      </div>
 
+      <input id="segmentResource" type="hidden">
 
+      <div class="field">
+        <label>Nom du segment</label>
+        <div class="inline">
+          <input id="segmentRename">
+          <button id="segmentRenameBtn" class="secondary" type="button">Renommer</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Rechercher dans ce segment</label>
+        <input id="segmentMemberSearch" type="search"
+               placeholder="Nom, pr&#233;nom, t&#233;l&#233;phone...">
+      </div>
+
+      <button id="segmentRemoveSelected" class="secondary" type="button">
+        Retirer les contacts s&#233;lectionn&#233;s
+      </button>
+
+      <button id="segmentAddToggle" class="secondary" type="button" style="margin-left:6px">
+        + Ajouter un contact
+      </button>
+
+      <div id="segmentMembers" style="margin-top:12px"></div>
+
+      <div id="segmentAddBox" class="hidden" style="margin-top:18px">
+        <h4>Ajouter un contact</h4>
+        <div class="inline">
+          <input id="segmentAddSearch" type="search" placeholder="Nom, t&#233;l&#233;phone ou e-mail">
+          <button id="segmentAddSearchBtn" class="secondary" type="button">Rechercher</button>
+        </div>
+        <div id="segmentAddResults" style="margin-top:10px"></div>
+      </div>
+
+      <button id="segmentDeleteBtn" class="secondary" type="button"
+              style="width:100%;margin-top:18px">
+        Supprimer ce segment
+      </button>
+      <p id="segmentManagerMessage" class="small"></p>
+    </div>
   </section>
 
 
@@ -2560,6 +2583,9 @@ function renderSegmentPage() {
 
 
     row.className = "segment-row";
+
+    row.style.cursor = "pointer";
+    row.onclick = (function(n){ return function(){ openSegmentManager(n); }; })(segmentName);
 
 
 
@@ -5096,6 +5122,121 @@ document.getElementById('crmContactSearch').addEventListener('keydown',function(
 document.getElementById('crmContactClose').onclick=function(){document.getElementById('crmContactEditor').classList.add('hidden');};
 document.getElementById('crmContactSave').onclick=crmSaveContact;
 document.getElementById('crmContactDelete').onclick=crmDeleteContact;
+
+
+
+/* ===== GESTION COMPLETE DES SEGMENTS ===== */
+let currentSegment=null;
+let currentSegmentMembers=[];
+
+function openSegmentManager(name){
+  const panel=document.getElementById('segmentManager');
+  const message=document.getElementById('segmentManagerMessage');
+  panel.classList.remove('hidden');
+  message.textContent='Chargement...';
+  call('crmGetSegmentByName',name).then(function(seg){
+    currentSegment=seg;
+    currentSegmentMembers=seg.contacts||[];
+    document.getElementById('segmentResource').value=seg.resourceName;
+    document.getElementById('segmentRename').value=seg.name;
+    document.getElementById('segmentManagerTitle').textContent=seg.name+' Â· '+seg.count;
+    document.getElementById('segmentMemberSearch').value='';
+    document.getElementById('segmentAddBox').classList.add('hidden');
+    message.textContent='';
+    renderSegmentMembers();
+    panel.scrollIntoView({behavior:'smooth',block:'start'});
+  }).catch(msg);
+}
+
+function renderSegmentMembers(){
+  const box=document.getElementById('segmentMembers');
+  const q=document.getElementById('segmentMemberSearch').value.trim().toLowerCase();
+  box.replaceChildren();
+  const rows=currentSegmentMembers.filter(function(c){
+    return !q || [c.first,c.last,c.phone,c.email].join(' ').toLowerCase().includes(q);
+  });
+  if(!rows.length){box.innerHTML='<span class="muted">Aucun contact.</span>';return;}
+  rows.forEach(function(c){
+    const row=document.createElement('div'); row.className='segment-member';
+    const cb=document.createElement('input'); cb.type='checkbox'; cb.value=c.resourceName; cb.className='seg-check';
+    const main=document.createElement('div'); main.className='segment-member-main';
+    const strong=document.createElement('strong'); strong.textContent=((c.first||'')+' '+(c.last||'')).trim()||'Sans nom';
+    const sub=document.createElement('div'); sub.className='small'; sub.textContent=[c.phone,c.email].filter(Boolean).join(' Â· ');
+    main.append(strong,sub);
+    const open=document.createElement('button'); open.className='secondary'; open.type='button'; open.textContent='Ouvrir';
+    open.onclick=function(e){e.stopPropagation();showPage('contacts');crmOpenContact(c.resourceName);};
+    row.append(cb,main,open); box.append(row);
+  });
+}
+
+document.getElementById('segmentManagerClose').onclick=function(){document.getElementById('segmentManager').classList.add('hidden');};
+document.getElementById('segmentMemberSearch').addEventListener('input',renderSegmentMembers);
+
+document.getElementById('segmentRemoveSelected').onclick=function(){
+  const refs=[...document.querySelectorAll('.seg-check:checked')].map(x=>x.value);
+  if(!refs.length){document.getElementById('segmentManagerMessage').textContent='SÃ©lectionne au moins un contact.';return;}
+  call('crmRemoveSegmentMembers',document.getElementById('segmentResource').value,refs).then(function(seg){
+    currentSegment=seg; currentSegmentMembers=seg.contacts||[];
+    document.getElementById('segmentManagerTitle').textContent=seg.name+' Â· '+seg.count;
+    document.getElementById('segmentManagerMessage').textContent=refs.length+' contact(s) retirÃ©(s) du segment.';
+    renderSegmentMembers(); bootstrap();
+  }).catch(msg);
+};
+
+document.getElementById('segmentRenameBtn').onclick=function(){
+  const rn=document.getElementById('segmentResource').value;
+  const name=document.getElementById('segmentRename').value.trim();
+  call('crmRenameSegment',rn,name).then(function(){
+    document.getElementById('segmentManagerTitle').textContent=name+' Â· '+currentSegmentMembers.length;
+    document.getElementById('segmentManagerMessage').textContent='Segment renommÃ©.';
+    bootstrap();
+  }).catch(msg);
+};
+
+document.getElementById('segmentAddToggle').onclick=function(){document.getElementById('segmentAddBox').classList.toggle('hidden');};
+
+function searchSegmentAdd(){
+  const q=document.getElementById('segmentAddSearch').value.trim();
+  if(q.length<2)return;
+  const box=document.getElementById('segmentAddResults');
+  box.innerHTML='<span class="muted">Recherche...</span>';
+  call('crmSearchContacts',q).then(function(data){
+    box.replaceChildren();
+    (data.contacts||[]).forEach(function(c){
+      const row=document.createElement('div'); row.className='segment-member';
+      const main=document.createElement('div'); main.className='segment-member-main';
+      const strong=document.createElement('strong'); strong.textContent=((c.first||'')+' '+(c.last||'')).trim()||'Sans nom';
+      const sub=document.createElement('div'); sub.className='small'; sub.textContent=[c.phone,c.email].filter(Boolean).join(' Â· ');
+      main.append(strong,sub);
+      const add=document.createElement('button'); add.type='button'; add.className='secondary'; add.textContent='Ajouter';
+      add.onclick=function(){
+        call('crmAddSegmentMembers',document.getElementById('segmentResource').value,[c.resourceName]).then(function(seg){
+          currentSegment=seg; currentSegmentMembers=seg.contacts||[];
+          document.getElementById('segmentManagerTitle').textContent=seg.name+' Â· '+seg.count;
+          renderSegmentMembers(); add.textContent='AjoutÃ©'; add.disabled=true; bootstrap();
+        }).catch(msg);
+      };
+      row.append(main,add); box.append(row);
+    });
+  }).catch(msg);
+}
+document.getElementById('segmentAddSearchBtn').onclick=searchSegmentAdd;
+document.getElementById('segmentAddSearch').addEventListener('keydown',function(e){if(e.key==='Enter')searchSegmentAdd();});
+
+document.getElementById('segmentDeleteBtn').onclick=function(){
+  const btn=this;
+  if(btn.dataset.confirm!=='1'){
+    btn.dataset.confirm='1';
+    btn.textContent='Confirmer la suppression du segment';
+    document.getElementById('segmentManagerMessage').textContent='Les contacts seront conservÃ©s dans Google Contacts.';
+    return;
+  }
+  call('crmDeleteSegment',document.getElementById('segmentResource').value).then(function(){
+    document.getElementById('segmentManager').classList.add('hidden');
+    btn.dataset.confirm=''; btn.textContent='Supprimer ce segment';
+    bootstrap();
+  }).catch(msg);
+};
 
 </script>
 
