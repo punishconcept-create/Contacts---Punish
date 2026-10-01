@@ -1054,21 +1054,16 @@
 
 
     <div class="panel">
-
-
-
-      <h3>&#201;v&#233;nements enregistr&#233;s</h3>
-
-
-
-      <div id="homeEvents" class="event-list">
-
-        <span class="muted">Chargement...</span>
-
+      <div id="homeEventsToggle"
+           onclick="toggleHomeEvents()"
+           style="display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;user-select:none;">
+        <h3 style="margin:0;">&#201;v&#233;nements enregistr&#233;s</h3>
+        <span id="homeEventsArrow" style="font-size:18px;color:var(--gold);">&#9654;</span>
       </div>
 
-
-
+      <div id="homeEvents" class="event-list" style="display:none;margin-top:16px;">
+        <span class="muted">Chargement...</span>
+      </div>
     </div>
 
 
@@ -1853,7 +1848,7 @@
     }
 
     if (!window.google?.accounts?.oauth2) {
-      el.info.textContent = 'Connexion Google indisponible. VÃƒÂ©rifie le rÃƒÂ©seau.';
+      el.info.textContent = 'Connexion Google indisponible. VÃƒÆ’Ã‚Â©rifie le rÃƒÆ’Ã‚Â©seau.';
       return null;
     }
 
@@ -1864,12 +1859,12 @@
       scope: scopes.join(' '),
       callback: result => {
         if (result.error) {
-          el.info.textContent = 'Connexion Google refusÃƒÂ©e ou interrompue.';
+          el.info.textContent = 'Connexion Google refusÃƒÆ’Ã‚Â©e ou interrompue.';
           return;
         }
         accessToken = result.access_token || '';
         if (!accessToken) {
-          el.info.textContent = 'Aucun jeton Google reÃƒÂ§u.';
+          el.info.textContent = 'Aucun jeton Google reÃƒÆ’Ã‚Â§u.';
           return;
         }
         el.overlay.style.display = 'none';
@@ -1912,11 +1907,11 @@
       if (!window.google?.accounts?.oauth2 && ++attempts < 30) return;
       clearInterval(timer);
       if (!window.google?.accounts?.oauth2) {
-        el.info.textContent = 'Appuie sur Ã‚Â« Se connecter avec Google Ã‚Â».';
+        el.info.textContent = 'Appuie sur Ãƒâ€šÃ‚Â« Se connecter avec Google Ãƒâ€šÃ‚Â».';
         return;
       }
       try { requestLogin('none'); }
-      catch (_) { el.info.textContent = 'Appuie sur Ã‚Â« Se connecter avec Google Ã‚Â». '; }
+      catch (_) { el.info.textContent = 'Appuie sur Ãƒâ€šÃ‚Â« Se connecter avec Google Ãƒâ€šÃ‚Â». '; }
     }, 250);
   });
 
@@ -2762,6 +2757,20 @@ function previewTarget() {
 
 \========================= */
 
+
+
+function toggleHomeEvents() {
+  var box = document.getElementById("homeEvents");
+  var arrow = document.getElementById("homeEventsArrow");
+  if (!box) return;
+
+  var opening = box.style.display === "none" || box.style.display === "";
+  box.style.display = opening ? "grid" : "none";
+
+  if (arrow) {
+    arrow.innerHTML = opening ? "&#9660;" : "&#9654;";
+  }
+}
 
 
 function createEvent() {
@@ -4772,7 +4781,7 @@ function restoreRememberedImport(){
   return call('getImport',id).then(r=>{
     if(!r){rememberImport('');return false}
     current=r;
-    if(r.status==='TerminÃ©'||r.remaining===0){
+    if(r.status==='TerminÃƒÂ©'||r.remaining===0){
       done(r);
       rememberImport('');
     }else{
@@ -4780,7 +4789,7 @@ function restoreRememberedImport(){
     }
     return true;
   }).catch(()=>{
-    /* On garde l'ID : une reconnexion ultÃ©rieure pourra reprendre. */
+    /* On garde l'ID : une reconnexion ultÃƒÂ©rieure pourra reprendre. */
     return false;
   });
 }
