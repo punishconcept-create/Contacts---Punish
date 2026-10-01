@@ -2440,9 +2440,18 @@ function showPage(id) {
 
 
 
-  if (navButton) {
+ if (navButton) {
 
-    navButton.classList.add("active");
+  navButton.classList.add("active");
+
+  // Faire suivre automatiquement la barre des onglets
+  navButton.scrollIntoView({
+    behavior: "smooth",
+    block: "nearest",
+    inline: "center"
+  });
+
+}
 
   }
 
