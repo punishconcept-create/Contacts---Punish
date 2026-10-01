@@ -1150,7 +1150,12 @@
       <div class="field"><label for="crmContactLast">Nom</label><input id="crmContactLast"></div>
       <div class="field"><label for="crmContactPhone">T&#233;l&#233;phone</label><input id="crmContactPhone" inputmode="tel"></div>
       <div class="field"><label for="crmContactEmail">E-mail</label><input id="crmContactEmail" type="email"></div>
-      <div class="field"><label for="crmContactBirth">Date de naissance</label><input id="crmContactBirth" type="date"></div>
+      <div class="field"><label for="crmContactBirth">Date de naissance</label><input id="crmContactBirth"
+       type="text"
+       inputmode="numeric"
+       placeholder="JJ/MM/AAAA"
+       maxlength="10"
+       autocomplete="off">
 
       <div class="field">
         <label>Segments / libell&#233;s Google Contacts</label>
@@ -5145,8 +5150,22 @@ function crmOpenContact(resource){
       document.getElementById('crmContactLast').value = c.last || '';
       document.getElementById('crmContactPhone').value = c.phone || '';
       document.getElementById('crmContactEmail').value = c.email || '';
-      document.getElementById('crmContactBirth').value =
-        (c.birth || '').replace(/^0000-/, '');
+      const birthInput = document.getElementById('crmContactBirth');
+
+if (c.birth && /^\d{4}-\d{2}-\d{2}$/.test(c.birth)) {
+
+  const parts = c.birth.split('-');
+
+  birthInput.value =
+    parts[2] + '/' +
+    parts[1] + '/' +
+    parts[0];
+
+} else {
+
+  birthInput.value = '';
+
+}
 
       const selected = new Set(
         (c.labels || []).map(function(x){
@@ -5312,7 +5331,27 @@ function crmSaveContact(){
     last:document.getElementById('crmContactLast').value,
     phone:document.getElementById('crmContactPhone').value,
     email:document.getElementById('crmContactEmail').value,
-    birth:document.getElementById('crmContactBirth').value,
+    birth:(function(){
+
+  const value =
+    document.getElementById('crmContactBirth')
+      .value
+      .trim();
+
+  if(!value) return '';
+
+  const m =
+    value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+
+  if(!m){
+    throw new Error(
+      'Date de naissance : utilise JJ/MM/AAAA'
+    );
+  }
+
+  return m[3] + '-' + m[2] + '-' + m[1];
+
+})(),
     groupResourceNames:groups
   };
   const result=document.getElementById('crmContactResult');
