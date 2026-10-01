@@ -2208,19 +2208,11 @@ window.addEventListener("popstate", function() {
 
 // État initial de la PWA
 try {
-
   history.replaceState(
     { punishCrmPage: "home" },
     "",
     location.href
   );
-
-  history.pushState(
-    { punishCrmPage: "home" },
-    "",
-    location.href
-  );
-
 } catch (e) {}
 
   /* ============================================================
@@ -2363,19 +2355,30 @@ document.addEventListener("touchend", function(e) {
   
 function showPage(id) {
 
-  // Quand l'utilisateur ouvre une rubrique normalement,
-  // on crée un cran permettant au Retour Android
-  // de revenir d'abord à l'accueil.
-  if (id !== "home" && !pwaBackToHome) {
+  var activePage = document.querySelector(".page.active");
+  var currentId = activePage ? activePage.id : "home";
 
+  // Un seul niveau d'historique pour toutes les rubriques
+  if (!pwaBackToHome) {
     try {
-      history.pushState(
-        { punishCrmPage: id },
-        "",
-        location.href
-      );
-    } catch (e) {}
+      if (id !== "home") {
 
+        if (currentId === "home") {
+          history.pushState(
+            { punishCrmPage: id },
+            "",
+            location.href
+          );
+        } else {
+          history.replaceState(
+            { punishCrmPage: id },
+            "",
+            location.href
+          );
+        }
+
+      }
+    } catch (e) {}
   }
 
   pwaBackToHome = false;
@@ -2453,7 +2456,7 @@ if (navButton) {
 
     navBar.scrollTo({
       left: Math.max(0, targetLeft),
-      behavior: "smooth"
+      behavior: "auto"
     });
   }
 }
