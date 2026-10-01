@@ -952,9 +952,9 @@
     <div id="bizoukModule"><div id="busy" class="hidden" role="status">Traitement en cours...</div>
 <section id="start"><h2>Nouvel import</h2><p class="muted">Choisis un fichier Bizouk et son libell&#233;. Les contacts Google seront compar&#233;s au moment de l&#8217;analyse.</p><div class="panel"><div class="field"><label for="file">Fichier Bizouk (.xls, .xlsx, .csv)</label><input id="file" type="file" accept=".xls,.xlsx,.csv"></div><div class="field"><label for="event">Nom de l&#8217;&#233;v&#233;nement</label><input id="event" type="text" placeholder="Rempli automatiquement apr&#232;s choix du fichier" maxlength="100"><p class="small">Tu peux corriger ce nom avant l&#8217;analyse.</p></div><div class="field"><label for="label">Libell&#233; Google Contacts</label><div class="inline"><select id="label"></select><button id="showNewLabel" class="secondary" type="button">+ Nouveau</button></div><div id="newLabelBox" class="hidden" style="margin-top:10px"><label for="newLabel">Nom du nouveau libell&#233;</label><div class="inline"><input id="newLabel" placeholder="L&#8217;Exc&#232;s STDM" maxlength="70"><button id="addLabel" class="secondary" type="button">Cr&#233;er</button></div></div></div><button id="analyse" class="primary">Analyser les contacts</button><p class="small">L&#8217;analyse ne modifie aucun contact.</p></div><details><summary>G&#233;rer les libell&#233;s</summary><div class="panel" id="labelManager"></div></details><details><summary>Imports r&#233;cents</summary><div class="panel"><div id="history" class="history"></div></div></details></section>
 
-<section id="review" class="hidden"><h2>Contr&#244;le termin&#233;</h2><p id="context" class="muted"></p><div class="panel"><div class="row"><span>Nouveaux contacts</span><span id="newCount" class="value"></span></div><div class="row"><span>Contacts d&#233;j&#224; pr&#233;sents</span><span id="existingCount" class="value"></span></div><div class="row"><span>Num&#233;ros &#224; remplacer</span><span id="replaceCount" class="value"></span></div><div class="row"><span>&#192; v&#233;rifier</span><span id="reviewCount" class="value"></span></div></div><p id="progress" class="muted"></p><div id="pendingErrors" class="error hidden"></div><p class="notice">Le libell&#233; choisi sera ajout&#233; aux contacts existants sans retirer leurs autres libell&#233;s. Les fiches ambigu&#235;s sont mises de c&#244;t&#233;.</p><details id="reviewDetails"><summary>Voir les fiches &#224; v&#233;rifier</summary><div class="panel"><ul id="reviewList"></ul><button id="chooseReviews" type="button" class="secondary">S&#233;lectionner certaines fiches</button><div class="field"><label for="resolveFile">R&#233;&#233;valuer les num&#233;ros partag&#233;s avec l&#8217;e-mail</label><input id="resolveFile" type="file" accept=".xls,.xlsx,.csv"><button id="recheckReviews" type="button" class="secondary" style="width:100%;margin-top:10px">R&#233;&#233;valuer les fiches</button><p id="recheckResult" class="ok hidden"></p></div><div id="reviewChoices" class="hidden"><p class="small">Chaque case associe uniquement le libell&#233; au contact Google indiqu&#233;. Son nom, son num&#233;ro et sa date restent inchang&#233;s. Les autres fiches restent de c&#244;t&#233;.</p><div id="choiceList"></div><button id="applyReviews" type="button" class="secondary" style="width:100%;margin-top:10px">Ajouter les fiches coch&#233;es au libell&#233;</button><p id="reviewResult" class="ok hidden"></p></div></div></details><details id="manualDetails"><summary>Compl&#233;ter les fiches associ&#233;es manuellement</summary><div class="panel"><p class="small">Choisis le fichier Bizouk pour comparer les informations avant toute modification.</p><input id="manualFile" type="file" accept=".xls,.xlsx,.csv" style="margin-bottom:10px"><button id="loadManual" type="button" class="secondary">Afficher les associations</button><div id="manualList"></div></div></details><button id="apply" class="primary">Appliquer les changements</button><button id="repair" class="secondary" style="width:100%;margin-top:10px">V&#233;rifier et r&#233;parer le libell&#233;</button><p id="repairResult" class="ok hidden"></p><div id="birthBox" class="panel hidden"><label for="birthFile">Compl&#233;ter les dates de naissance</label><p class="small">Choisis le fichier Bizouk utilis&#233; pour cet import. Les dates d&#233;j&#224; pr&#233;sentes dans Google Contacts seront conserv&#233;es.</p><input id="birthFile" type="file" accept=".xls,.xlsx,.csv"><button id="birthApply" class="secondary" style="width:100%;margin-top:10px">Ajouter les dates manquantes</button><p id="birthResult" class="ok hidden"></p></div><button id="check" class="secondary" style="width:100%;margin-top:10px">V&#233;rifier l&#8217;&#233;tat de l&#8217;import</button><button id="back" class="secondary" style="width:100%;margin-top:10px">Retour</button></section>
+<section id="review" class="hidden"><h2>Contr&#244;le termin&#233;</h2><p id="context" class="muted"></p><div class="panel"><div class="row"><span>Nouveaux contacts</span><span id="newCount" class="value"></span></div><div class="row"><span>Contacts d&#233;j&#224; pr&#233;sents</span><span id="existingCount" class="value"></span></div><div class="row"><span>Num&#233;ros &#224; remplacer</span><span id="replaceCount" class="value"></span></div><div class="row"><span>&#192; v&#233;rifier</span><span id="reviewCount" class="value"></span></div></div><p id="progress" class="muted"></p><div id="pendingErrors" class="error hidden"></div><p class="notice">Le libell&#233; choisi sera ajout&#233; aux contacts existants sans retirer leurs autres libell&#233;s. Les fiches ambigu&#235;s sont mises de c&#244;t&#233;.</p><details id="reviewDetails"><summary>Voir les fiches &#224; v&#233;rifier</summary><div class="panel"><ul id="reviewList"></ul><button id="chooseReviews" type="button" class="secondary">S&#233;lectionner certaines fiches</button><div class="field"><label for="resolveFile">R&#233;&#233;valuer les num&#233;ros partag&#233;s avec l&#8217;e-mail</label><input id="resolveFile" type="file" accept=".xls,.xlsx,.csv"><button id="recheckReviews" type="button" class="secondary" style="width:100%;margin-top:10px">R&#233;&#233;valuer les fiches</button><p id="recheckResult" class="ok hidden"></p></div><div id="reviewChoices" class="hidden"><p class="small">Chaque case associe uniquement le libell&#233; au contact Google indiqu&#233;. Son nom, son num&#233;ro et sa date restent inchang&#233;s. Les autres fiches restent de c&#244;t&#233;.</p><div id="choiceList"></div><button id="applyReviews" type="button" class="secondary" style="width:100%;margin-top:10px">Ajouter les fiches coch&#233;es au libell&#233;</button><p id="reviewResult" class="ok hidden"></p></div></div></details><details id="manualDetails"><summary>Compl&#233;ter les fiches associ&#233;es manuellement</summary><div class="panel"><p class="small">Choisis le fichier Bizouk pour comparer les informations avant toute modification.</p><input id="manualFile" type="file" accept=".xls,.xlsx,.csv" style="margin-bottom:10px"><button id="loadManual" type="button" class="secondary">Afficher les associations</button><div id="manualList"></div></div></details><button id="apply" class="primary">Appliquer les changements</button><button id="repair" class="secondary" style="width:100%;margin-top:10px">V&#233;rifier et r&#233;parer le libell&#233;</button><p id="repairResult" class="ok hidden"></p><button id="check" class="secondary" style="width:100%;margin-top:10px">V&#233;rifier l&#8217;&#233;tat de l&#8217;import</button><button id="back" class="secondary" style="width:100%;margin-top:10px">Retour</button></section>
 
-<section id="done" class="hidden"><h2>Import trait&#233;</h2><p id="doneMessage" class="ok"></p><div id="errors" class="error hidden"></div><button id="again" class="primary">Nouvel import</button></section><div id="message" role="alert" class="error hidden"></div>
+<section id="done" class="hidden"><h2>Import trait&#233;</h2><p id="doneMessage" class="ok"></p><div id="errors" class="error hidden"></div><button id="doneReview" class="secondary hidden" style="width:100%;margin-bottom:10px">âš ï¸ VÃ©rifier les fiches Ã  contrÃ´ler</button><button id="again" class="primary">Nouvel import</button></section><div id="message" role="alert" class="error hidden"></div>
 </div>
 
 
@@ -967,11 +967,13 @@
 
 
 
-  <!-- STATS -->
+  <!-- ACCUEIL -->
 
 
 
-  <div class="stats">
+  <section id="home" class="page active">
+
+    <div class="stats">
 
 
 
@@ -1020,55 +1022,29 @@
 
 
 
-
-  <!-- ACCUEIL -->
-
-
-
-  <section id="home" class="page active">
-
-
-
-    <div class="panel welcome">
-
-
-
-      <h2>Tableau de bord</h2>
-
-
-
-      <p class="muted">
-
-        Ta base clients Punish Concept est connect&#233;e.
-
-        Utilise les onglets pour g&#233;rer tes &#233;v&#233;nements,
-
-        tes segments et tes campagnes.
-
-      </p>
-
-
-
+    <div class="panel">
+      <div id="homeImportsToggle"
+           onclick="toggleHomeImports()"
+           style="display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;user-select:none;">
+        <h3 style="margin:0;">Imports r&#233;cents</h3>
+        <span id="homeImportsArrow" style="font-size:18px;color:var(--gold);">&#9654;</span>
+      </div>
+      <div id="homeImports" class="history" style="display:none;margin-top:16px;">
+        <span class="muted">Chargement...</span>
+      </div>
     </div>
 
-
-
     <div class="panel">
-
-
-
-      <h3>&#201;v&#233;nements enregistr&#233;s</h3>
-
-
-
-      <div id="homeEvents" class="event-list">
-
-        <span class="muted">Chargement...</span>
-
+      <div id="homeEventsToggle"
+           onclick="toggleHomeEvents()"
+           style="display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;user-select:none;">
+        <h3 style="margin:0;">&#201;v&#233;nements enregistr&#233;s</h3>
+        <span id="homeEventsArrow" style="font-size:18px;color:var(--gold);">&#9654;</span>
       </div>
 
-
-
+      <div id="homeEvents" class="event-list" style="display:none;margin-top:16px;">
+        <span class="muted">Chargement...</span>
+      </div>
     </div>
 
 
@@ -1084,45 +1060,44 @@
 
 
   <section id="contacts" class="page">
-
-
-
     <div class="panel">
-
-
-
-      <h2>&#128101; Contacts</h2>
-
-
-
-      <p class="muted">
-
-        La base contient actuellement
-
-        <strong id="contactsText">&#8212;</strong> contacts,
-
-        dont <strong id="mobilesText">&#8212;</strong>
-
-        mobiles fran&#231;ais exploitables.
-
-      </p>
-
-
-
-      <p class="muted">
-
-        La gestion d&#233;taill&#233;e des fiches clients sera ajout&#233;e
-
-        dans l'&#233;tape suivante.
-
-      </p>
-
-
-
+      <h2>&#128101; Gestion des contacts</h2>
+      <p class="muted">Recherche directement dans Google Contacts puis ouvre une fiche pour la modifier.</p>
+      <div class="field">
+        <label for="crmContactSearch">Nom, prÃ©nom, tÃ©lÃ©phone ou e-mail</label>
+        <div class="inline">
+          <input id="crmContactSearch" type="search" placeholder="Ex. Dimitri, 06..., nom@email.fr" autocomplete="off">
+          <button id="crmContactSearchBtn" type="button" class="primary">Rechercher</button>
+        </div>
+      </div>
+      <p id="crmContactSearchInfo" class="small"></p>
     </div>
 
+    <div id="crmContactResults" class="panel hidden"></div>
 
+    <div id="crmContactEditor" class="panel hidden">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+        <h3 style="margin:0;">Fiche contact</h3>
+        <button id="crmContactClose" type="button" class="secondary">Fermer</button>
+      </div>
 
+      <input id="crmContactResource" type="hidden">
+
+      <div class="field"><label for="crmContactFirst">PrÃ©nom</label><input id="crmContactFirst"></div>
+      <div class="field"><label for="crmContactLast">Nom</label><input id="crmContactLast"></div>
+      <div class="field"><label for="crmContactPhone">TÃ©lÃ©phone</label><input id="crmContactPhone" inputmode="tel"></div>
+      <div class="field"><label for="crmContactEmail">E-mail</label><input id="crmContactEmail" type="email"></div>
+      <div class="field"><label for="crmContactBirth">Date de naissance</label><input id="crmContactBirth" type="date"></div>
+
+      <div class="field">
+        <label>Segments / libellÃ©s Google Contacts</label>
+        <div id="crmContactGroups" style="display:grid;gap:8px;margin-top:8px;"></div>
+      </div>
+
+      <button id="crmContactSave" type="button" class="primary" style="width:100%;">Enregistrer les modifications</button>
+      <button id="crmContactDelete" type="button" class="secondary" style="width:100%;margin-top:10px;">Supprimer ce contact</button>
+      <p id="crmContactResult" class="ok hidden"></p>
+    </div>
   </section>
 
 
@@ -1853,7 +1828,7 @@
     }
 
     if (!window.google?.accounts?.oauth2) {
-      el.info.textContent = 'Connexion Google indisponible. VÃƒÂ©rifie le rÃƒÂ©seau.';
+      el.info.textContent = 'Connexion Google indisponible. VÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©rifie le rÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©seau.';
       return null;
     }
 
@@ -1864,12 +1839,12 @@
       scope: scopes.join(' '),
       callback: result => {
         if (result.error) {
-          el.info.textContent = 'Connexion Google refusÃƒÂ©e ou interrompue.';
+          el.info.textContent = 'Connexion Google refusÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©e ou interrompue.';
           return;
         }
         accessToken = result.access_token || '';
         if (!accessToken) {
-          el.info.textContent = 'Aucun jeton Google reÃƒÂ§u.';
+          el.info.textContent = 'Aucun jeton Google reÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§u.';
           return;
         }
         el.overlay.style.display = 'none';
@@ -1912,11 +1887,11 @@
       if (!window.google?.accounts?.oauth2 && ++attempts < 30) return;
       clearInterval(timer);
       if (!window.google?.accounts?.oauth2) {
-        el.info.textContent = 'Appuie sur Ã‚Â« Se connecter avec Google Ã‚Â».';
+        el.info.textContent = 'Appuie sur ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â« Se connecter avec Google ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â».';
         return;
       }
       try { requestLogin('none'); }
-      catch (_) { el.info.textContent = 'Appuie sur Ã‚Â« Se connecter avec Google Ã‚Â». '; }
+      catch (_) { el.info.textContent = 'Appuie sur ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â« Se connecter avec Google ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â». '; }
     }, 250);
   });
 
@@ -2762,6 +2737,29 @@ function previewTarget() {
 
 \========================= */
 
+
+
+function toggleHomeImports() {
+  var box = document.getElementById("homeImports");
+  var arrow = document.getElementById("homeImportsArrow");
+  if (!box) return;
+  var opening = box.style.display === "none" || box.style.display === "";
+  box.style.display = opening ? "block" : "none";
+  if (arrow) arrow.innerHTML = opening ? "&#9660;" : "&#9654;";
+}
+
+function toggleHomeEvents() {
+  var box = document.getElementById("homeEvents");
+  var arrow = document.getElementById("homeEventsArrow");
+  if (!box) return;
+
+  var opening = box.style.display === "none" || box.style.display === "";
+  box.style.display = opening ? "grid" : "none";
+
+  if (arrow) {
+    arrow.innerHTML = opening ? "&#9660;" : "&#9654;";
+  }
+}
 
 
 function createEvent() {
@@ -4772,7 +4770,7 @@ function restoreRememberedImport(){
   return call('getImport',id).then(r=>{
     if(!r){rememberImport('');return false}
     current=r;
-    if(r.status==='TerminÃ©'||r.remaining===0){
+    if(r.status==='TerminÃƒÆ’Ã‚Â©'||r.remaining===0){
       done(r);
       rememberImport('');
     }else{
@@ -4780,7 +4778,7 @@ function restoreRememberedImport(){
     }
     return true;
   }).catch(()=>{
-    /* On garde l'ID : une reconnexion ultÃ©rieure pourra reprendre. */
+    /* On garde l'ID : une reconnexion ultÃƒÆ’Ã‚Â©rieure pourra reprendre. */
     return false;
   });
 }
@@ -4799,7 +4797,34 @@ function call(method,...args){busy(true);$('#message').classList.add('hidden');r
 
 function show(id){['start','review','done'].forEach(x=>$('#'+x).classList.toggle('hidden',x!==id));bizRoot.scrollIntoView({block:'start'})}
 
-function displayData(d,selected){$('#label').replaceChildren(...d.labels.map(s=>new Option(s,s)));if(d.labels.includes(selected))$('#label').value=selected;$('#history').replaceChildren(...d.imports.map(i=>{const el=document.createElement('div');el.className='history-item';const title=document.createElement('span');title.textContent=`${readable(i.event)} \u00b7 ${readable(i.label)} \u00b7 ${readable(i.status)}`;el.append(title);const open=document.createElement('button');open.type='button';open.className='secondary';open.textContent='Ouvrir';open.onclick=()=>call('getImport',i.id).then(render).catch(msg);el.append(open);if(i.status==='\u00c0 valider'){const del=document.createElement('button');del.type='button';del.className='secondary';del.textContent='Supprimer';del.onclick=()=>{const confirm=document.createElement('button');confirm.type='button';confirm.className='secondary';confirm.textContent='Confirmer la suppression';confirm.onclick=()=>call('deletePendingImport',i.id).then(x=>displayData(x,$('#label').value)).catch(msg);el.replaceChild(confirm,del)};el.append(del)}return el}));if(!d.imports.length)$('#history').textContent='Aucun import pour le moment.';renderLabels(d.labels)}
+function renderHomeImports(imports){
+  var box=document.getElementById('homeImports');
+  if(!box)return;
+  box.replaceChildren();
+  (imports||[]).slice(0,6).forEach(function(i){
+    var el=document.createElement('div');
+    el.className='history-item';
+    var title=document.createElement('span');
+    title.textContent=`${readable(i.event)} Â· ${readable(i.label)} Â· ${readable(i.status)}`;
+    el.append(title);
+    var open=document.createElement('button');
+    open.type='button';
+    open.className='secondary';
+    open.textContent='Ouvrir';
+    open.onclick=function(){
+      showPage('import');
+      call('getImport',i.id).then(function(r){
+        if(r.status==='TerminÃ©' && !(r.review?.length||r.counts?.review)) done(r);
+        else render(r);
+      }).catch(msg);
+    };
+    el.append(open);
+    box.append(el);
+  });
+  if(!(imports||[]).length)box.innerHTML='<span class="muted">Aucun import pour le moment.</span>';
+}
+
+function displayData(d,selected){$('#label').replaceChildren(...d.labels.map(s=>new Option(s,s)));if(d.labels.includes(selected))$('#label').value=selected;$('#history').replaceChildren(...d.imports.map(i=>{const el=document.createElement('div');el.className='history-item';const title=document.createElement('span');title.textContent=`${readable(i.event)} \u00b7 ${readable(i.label)} \u00b7 ${readable(i.status)}`;el.append(title);const open=document.createElement('button');open.type='button';open.className='secondary';open.textContent='Ouvrir';open.onclick=()=>call('getImport',i.id).then(render).catch(msg);el.append(open);if(i.status==='\u00c0 valider'){const del=document.createElement('button');del.type='button';del.className='secondary';del.textContent='Supprimer';del.onclick=()=>{const confirm=document.createElement('button');confirm.type='button';confirm.className='secondary';confirm.textContent='Confirmer la suppression';confirm.onclick=()=>call('deletePendingImport',i.id).then(x=>displayData(x,$('#label').value)).catch(msg);el.replaceChild(confirm,del)};el.append(del)}return el}));if(!d.imports.length)$('#history').textContent='Aucun import pour le moment.';renderHomeImports(d.imports);renderLabels(d.labels)}
 
 function bootstrap(){
   const selected=$('#label').value;
@@ -4819,9 +4844,22 @@ $('#addLabel').onclick=()=>{const s=$('#newLabel').value.trim();if(!s){msg('Indi
 
 $('#analyse').onclick=()=>{rememberImport('');const f=$('#file').files[0],event=$('#event').value.trim(),label=$('#label').value;if(!f||!event||!label){msg('Choisis un fichier, un \u00e9v\u00e9nement et un libell\u00e9.');return}if(f.size>10*1024*1024){msg('Fichier limit\u00e9 \u00e0 10 Mo.');return}const reader=new FileReader();reader.onload=()=>{const data=String(reader.result).split(',')[1];call('analyzeUpload',{name:f.name,data},event,label).then(render).catch(e=>{msg(e);$('#message').textContent='Connexion interrompue. Recherche d\u2019une analyse enregistr\u00e9e\u2026';call('recoverAnalysis',{name:f.name,data},event,label).then(found=>{if(found)render(found);else{$('#message').textContent='Analyse introuvable pour le moment. Ouvre \u00ab Imports r\u00e9cents \u00bb ou r\u00e9essaie sans changer le fichier, l\u2019\u00e9v\u00e9nement ni le libell\u00e9.'}}).catch(()=>{$('#message').textContent='Connexion interrompue. V\u00e9rifie \u00ab Imports r\u00e9cents \u00bb avant de relancer l\u2019analyse.'})})};reader.onerror=()=>msg('Lecture du fichier impossible.');reader.readAsDataURL(f)};
 
-function render(result){const changed=!current||current.id!==result.id;current=result;rememberImport(result&&result.id);if(changed){$('#manualList').replaceChildren();$('#manualFile').value='';$('#resolveFile').value='';$('#recheckResult').classList.add('hidden');$('#manualDetails').open=false;$('#reviewDetails').open=false;$('#birthFile').value='';$('#birthResult').classList.add('hidden');$('#repairResult').classList.add('hidden')}$('#file').value='';$('#context').textContent=`${result.event} \u00b7 ${result.label}`;$('#newCount').textContent=result.counts.new;$('#existingCount').textContent=result.counts.existing;$('#replaceCount').textContent=result.counts.replace;$('#reviewCount').textContent=result.review.length;$('#reviewList').replaceChildren(...result.review.map(r=>{const li=document.createElement('li');li.textContent=`${r.first} ${r.last} \u2014 ${readable(r.reason)}`;return li}));$('#reviewDetails').classList.toggle('hidden',!result.review.length);$('#reviewChoices').classList.add('hidden');$('#progress').textContent=result.applied?`${result.applied} fiche(s) d\u00e9j\u00e0 trait\u00e9e(s), ${result.remaining} restante(s).`:'';$('#pendingErrors').textContent=(result.errors||[]).map(readable).join(' | ');$('#pendingErrors').classList.toggle('hidden',!result.errors?.length);$('#apply').textContent=result.applied?'Reprendre les fiches restantes':'Appliquer les changements';$('#apply').classList.toggle('hidden',result.status==='Termin\u00e9'||result.remaining===0);$('#repair').classList.toggle('hidden',!result.applied);$('#birthBox').classList.toggle('hidden',!result.applied);show('review')}
+function render(result){const changed=!current||current.id!==result.id;current=result;rememberImport(result&&result.id);if(changed){$('#manualList').replaceChildren();$('#manualFile').value='';$('#resolveFile').value='';$('#recheckResult').classList.add('hidden');$('#manualDetails').open=false;$('#reviewDetails').open=false;$('#repairResult').classList.add('hidden')}$('#file').value='';$('#context').textContent=`${result.event} \u00b7 ${result.label}`;$('#newCount').textContent=result.counts.new;$('#existingCount').textContent=result.counts.existing;$('#replaceCount').textContent=result.counts.replace;$('#reviewCount').textContent=result.review.length;$('#reviewList').replaceChildren(...result.review.map(r=>{const li=document.createElement('li');li.textContent=`${r.first} ${r.last} \u2014 ${readable(r.reason)}`;return li}));$('#reviewDetails').classList.toggle('hidden',!result.review.length);$('#reviewChoices').classList.add('hidden');$('#progress').textContent=result.applied?`${result.applied} fiche(s) d\u00e9j\u00e0 trait\u00e9e(s), ${result.remaining} restante(s).`:'';$('#pendingErrors').textContent=(result.errors||[]).map(readable).join(' | ');$('#pendingErrors').classList.toggle('hidden',!result.errors?.length);$('#apply').textContent=result.applied?'Reprendre les fiches restantes':'Appliquer les changements';$('#apply').classList.toggle('hidden',result.status==='Termin\u00e9'||result.remaining===0);$('#repair').classList.toggle('hidden',!result.applied);show('review')}
 
-function done(r){rememberImport('');current=r;$('#doneMessage').textContent=r.remaining?`Traitement partiel : ${r.remaining} fiche(s) \u00e0 reprendre.`:`Termin\u00e9. ${r.counts.new} nouveaux, ${r.counts.existing} existants, ${r.counts.replace} num\u00e9ros pr\u00e9vus pour remplacement. ${r.counts.review} \u00e0 v\u00e9rifier.`;$('#errors').classList.toggle('hidden',!r.errors?.length);$('#errors').textContent=(r.errors||[]).join('\n');show('done')}
+function done(r){
+  current=r;
+  $('#doneMessage').textContent=r.remaining
+    ? `Traitement partiel : ${r.remaining} fiche(s) Ã  reprendre.`
+    : `TerminÃ©. ${r.counts.new} nouveaux, ${r.counts.existing} existants, ${r.counts.replace} numÃ©ros prÃ©vus pour remplacement. ${r.counts.review} Ã  vÃ©rifier.`;
+  $('#errors').classList.toggle('hidden',!r.errors?.length);
+  $('#errors').textContent=(r.errors||[]).join('\n');
+  const reviewBtn=$('#doneReview');
+  if(reviewBtn){
+    reviewBtn.classList.toggle('hidden',!(r.review?.length||r.counts?.review));
+    reviewBtn.textContent=`âš ï¸ VÃ©rifier les ${r.review?.length||r.counts?.review||0} fiche(s) Ã  contrÃ´ler`;
+  }
+  show('done');
+}
 
 async function applyInBatches(){
 
@@ -4867,13 +4905,24 @@ async function applyInBatches(){
 
 }
 
+$('#doneReview').onclick=()=>{
+  if(!current)return;
+  call('getImport',current.id).then(r=>{
+    render(r);
+    if(r.review?.length){
+      $('#reviewDetails').classList.remove('hidden');
+      $('#reviewDetails').open=true;
+    }
+  }).catch(msg);
+};
+
 $('#apply').onclick=applyInBatches;
 
 $('#check').onclick=()=>{if(!current)return;call('getImport',current.id).then(r=>r.status==='Termin\u00e9'?done(r):render(r)).catch(msg)};
 
 $('#repair').onclick=()=>{if(!current)return;call('repairImportLabels',current.id).then(r=>{$('#repairResult').textContent=`Libell\u00e9 v\u00e9rifi\u00e9 sur ${r.checked} fiche(s) ; ajout\u00e9 \u00e0 ${r.added} fiche(s).${r.errors.length?' Erreurs : '+r.errors.join(' | '):''}`;$('#repairResult').classList.remove('hidden')}).catch(msg)};
 
-$('#birthApply').onclick=()=>{const f=$('#birthFile').files[0];if(!current||!f){msg('Choisis le fichier Bizouk de cet import.');return}if(f.size>10*1024*1024){msg('Fichier limit\u00e9 \u00e0 10 Mo.');return}const reader=new FileReader();reader.onload=()=>{call('backfillBirthdays',{name:f.name,data:String(reader.result).split(',')[1]},current.id).then(r=>{$('#birthResult').textContent=`Dates ajout\u00e9es : ${r.added}. D\u00e9j\u00e0 pr\u00e9sentes : ${r.already}. Dates diff\u00e9rentes ou fiches non concordantes : ${r.conflicts}. Sans date exploitable : ${r.missing}.${r.errors.length?' Erreurs : '+r.errors.join(' | '):''}`;$('#birthResult').classList.remove('hidden');$('#birthFile').value=''}).catch(msg)};reader.onerror=()=>msg('Lecture du fichier impossible.');reader.readAsDataURL(f)};
+
 
 $('#recheckReviews').onclick=()=>{const f=$('#resolveFile').files[0];if(!current||!f){msg('Choisis le m\u00eame fichier Bizouk que pour cet import.');return}const reader=new FileReader();reader.onload=()=>call('reevaluateReviews',{name:f.name,data:String(reader.result).split(',')[1]},current.id).then(v=>{render(v.import);$('#reviewDetails').open=true;$('#recheckResult').textContent=`${v.proposed} fiche(s) \u00e0 appliquer, ${v.ignored} inscription(s) avec les coordonn\u00e9es de l\u2019acheteur \u00e9cart\u00e9e(s). V\u00e9rifie le r\u00e9capitulatif avant d\u2019appliquer.`;$('#recheckResult').classList.remove('hidden')}).catch(msg);reader.onerror=()=>msg('Lecture du fichier impossible.');reader.readAsDataURL(f)};
 
@@ -4887,6 +4936,139 @@ $('#back').onclick=()=>show('start');$('#again').onclick=()=>{rememberImport('')
 
 
 })();
+
+
+
+/* ===== GESTION GOOGLE CONTACTS ===== */
+let crmContactGroupsCache=[];
+
+function crmContactEscape(v){
+  return String(v==null?'':v);
+}
+
+function crmRenderContactResults(data){
+  const box=document.getElementById('crmContactResults');
+  const info=document.getElementById('crmContactSearchInfo');
+  crmContactGroupsCache=data.groups||[];
+  box.replaceChildren();
+  const list=data.contacts||[];
+  info.textContent=list.length ? `${list.length} rÃ©sultat(s)` : 'Aucun contact trouvÃ©.';
+  if(!list.length){ box.classList.add('hidden'); return; }
+  list.forEach(function(c){
+    const row=document.createElement('div');
+    row.className='history-item';
+    row.style.cursor='pointer';
+
+    const left=document.createElement('div');
+    left.style.minWidth='0';
+    const name=document.createElement('strong');
+    name.textContent=((c.first||'')+' '+(c.last||'')).trim()||'Sans nom';
+    const sub=document.createElement('div');
+    sub.className='small';
+    sub.textContent=[c.phone,c.email,(c.labels||[]).map(x=>x.name).join(', ')].filter(Boolean).join(' Â· ');
+    left.append(name,sub);
+
+    const open=document.createElement('button');
+    open.type='button';
+    open.className='secondary';
+    open.textContent='Ouvrir';
+    open.onclick=function(){crmOpenContact(c.resourceName);};
+
+    row.append(left,open);
+    box.append(row);
+  });
+  box.classList.remove('hidden');
+}
+
+function crmSearchContact(){
+  const q=document.getElementById('crmContactSearch').value.trim();
+  const info=document.getElementById('crmContactSearchInfo');
+  if(q.length<2){info.textContent='Saisis au moins 2 caractÃ¨res.';return;}
+  info.textContent='Recherche...';
+  call('crmSearchContacts',q).then(crmRenderContactResults).catch(function(e){
+    info.textContent='';
+    msg(e);
+  });
+}
+
+function crmOpenContact(resource){
+  call('crmGetContact',resource).then(function(data){
+    const c=data.contact;
+    crmContactGroupsCache=data.groups||[];
+    document.getElementById('crmContactResource').value=c.resourceName||'';
+    document.getElementById('crmContactFirst').value=c.first||'';
+    document.getElementById('crmContactLast').value=c.last||'';
+    document.getElementById('crmContactPhone').value=c.phone||'';
+    document.getElementById('crmContactEmail').value=c.email||'';
+    document.getElementById('crmContactBirth').value=(c.birth||'').replace(/^0000-/,'');
+    const selected=new Set((c.labels||[]).map(x=>x.resourceName));
+    const groups=document.getElementById('crmContactGroups');
+    groups.replaceChildren();
+    crmContactGroupsCache.forEach(function(g){
+      const label=document.createElement('label');
+      label.style.display='flex';
+      label.style.alignItems='center';
+      label.style.gap='9px';
+      const cb=document.createElement('input');
+      cb.type='checkbox';
+      cb.value=g.resourceName;
+      cb.checked=selected.has(g.resourceName);
+      cb.style.width='auto';
+      const span=document.createElement('span');
+      span.textContent=g.name;
+      label.append(cb,span);
+      groups.append(label);
+    });
+    document.getElementById('crmContactResult').classList.add('hidden');
+    document.getElementById('crmContactEditor').classList.remove('hidden');
+    document.getElementById('crmContactEditor').scrollIntoView({behavior:'smooth',block:'start'});
+  }).catch(msg);
+}
+
+function crmSaveContact(){
+  const groups=[...document.querySelectorAll('#crmContactGroups input[type="checkbox"]:checked')].map(x=>x.value);
+  const data={
+    resourceName:document.getElementById('crmContactResource').value,
+    first:document.getElementById('crmContactFirst').value,
+    last:document.getElementById('crmContactLast').value,
+    phone:document.getElementById('crmContactPhone').value,
+    email:document.getElementById('crmContactEmail').value,
+    birth:document.getElementById('crmContactBirth').value,
+    groupResourceNames:groups
+  };
+  const result=document.getElementById('crmContactResult');
+  result.textContent='Enregistrement...';
+  result.classList.remove('hidden');
+  call('crmSaveContact',data).then(function(){
+    result.textContent='Contact mis Ã  jour dans Google Contacts.';
+    crmSearchContact();
+  }).catch(msg);
+}
+
+function crmDeleteContact(){
+  const resource=document.getElementById('crmContactResource').value;
+  const result=document.getElementById('crmContactResult');
+  if(!resource)return;
+  if(document.getElementById('crmContactDelete').dataset.confirm!=='1'){
+    document.getElementById('crmContactDelete').dataset.confirm='1';
+    document.getElementById('crmContactDelete').textContent='Confirmer la suppression';
+    result.textContent='Appuie une seconde fois pour supprimer dÃ©finitivement ce contact.';
+    result.classList.remove('hidden');
+    return;
+  }
+  call('crmDeleteContact',resource).then(function(){
+    document.getElementById('crmContactEditor').classList.add('hidden');
+    document.getElementById('crmContactDelete').dataset.confirm='';
+    document.getElementById('crmContactDelete').textContent='Supprimer ce contact';
+    crmSearchContact();
+  }).catch(msg);
+}
+
+document.getElementById('crmContactSearchBtn').onclick=crmSearchContact;
+document.getElementById('crmContactSearch').addEventListener('keydown',function(e){if(e.key==='Enter')crmSearchContact();});
+document.getElementById('crmContactClose').onclick=function(){document.getElementById('crmContactEditor').classList.add('hidden');};
+document.getElementById('crmContactSave').onclick=crmSaveContact;
+document.getElementById('crmContactDelete').onclick=crmDeleteContact;
 
 </script>
 
