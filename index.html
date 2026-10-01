@@ -5957,32 +5957,194 @@ function call(method,...args){busy(true);$('#message').classList.add('hidden');r
 function show(id){['start','review','done'].forEach(x=>$('#'+x).classList.toggle('hidden',x!==id));bizRoot.scrollIntoView({block:'start'})}
 
 function renderHomeImports(imports){
-  var box=document.getElementById('homeImports');
-  if(!box)return;
-  box.replaceChildren();
-  (imports||[]).slice(0,6).forEach(function(i){
-    var el=document.createElement('div');
-    el.className='history-item';
-    var title=document.createElement('span');
-    title.textContent=`${readable(i.event)} Â· ${readable(i.label)} Â· ${readable(i.status)}`;
-    el.append(title);
-    var open=document.createElement('button');
-    open.type='button';
-    open.className='secondary';
-    open.textContent='Ouvrir';
-    open.onclick=function(){
-      showPage('import');
-      call('getImport',i.id).then(function(r){
-        if(r.status==='TerminÃ©' && !(r.review?.length||r.counts?.review)) done(r);
-        else render(r);
-      }).catch(msg);
-    };
-    el.append(open);
-    box.append(el);
-  });
-  if(!(imports||[]).length)box.innerHTML='<span class="muted">Aucun import pour le moment.</span>';
-}
 
+  var box = document.getElementById('homeImports');
+  if (!box) return;
+
+  box.replaceChildren();
+
+  var list = (imports || []).slice(0, 6);
+
+  if (!list.length) {
+    box.innerHTML =
+      '<span class="muted">Aucun import pour le moment.</span>';
+    return;
+  }
+
+  /* BOUTONS */
+  var actions = document.createElement('div');
+
+  actions.style.display = 'flex';
+  actions.style.gap = '8px';
+  actions.style.flexWrap = 'wrap';
+  actions.style.marginBottom = '14px';
+
+  var selectAll = document.createElement('button');
+  selectAll.type = 'button';
+  selectAll.className = 'secondary';
+  selectAll.textContent = 'Tout sélectionner';
+
+  var deleteBtn = document.createElement('button');
+  deleteBtn.type = 'button';
+  deleteBtn.className = 'danger';
+  deleteBtn.textContent = 'Supprimer';
+
+  actions.append(selectAll, deleteBtn);
+  box.append(actions);
+
+
+  /* IMPORTS */
+  list.forEach(function(i){
+
+    var el = document.createElement('div');
+    el.className = 'history-item';
+
+    el.style.display = 'flex';
+    el.style.alignItems = 'center';
+    el.style.gap = '10px';
+    el.style.marginBottom = '10px';
+
+
+    var check = document.createElement('input');
+
+    check.type = 'checkbox';
+    check.className = 'home-import-select';
+    check.value = i.id;
+
+    check.style.width = '20px';
+    check.style.height = '20px';
+    check.style.flex = '0 0 auto';
+
+
+    var title = document.createElement('span');
+
+    title.style.flex = '1';
+    title.style.minWidth = '0';
+
+    title.textContent =
+      readable(i.event) +
+      ' · ' +
+      readable(i.label) +
+      ' · ' +
+      readable(i.status);
+
+
+    var open = document.createElement('button');
+
+    open.type = 'button';
+    open.className = 'secondary';
+    open.textContent = 'Ouvrir';
+
+    open.onclick = function(){
+
+      showPage('import');
+
+      call('getImport', i.id)
+        .then(function(r){
+
+          if (
+            r.status === 'Terminé' &&
+            !(r.review?.length || r.counts?.review)
+          ) {
+            done(r);
+          } else {
+            render(r);
+          }
+
+        })
+        .catch(msg);
+    };
+
+
+    el.append(check, title, open);
+    box.append(el);
+
+  });
+
+
+  /* TOUT SELECTIONNER */
+  selectAll.onclick = function(){
+
+    var checks =
+      box.querySelectorAll('.home-import-select');
+
+    var allSelected =
+      Array.from(checks).every(function(cb){
+        return cb.checked;
+      });
+
+    checks.forEach(function(cb){
+      cb.checked = !allSelected;
+    });
+
+    selectAll.textContent =
+      allSelected
+        ? 'Tout sélectionner'
+        : 'Tout désélectionner';
+  };
+
+
+  /* SUPPRESSION */
+  deleteBtn.onclick = function(){
+
+    var selected = Array.from(
+      box.querySelectorAll(
+        '.home-import-select:checked'
+      )
+    ).map(function(cb){
+      return cb.value;
+    });
+
+    if (!selected.length) {
+      alert('Sélectionne au moins un import.');
+      return;
+    }
+
+
+    /* PREMIER CLIC = CONFIRMATION */
+    if (
+      deleteBtn.textContent !==
+      'Confirmer la suppression'
+    ) {
+
+      deleteBtn.textContent =
+        'Confirmer la suppression';
+
+      return;
+    }
+
+
+    deleteBtn.disabled = true;
+    deleteBtn.textContent = 'Suppression...';
+
+
+    call('deleteImports', selected)
+
+      .then(function(d){
+
+        rememberImport('');
+
+        displayData(
+          d,
+          $('#label').value
+        );
+
+        renderHomeImports(d.imports);
+
+      })
+
+      .catch(function(e){
+
+        deleteBtn.disabled = false;
+        deleteBtn.textContent = 'Supprimer';
+
+        msg(e);
+
+      });
+
+  };
+
+}
 function displayData(d, selected) {
 
   $('#label').replaceChildren(
