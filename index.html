@@ -2713,19 +2713,7 @@ function openSegmentMerge() {
     deleteCheckbox.checked
   );
 
-.catch(function(error) {
 
-  confirm.disabled = false;
-  cancel.disabled = false;
-
-  confirm.textContent = "Fusionner";
-
-  status.textContent =
-    "❌ " + getError(error);
-
-  status.style.color = "#ef4444";
-
-});
   };
 
 
