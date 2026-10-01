@@ -4785,9 +4785,32 @@ function restoreRememberedImport(){
 
 function eventFromFile(name){return String(name||'').replace(/\\.(xls|xlsx|csv)$/i,'').replace(/^bizouk[ _.-]\*forms?[ _.-]\*/i,'').replace(/[ _.-]\*\d+(?:[ _.-]\*\\(\d+\\))?$/i,'').replace(/[_.-]+/g,' ').replace(/\s+/g,' ').trim().replace(/\b\p{L}/gu,c=>c.toLocaleUpperCase())}
 
-$('#file').addEventListener('change',()=>{const name=$('#file').files[0]?.name||'';const suggested=eventFromFile(name);if(!$('#event').value.trim()||$('#event').value===autoEvent){$('#event').value=suggested;autoEvent=suggested}});
+$('#file').addEventListener('change',()=>{const name=$('#file').files[0]?.name||'';const suggested=eventFromFile(name);if(!$('#event').value.trim()||$('#event').value=cleanBizoukEventName(file.files[0].name);autoEvent=suggested}});
 
 function busy(on){$('#busy').classList.toggle('hidden',!on);bizRoot.querySelectorAll('button').forEach(b=>b.disabled=on)}
+
+
+function cleanBizoukEventName(fileName){
+  let name=String(fileName||'').trim();
+
+  // Extension
+  name=name.replace(/\.(xlsx?|csv)$/i,'');
+
+  // Separators
+  name=name.replace(/[_-]+/g,' ');
+
+  // Standard Bizouk export prefixes/words
+  name=name.replace(/\bbizouk\b/gi,' ');
+  name=name.replace(/\bforms?\b/gi,' ');
+
+  // Bizouk numeric event/export ID (standalone number)
+  name=name.replace(/\b\d{3,}\b/g,' ');
+
+  // Cleanup
+  name=name.replace(/\s+/g,' ').trim();
+
+  return name.toUpperCase();
+}
 
 function readable(v){return String(v??'').replace(/\u00c3[\u0080-\u00BF]|\u00c2[\u0080-\u00BF]|\u00e2[\u0080-\u00BF]{2}/g,part=>{try{return new TextDecoder('utf-8',{fatal:true}).decode(Uint8Array.from(part,c=>c.charCodeAt(0)))}catch(_){return part}})}
 
