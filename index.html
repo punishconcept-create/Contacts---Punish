@@ -3129,97 +3129,106 @@ function getSegmentCount(s) {
 
 function renderCampaignSegments() {
 
-
-
   var box = document.getElementById("campaignSegments");
 
-
-
   if (!box) {
-
     return;
-
   }
-
-
 
   box.innerHTML = "";
 
+  // Récupérer les mêmes favoris que dans la page Segments
+  var favorites = [];
 
+  try {
+    favorites = JSON.parse(
+      localStorage.getItem("punish_segment_favorites") || "[]"
+    );
+  } catch (e) {
+    favorites = [];
+  }
 
-  var i;
+  // Séparer favoris et autres segments
+  var favoriteSegments = [];
+  var otherSegments = [];
 
-
-
-  for (i = 0; i < APP.segments.length; i++) {
-
-
-
-    var s = APP.segments[i];
-
-
+  APP.segments.forEach(function(s) {
 
     var name = getSegmentName(s);
 
-    var count = getSegmentCount(s);
-
-
-
     if (!name) {
-
-      continue;
-
+      return;
     }
 
+    if (favorites.indexOf(name) !== -1) {
+      favoriteSegments.push(s);
+    } else {
+      otherSegments.push(s);
+    }
 
+  });
+
+
+  function createCampaignSegment(s, favorite) {
+
+    var name = getSegmentName(s);
+    var count = getSegmentCount(s);
 
     var label = document.createElement("label");
-
-
 
     label.className = "seg";
 
     label.setAttribute(
-
       "data-search",
-
       name.toLowerCase()
-
     );
-
-
 
     var cb = document.createElement("input");
 
-
-
     cb.type = "checkbox";
-
     cb.value = name;
-
     cb.onchange = schedulePreview;
-
-
 
     var txt = document.createElement("span");
 
-
-
     txt.textContent =
-
-      name + " (" + count + ")";
-
-
+      (favorite ? "⭐ " : "") +
+      name +
+      " (" +
+      count +
+      ")";
 
     label.appendChild(cb);
-
     label.appendChild(txt);
 
-
-
-    box.appendChild(label);
-
+    return label;
   }
+
+
+  // =========================
+  // FAVORIS EN PREMIER
+  // =========================
+
+  favoriteSegments.forEach(function(s) {
+
+    box.appendChild(
+      createCampaignSegment(s, true)
+    );
+
+  });
+
+
+  // =========================
+  // AUTRES SEGMENTS
+  // =========================
+
+  otherSegments.forEach(function(s) {
+
+    box.appendChild(
+      createCampaignSegment(s, false)
+    );
+
+  });
 
 }
 
