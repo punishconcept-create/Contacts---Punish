@@ -5384,34 +5384,32 @@ function crmSaveContact(){
   result.textContent = 'Enregistrement...';
   result.classList.remove('hidden');
 
-  call('crmSaveContact', data)
+  google.script.run
 
-    .then(function(response){
+  .withSuccessHandler(function(response){
 
-      result.textContent =
-        '✓ Contact mis à jour dans Google Contacts.';
+    result.textContent =
+      '✓ Contact mis à jour dans Google Contacts.';
 
-      /*
-       * Recharge la fiche pour vérifier immédiatement
-       * ce que Google Contacts a réellement enregistré.
-       */
-      const resource =
-        document.getElementById('crmContactResource').value;
+    const resource =
+      document.getElementById('crmContactResource').value;
 
-      if(resource){
-        crmOpenContact(resource);
-      }
+    if(resource){
+      crmOpenContact(resource);
+    }
 
-    })
+  })
 
-    .catch(function(error){
+  .withFailureHandler(function(error){
 
-      console.error('crmSaveContact', error);
+    console.error('crmSaveContact', error);
 
-      result.textContent =
-        'ERREUR : ' + getError(error);
+    result.textContent =
+      'ERREUR : ' + getError(error);
 
-    });
+  })
+
+  .crmSaveContact(data);
 }
 function crmDeleteContact(){
   const resource=document.getElementById('crmContactResource').value;
