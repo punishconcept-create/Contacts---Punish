@@ -5129,28 +5129,68 @@ document.getElementById('crmContactDelete').onclick=crmDeleteContact;
 let currentSegment=null;
 let currentSegmentMembers=[];
 
-function openSegmentManager(name){
-  const panel=document.getElementById('segmentManager');
-  const message=document.getElementById('segmentManagerMessage');
-  panel.classList.remove('hidden');
-  message.textContent='Chargement...';
-  call('crmGetSegmentByName',name).then(function(seg){
-    currentSegment=seg;
-    currentSegmentMembers=seg.contacts||[];
-    document.getElementById('segmentResource').value=seg.resourceName;
-    document.getElementById('segmentRename').value=seg.name;
-    document.getElementById('segmentManagerTitle').textContent=seg.name+' Â· '+seg.count;
-    document.getElementById('segmentMemberSearch').value='';
-    document.getElementById('segmentAddBox').classList.add('hidden');
-    message.textContent='';
-    renderSegmentMembers();
-    panel.scrollIntoView({behavior:'smooth',block:'start'});
-  }).catch(function(error){
-  document.getElementById('segmentManagerMessage').textContent =
-    'ERREUR : ' + (error && error.message ? error.message : String(error));
+function openSegmentManager(name) {
 
-  console.error('SEGMENT ERROR', error);
-});
+  var panel = document.getElementById('segmentManager');
+  var message = document.getElementById('segmentManagerMessage');
+
+  panel.classList.remove('hidden');
+
+  document.getElementById('segmentManagerTitle').textContent = name;
+  document.getElementById('segmentRename').value = name;
+
+  message.textContent = 'Chargement...';
+
+  google.script.run
+
+    .withSuccessHandler(function(seg) {
+
+      if (!seg) {
+        message.textContent = 'Erreur : aucune donnée reçue.';
+        return;
+      }
+
+      currentSegment = seg;
+      currentSegmentMembers = seg.contacts || [];
+
+      document.getElementById('segmentResource').value =
+        seg.resourceName || '';
+
+      document.getElementById('segmentRename').value =
+        seg.name || name;
+
+      document.getElementById('segmentManagerTitle').textContent =
+        (seg.name || name) + ' · ' + (seg.count || 0);
+
+      document.getElementById('segmentMemberSearch').value = '';
+
+      document.getElementById('segmentAddBox')
+        .classList.add('hidden');
+
+      message.textContent = '';
+
+      renderSegmentMembers();
+
+      panel.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+
+    })
+
+    .withFailureHandler(function(error) {
+
+      console.error(
+        'crmGetSegmentByName :',
+        error
+      );
+
+      message.textContent =
+        'Erreur : ' + getError(error);
+
+    })
+
+    .crmGetSegmentByName(name);
 }
 
 function renderSegmentMembers(){
