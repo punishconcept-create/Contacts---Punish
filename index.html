@@ -4270,18 +4270,12 @@ function renderEvents() {
 
 
     box.appendChild(
+  buildEventCard(e, true, false)
+);
 
-      buildEventCard(e, true)
-
-    );
-
-
-
-    home.appendChild(
-
-      buildEventCard(e, false)
-
-    );
+home.appendChild(
+  buildEventCard(e, false, true)
+);
 
   }
 
@@ -4289,7 +4283,7 @@ function renderEvents() {
 
 
 
-function buildEventCard(e, withActions) {
+function buildEventCard(e, withActions, deleteOnly) {
 
 
 
@@ -4379,7 +4373,7 @@ function buildEventCard(e, withActions) {
 
 
 
-  if (withActions) {
+  if (withActions || deleteOnly) {
 
 
 
@@ -4399,29 +4393,20 @@ function buildEventCard(e, withActions) {
 
     /* PREPARER CAMPAGNE */
 
+if (withActions) {
 
+  var campaignBtn =
+    document.createElement("button");
 
-    var campaignBtn =
+  campaignBtn.className = "gold";
+  campaignBtn.textContent = "📣 Préparer campagne";
 
-      document.createElement("button");
+  campaignBtn.onclick = function() {
+    prepareCampaign(e);
+  };
 
-
-
-    campaignBtn.className = "gold";
-
-    campaignBtn.textContent = "\uD83D\uDCE3 Pr\u00E9parer campagne";
-
-
-
-    campaignBtn.onclick = function() {
-
-      prepareCampaign(e);
-
-    };
-
-
-
-    actions.appendChild(campaignBtn);
+  actions.appendChild(campaignBtn);
+}
 
 
 
