@@ -1910,7 +1910,7 @@
 
   function flushWaitingCalls() {
     const calls = waitingCalls.splice(0);
-    calls.forEach(c => apiRun(c.functionName, c.parameters).then(c.resolve).(c.reject));
+    calls.forEach(c => apiRun(c.functionName, c.parameters).then(c.resolve).catch(c.reject));
   }
 
   function loginElements() {
