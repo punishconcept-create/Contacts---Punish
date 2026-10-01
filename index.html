@@ -5325,110 +5325,85 @@ search.oninput = function(){
 }
 function crmSaveContact(){
 
-  const result = document.getElementById('crmContactResult');
+  const groups = [
+    ...document.querySelectorAll(
+      '#crmContactGroups input[type="checkbox"]:checked'
+    )
+  ].map(function(x){
+    return x.value;
+  });
 
-  try {
+  const birthValue =
+    document.getElementById('crmContactBirth').value.trim();
 
-    const birthField =
-      document.getElementById('crmContactBirth').value.trim();
+  let birth = '';
 
-    let birth = '';
+  if(birthValue){
 
-    if(birthField){
+    const m =
+      birthValue.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
 
-      const m =
-        birthField.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-
-      if(!m){
-        throw new Error(
-          'Date invalide. Utilise JJ/MM/AAAA.'
-        );
-      }
-
-      const day = Number(m[1]);
-      const month = Number(m[2]);
-      const year = Number(m[3]);
-
-      const test = new Date(
-        Date.UTC(year, month - 1, day)
-      );
-
-      if(
-        test.getUTCFullYear() !== year ||
-        test.getUTCMonth() !== month - 1 ||
-        test.getUTCDate() !== day
-      ){
-        throw new Error(
-          'Cette date de naissance n’existe pas.'
-        );
-      }
-
-      birth =
-        String(year).padStart(4,'0') + '-' +
-        String(month).padStart(2,'0') + '-' +
-        String(day).padStart(2,'0');
-
+    if(!m){
+      document.getElementById('crmContactResult').textContent =
+        'Date invalide. Utilise JJ/MM/AAAA.';
+      document.getElementById('crmContactResult')
+        .classList.remove('hidden');
+      return;
     }
 
-    const groups = [
-      ...document.querySelectorAll(
-        '#crmContactGroups input[type="checkbox"]:checked'
-      )
-    ].map(function(x){
-      return x.value;
-    });
-
-    const data = {
-      resourceName:
-        document.getElementById('crmContactResource').value,
-
-      first:
-        document.getElementById('crmContactFirst').value,
-
-      last:
-        document.getElementById('crmContactLast').value,
-
-      phone:
-        document.getElementById('crmContactPhone').value,
-
-      email:
-        document.getElementById('crmContactEmail').value,
-
-      birth: birth,
-
-      groupResourceNames: groups
-    };
-
-    result.textContent = 'Enregistrement...';
-    result.classList.remove('hidden');
-
-    call('crmSaveContact', data)
-
-      .then(function(){
-
-        result.textContent =
-          'Contact mis à jour dans Google Contacts.';
-
-      })
-
-      .catch(function(error){
-
-        result.textContent =
-          'Erreur : ' + getError(error);
-
-      });
-
-  }catch(error){
-
-    result.textContent =
-      'Erreur : ' + error.message;
-
-    result.classList.remove('hidden');
-
+    birth =
+      m[3] + '-' +
+      m[2] + '-' +
+      m[1];
   }
 
-}
-function crmDeleteContact(){
+  const data = {
+    resourceName:
+      document.getElementById('crmContactResource').value,
+
+    first:
+      document.getElementById('crmContactFirst').value,
+
+    last:
+      document.getElementById('crmContactLast').value,
+
+    phone:
+      document.getElementById('crmContactPhone').value,
+
+    email:
+      document.getElementById('crmContactEmail').value,
+
+    birth: birth,
+
+    groupResourceNames: groups
+  };
+
+  const result =
+    document.getElementById('crmContactResult');
+
+  result.textContent = 'Enregistrement...';
+  result.classList.remove('hidden');
+
+  google.script.run
+
+    .withSuccessHandler(function(){
+
+      result.textContent =
+        'Contact mis à jour dans Google Contacts.';
+
+    })
+
+    .withFailureHandler(function(error){
+
+      console.error('crmSaveContact', error);
+
+      result.textContent =
+        'ERREUR : ' + getError(error);
+
+    })
+
+    .crmSaveContact(data);
+}function crmDeleteContact(){
   const resource=document.getElementById('crmContactResource').value;
   const result=document.getElementById('crmContactResult');
   if(!resource)return;
