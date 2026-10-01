@@ -1906,7 +1906,7 @@
     });
   }
 
-  window.google.script.run = makeRunner(null, null);
+  window. = makeRunner(null, null);
 
   function flushWaitingCalls() {
     const calls = waitingCalls.splice(0);
@@ -2660,53 +2660,49 @@ function openSegmentMerge() {
     status.style.color = "#9ca3af";
 
 
-    google.script.run
+    call(
+  "crmMergeSegments",
+  selected,
+  newName,
+  deleteCheckbox.checked
+)
 
-      .withSuccessHandler(function(result) {
+.then(function(result) {
 
-        result = result || {};
+  result = result || {};
 
-        status.textContent =
-          "✅ Fusion terminée : " +
-          (result.contacts || 0) +
-          " contact(s) dans « " +
-          (result.name || newName) +
-          " ».";
+  status.textContent =
+    "✅ Fusion terminée : " +
+    (result.contacts || 0) +
+    " contact(s) dans « " +
+    (result.name || newName) +
+    " ».";
 
-        status.style.color = "#22c55e";
+  status.style.color = "#22c55e";
 
+  setTimeout(function() {
 
-        setTimeout(function() {
+    overlay.remove();
 
-          overlay.remove();
+    loadApp();
 
-          loadApp();
+  }, 1200);
 
-        }, 1200);
+})
 
-      })
+.catch(function(error) {
 
-      .withFailureHandler(function(error) {
+  confirm.disabled = false;
+  cancel.disabled = false;
 
-        confirm.disabled = false;
-        cancel.disabled = false;
+  confirm.textContent = "Fusionner";
 
-        confirm.textContent =
-          "Fusionner";
+  status.textContent =
+    "❌ " + getError(error);
 
-        status.textContent =
-          "❌ " + getError(error);
+  status.style.color = "#ef4444";
 
-        status.style.color = "#ef4444";
-
-      })
-
-      .crmMergeSegments(
-        selected,
-        newName,
-        deleteCheckbox.checked
-      );
-
+});
   };
 
 
