@@ -954,7 +954,7 @@
 
 <section id="review" class="hidden"><h2>Contr&#244;le termin&#233;</h2><p id="context" class="muted"></p><div class="panel"><div class="row"><span>Nouveaux contacts</span><span id="newCount" class="value"></span></div><div class="row"><span>Contacts d&#233;j&#224; pr&#233;sents</span><span id="existingCount" class="value"></span></div><div class="row"><span>Num&#233;ros &#224; remplacer</span><span id="replaceCount" class="value"></span></div><div class="row"><span>&#192; v&#233;rifier</span><span id="reviewCount" class="value"></span></div></div><p id="progress" class="muted"></p><div id="pendingErrors" class="error hidden"></div><p class="notice">Le libell&#233; choisi sera ajout&#233; aux contacts existants sans retirer leurs autres libell&#233;s. Les fiches ambigu&#235;s sont mises de c&#244;t&#233;.</p><details id="reviewDetails"><summary>Voir les fiches &#224; v&#233;rifier</summary><div class="panel"><ul id="reviewList"></ul><button id="chooseReviews" type="button" class="secondary">S&#233;lectionner certaines fiches</button><div class="field"><label for="resolveFile">R&#233;&#233;valuer les num&#233;ros partag&#233;s avec l&#8217;e-mail</label><input id="resolveFile" type="file" accept=".xls,.xlsx,.csv"><button id="recheckReviews" type="button" class="secondary" style="width:100%;margin-top:10px">R&#233;&#233;valuer les fiches</button><p id="recheckResult" class="ok hidden"></p></div><div id="reviewChoices" class="hidden"><p class="small">Chaque case associe uniquement le libell&#233; au contact Google indiqu&#233;. Son nom, son num&#233;ro et sa date restent inchang&#233;s. Les autres fiches restent de c&#244;t&#233;.</p><div id="choiceList"></div><button id="applyReviews" type="button" class="secondary" style="width:100%;margin-top:10px">Ajouter les fiches coch&#233;es au libell&#233;</button><p id="reviewResult" class="ok hidden"></p></div></div></details><details id="manualDetails"><summary>Compl&#233;ter les fiches associ&#233;es manuellement</summary><div class="panel"><p class="small">Choisis le fichier Bizouk pour comparer les informations avant toute modification.</p><input id="manualFile" type="file" accept=".xls,.xlsx,.csv" style="margin-bottom:10px"><button id="loadManual" type="button" class="secondary">Afficher les associations</button><div id="manualList"></div></div></details><button id="apply" class="primary">Appliquer les changements</button><button id="repair" class="secondary" style="width:100%;margin-top:10px">V&#233;rifier et r&#233;parer le libell&#233;</button><p id="repairResult" class="ok hidden"></p><button id="check" class="secondary" style="width:100%;margin-top:10px">V&#233;rifier l&#8217;&#233;tat de l&#8217;import</button><button id="back" class="secondary" style="width:100%;margin-top:10px">Retour</button></section>
 
-<section id="done" class="hidden"><h2>Import trait&#233;</h2><p id="doneMessage" class="ok"></p><div id="errors" class="error hidden"></div><button id="again" class="primary">Nouvel import</button></section><div id="message" role="alert" class="error hidden"></div>
+<section id="done" class="hidden"><h2>Import trait&#233;</h2><p id="doneMessage" class="ok"></p><div id="errors" class="error hidden"></div><button id="doneReview" class="secondary hidden" style="width:100%;margin-bottom:10px">âš ï¸ VÃ©rifier les fiches Ã  contrÃ´ler</button><button id="again" class="primary">Nouvel import</button></section><div id="message" role="alert" class="error hidden"></div>
 </div>
 
 
@@ -4830,7 +4830,20 @@ $('#analyse').onclick=()=>{rememberImport('');const f=$('#file').files[0],event=
 
 function render(result){const changed=!current||current.id!==result.id;current=result;rememberImport(result&&result.id);if(changed){$('#manualList').replaceChildren();$('#manualFile').value='';$('#resolveFile').value='';$('#recheckResult').classList.add('hidden');$('#manualDetails').open=false;$('#reviewDetails').open=false;$('#repairResult').classList.add('hidden')}$('#file').value='';$('#context').textContent=`${result.event} \u00b7 ${result.label}`;$('#newCount').textContent=result.counts.new;$('#existingCount').textContent=result.counts.existing;$('#replaceCount').textContent=result.counts.replace;$('#reviewCount').textContent=result.review.length;$('#reviewList').replaceChildren(...result.review.map(r=>{const li=document.createElement('li');li.textContent=`${r.first} ${r.last} \u2014 ${readable(r.reason)}`;return li}));$('#reviewDetails').classList.toggle('hidden',!result.review.length);$('#reviewChoices').classList.add('hidden');$('#progress').textContent=result.applied?`${result.applied} fiche(s) d\u00e9j\u00e0 trait\u00e9e(s), ${result.remaining} restante(s).`:'';$('#pendingErrors').textContent=(result.errors||[]).map(readable).join(' | ');$('#pendingErrors').classList.toggle('hidden',!result.errors?.length);$('#apply').textContent=result.applied?'Reprendre les fiches restantes':'Appliquer les changements';$('#apply').classList.toggle('hidden',result.status==='Termin\u00e9'||result.remaining===0);$('#repair').classList.toggle('hidden',!result.applied);show('review')}
 
-function done(r){rememberImport('');current=r;$('#doneMessage').textContent=r.remaining?`Traitement partiel : ${r.remaining} fiche(s) \u00e0 reprendre.`:`Termin\u00e9. ${r.counts.new} nouveaux, ${r.counts.existing} existants, ${r.counts.replace} num\u00e9ros pr\u00e9vus pour remplacement. ${r.counts.review} \u00e0 v\u00e9rifier.`;$('#errors').classList.toggle('hidden',!r.errors?.length);$('#errors').textContent=(r.errors||[]).join('\n');show('done')}
+function done(r){
+  current=r;
+  $('#doneMessage').textContent=r.remaining
+    ? `Traitement partiel : ${r.remaining} fiche(s) Ã  reprendre.`
+    : `TerminÃ©. ${r.counts.new} nouveaux, ${r.counts.existing} existants, ${r.counts.replace} numÃ©ros prÃ©vus pour remplacement. ${r.counts.review} Ã  vÃ©rifier.`;
+  $('#errors').classList.toggle('hidden',!r.errors?.length);
+  $('#errors').textContent=(r.errors||[]).join('\n');
+  const reviewBtn=$('#doneReview');
+  if(reviewBtn){
+    reviewBtn.classList.toggle('hidden',!(r.review?.length||r.counts?.review));
+    reviewBtn.textContent=`âš ï¸ VÃ©rifier les ${r.review?.length||r.counts?.review||0} fiche(s) Ã  contrÃ´ler`;
+  }
+  show('done');
+}
 
 async function applyInBatches(){
 
@@ -4875,6 +4888,17 @@ async function applyInBatches(){
   }finally{$('#busy').textContent='Traitement en cours\u2026'}
 
 }
+
+$('#doneReview').onclick=()=>{
+  if(!current)return;
+  call('getImport',current.id).then(r=>{
+    render(r);
+    if(r.review?.length){
+      $('#reviewDetails').classList.remove('hidden');
+      $('#reviewDetails').open=true;
+    }
+  }).catch(msg);
+};
 
 $('#apply').onclick=applyInBatches;
 
