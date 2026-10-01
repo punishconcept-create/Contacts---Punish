@@ -779,6 +779,63 @@
 .segment-member{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
 .segment-member input[type="checkbox"]{width:auto}
 .segment-member-main{flex:1;min-width:0}
+  .segment-member{
+  padding:12px 6px;
+}
+
+.segment-member-main strong{
+  display:block;
+  font-size:16px;
+  line-height:1.25;
+}
+
+.segment-member-main .small{
+  margin-top:3px;
+  font-size:13px;
+  line-height:1.35;
+  overflow-wrap:anywhere;
+}
+
+.segment-member > button{
+  padding:9px 12px;
+  font-size:13px;
+  flex:0 0 auto;
+}
+
+.segment-member > input[type="checkbox"]{
+  width:20px;
+  height:20px;
+  flex:0 0 20px;
+}
+
+@media(max-width:600px){
+
+  #segmentManager{
+    padding:16px;
+  }
+
+  #segmentManagerTitle{
+    font-size:21px;
+  }
+
+  #segmentRemoveSelected,
+  #segmentAddToggle{
+    width:100%;
+    margin:6px 0 0 !important;
+  }
+
+  .segment-member{
+    gap:9px;
+  }
+
+  .segment-member-main{
+    font-size:14px;
+  }
+
+  .segment-member > button{
+    padding:8px 10px;
+  }
+}
 </style>
 
 </head>
@@ -5206,7 +5263,7 @@ function renderSegmentMembers(){
     const cb=document.createElement('input'); cb.type='checkbox'; cb.value=c.resourceName; cb.className='seg-check';
     const main=document.createElement('div'); main.className='segment-member-main';
     const strong=document.createElement('strong'); strong.textContent=((c.first||'')+' '+(c.last||'')).trim()||'Sans nom';
-    const sub=document.createElement('div'); sub.className='small'; sub.textContent=[c.phone,c.email].filter(Boolean).join(' Â· ');
+    const sub=document.createElement('div'); sub.className='small'; sub.textContent=[c.phone,c.email].filter(Boolean).join(' \u2022 ');
     main.append(strong,sub);
     const open=document.createElement('button'); open.className='secondary'; open.type='button'; open.textContent='Ouvrir';
     open.onclick=function(e){e.stopPropagation();showPage('contacts');crmOpenContact(c.resourceName);};
