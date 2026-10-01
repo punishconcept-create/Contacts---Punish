@@ -5325,13 +5325,8 @@ search.oninput = function(){
 }
 function crmSaveContact(){
 
-  const groups = [
-    ...document.querySelectorAll(
-      '#crmContactGroups input[type="checkbox"]:checked'
-    )
-  ].map(function(x){
-    return x.value;
-  });
+  const result =
+    document.getElementById('crmContactResult');
 
   const birthValue =
     document.getElementById('crmContactBirth').value.trim();
@@ -5344,10 +5339,9 @@ function crmSaveContact(){
       birthValue.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
 
     if(!m){
-      document.getElementById('crmContactResult').textContent =
+      result.textContent =
         'Date invalide. Utilise JJ/MM/AAAA.';
-      document.getElementById('crmContactResult')
-        .classList.remove('hidden');
+      result.classList.remove('hidden');
       return;
     }
 
@@ -5357,52 +5351,68 @@ function crmSaveContact(){
       m[1];
   }
 
+  const groups = [
+    ...document.querySelectorAll(
+      '#crmContactGroups input[type="checkbox"]:checked'
+    )
+  ].map(function(x){
+    return x.value;
+  });
+
   const data = {
+
     resourceName:
       document.getElementById('crmContactResource').value,
 
     first:
-      document.getElementById('crmContactFirst').value,
+      document.getElementById('crmContactFirst').value.trim(),
 
     last:
-      document.getElementById('crmContactLast').value,
+      document.getElementById('crmContactLast').value.trim(),
 
     phone:
-      document.getElementById('crmContactPhone').value,
+      document.getElementById('crmContactPhone').value.trim(),
 
     email:
-      document.getElementById('crmContactEmail').value,
+      document.getElementById('crmContactEmail').value.trim(),
 
     birth: birth,
 
     groupResourceNames: groups
   };
 
-  const result =
-    document.getElementById('crmContactResult');
-
   result.textContent = 'Enregistrement...';
   result.classList.remove('hidden');
 
-  google.script.run
+  call('crmSaveContact', data)
 
-    .withSuccessHandler(function(){
+    .then(function(response){
 
       result.textContent =
-        'Contact mis à jour dans Google Contacts.';
+        '✓ Contact mis à jour dans Google Contacts.';
+
+      /*
+       * Recharge la fiche pour vérifier immédiatement
+       * ce que Google Contacts a réellement enregistré.
+       */
+      const resource =
+        document.getElementById('crmContactResource').value;
+
+      if(resource){
+        crmOpenContact(resource);
+      }
 
     })
 
-    .withFailureHandler(function(error){
+    .catch(function(error){
 
       console.error('crmSaveContact', error);
 
       result.textContent =
         'ERREUR : ' + getError(error);
 
-    })
-
-    .crmSaveContact(data);
+    });
+}
 }function crmDeleteContact(){
   const resource=document.getElementById('crmContactResource').value;
   const result=document.getElementById('crmContactResult');
