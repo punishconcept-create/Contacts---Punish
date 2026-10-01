@@ -5126,7 +5126,7 @@ function crmOpenContact(resource){
       label.append(cb,span);
       groups.append(label);
     });
-    document.getElementById('crmContactResult').classList.add('hidden');
+    document.getElementById('crmContactResults').classList.add('hidden');
     document.getElementById('crmContactEditor').classList.remove('hidden');
     document.getElementById('crmContactEditor').scrollIntoView({behavior:'smooth',block:'start'});
   }).catch(msg);
