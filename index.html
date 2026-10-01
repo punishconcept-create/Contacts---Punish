@@ -2631,7 +2631,10 @@ function renderSegmentPage() {
     star.type = "button";
     star.textContent =
       isFavorite(segmentName) ? "★" : "☆";
-
+star.style.color =
+  isFavorite(segmentName)
+    ? "#f4c430"
+    : "#777";
     star.style.background = "transparent";
     star.style.border = "0";
     star.style.fontSize = "24px";
@@ -2640,26 +2643,36 @@ function renderSegmentPage() {
     star.style.cursor = "pointer";
     star.style.flexShrink = "0";
 
-    star.onclick = function(e) {
+   star.onclick = function(e) {
 
-      e.stopPropagation();
+  e.stopPropagation();
 
-      var index =
-        favorites.indexOf(segmentName);
+  var index = favorites.indexOf(segmentName);
 
-      if (index === -1) {
+  if (index === -1) {
 
-        favorites.push(segmentName);
+    // Ajouter aux favoris
+    favorites.push(segmentName);
 
-      } else {
+    star.textContent = "★";
+    star.style.color = "#f4c430";
 
-        favorites.splice(index, 1);
+  } else {
 
-      }
+    // Retirer des favoris
+    favorites.splice(index, 1);
 
-      saveFavorites();
-      renderSegmentPage();
-    };
+    star.textContent = "☆";
+    star.style.color = "#777";
+
+  }
+
+  saveFavorites();
+
+  // IMPORTANT :
+  // on ne recharge PAS la liste ici.
+  // Le segment reste donc à sa place pendant la sélection.
+};
 function openSegmentMerge() {
 
   alert(
@@ -2844,19 +2857,26 @@ function openSegmentMerge() {
 
   toggle.onclick = function() {
 
-    var opened =
-      otherBox.style.display !== "none";
+  var opened =
+    otherBox.style.display !== "none";
 
-    otherBox.style.display =
-      opened ? "none" : "block";
+  if (opened) {
 
-    toggle.innerHTML =
-      (opened ? "▶" : "▼") +
-      " AUTRES SEGMENTS (" +
-      otherSegments.length +
-      ")";
+    // On ferme puis on réorganise la page :
+    // les nouveaux favoris remontent maintenant.
+    renderSegmentPage();
+    return;
 
-  };
+  }
+
+  otherBox.style.display = "block";
+
+  toggle.innerHTML =
+    "▼ AUTRES SEGMENTS (" +
+    otherSegments.length +
+    ")";
+
+};
 
 
   box.appendChild(toggle);
