@@ -5155,32 +5155,28 @@ function crmOpenContact(resource){
       );
 
      const groups = document.getElementById('crmContactGroups');
-const otherGroups = document.getElementById('crmOtherGroups');
-const otherBox = document.getElementById('crmOtherGroupsBox');
-const toggle = document.getElementById('crmToggleOtherGroups');
-const search = document.getElementById('crmGroupSearch');
-
 groups.replaceChildren();
-otherGroups.replaceChildren();
 
-otherBox.classList.add('hidden');
-search.value = '';
+const currentGroups = crmContactGroupsCache.filter(function(g){
+  return selected.has(g.resourceName);
+});
 
-function createGroupCheckbox(g, checked){
+const otherGroups = crmContactGroupsCache.filter(function(g){
+  return !selected.has(g.resourceName);
+});
+
+function createGroupCheckbox(g){
 
   const label = document.createElement('label');
-
   label.style.display = 'flex';
   label.style.alignItems = 'center';
   label.style.gap = '9px';
-  label.style.padding = '9px 0';
-  label.dataset.name = String(g.name || '').toLowerCase();
+  label.style.margin = '8px 0';
 
   const cb = document.createElement('input');
-
   cb.type = 'checkbox';
   cb.value = g.resourceName;
-  cb.checked = checked;
+  cb.checked = selected.has(g.resourceName);
   cb.style.width = 'auto';
 
   const span = document.createElement('span');
@@ -5191,97 +5187,92 @@ function createGroupCheckbox(g, checked){
   return label;
 }
 
-const currentGroups = crmContactGroupsCache.filter(function(g){
-  return selected.has(g.resourceName);
-});
+/* SEGMENTS ACTUELS */
+const currentTitle = document.createElement('div');
+currentTitle.textContent = 'Segments actuels';
+currentTitle.style.fontWeight = 'bold';
+currentTitle.style.marginBottom = '10px';
 
-const availableGroups = crmContactGroupsCache.filter(function(g){
-  return !selected.has(g.resourceName);
-});
+groups.append(currentTitle);
 
-currentGroups.forEach(function(g){
-  groups.append(
-    createGroupCheckbox(g, true)
-  );
-});
+if(currentGroups.length){
 
-if(!currentGroups.length){
+  currentGroups.forEach(function(g){
+    groups.append(createGroupCheckbox(g));
+  });
 
-  const empty = document.createElement('div');
+}else{
 
-  empty.className = 'muted';
-  empty.textContent = 'Aucun segment actuellement.';
+  const none = document.createElement('div');
+  none.textContent = 'Aucun segment';
+  none.className = 'muted';
+  groups.append(none);
 
-  groups.append(empty);
 }
 
-availableGroups.forEach(function(g){
-  otherGroups.append(
-    createGroupCheckbox(g, false)
-  );
+/* BOUTON OUVRIR LES AUTRES SEGMENTS */
+const toggle = document.createElement('button');
+toggle.type = 'button';
+toggle.className = 'secondary';
+toggle.textContent = '+ Ajouter / modifier les segments';
+toggle.style.width = '100%';
+toggle.style.marginTop = '14px';
+
+groups.append(toggle);
+
+/* ZONE MASQUÉE */
+const extraBox = document.createElement('div');
+extraBox.style.display = 'none';
+extraBox.style.marginTop = '12px';
+
+const search = document.createElement('input');
+search.type = 'search';
+search.placeholder = 'Rechercher un segment...';
+search.style.marginBottom = '10px';
+
+extraBox.append(search);
+
+const list = document.createElement('div');
+
+otherGroups.forEach(function(g){
+
+  const item = createGroupCheckbox(g);
+
+  item.dataset.name = String(g.name || '').toLowerCase();
+
+  list.append(item);
+
 });
 
-toggle.style.display = availableGroups.length ? 'block' : 'none';
-
-toggle.textContent =
-  '+ Ajouter / modifier les segments (' +
-  availableGroups.length +
-  ')';
+extraBox.append(list);
+groups.append(extraBox);
 
 toggle.onclick = function(){
 
-  const opening =
-    otherBox.classList.contains('hidden');
+  const opening = extraBox.style.display === 'none';
 
-  otherBox.classList.toggle('hidden');
+  extraBox.style.display = opening ? 'block' : 'none';
 
   toggle.textContent = opening
-    ? '− Refermer les autres segments'
-    : '+ Ajouter / modifier les segments (' +
-      availableGroups.length +
-      ')';
+    ? '− Masquer les autres segments'
+    : '+ Ajouter / modifier les segments';
+
 };
 
 search.oninput = function(){
 
-  const q = search.value
-    .trim()
-    .toLowerCase();
+  const q = search.value.trim().toLowerCase();
 
-  otherGroups
-    .querySelectorAll('label')
-    .forEach(function(label){
+  Array.from(list.children).forEach(function(item){
 
-      label.style.display =
-        !q || label.dataset.name.includes(q)
-          ? 'flex'
-          : 'none';
+    item.style.display =
+      !q || item.dataset.name.indexOf(q) !== -1
+        ? 'flex'
+        : 'none';
 
-    });
+  });
+
 };
-
-      crmContactGroupsCache.forEach(function(g){
-
-        const label = document.createElement('label');
-
-        label.style.display = 'flex';
-        label.style.alignItems = 'center';
-        label.style.gap = '9px';
-
-        const cb = document.createElement('input');
-
-        cb.type = 'checkbox';
-        cb.value = g.resourceName;
-        cb.checked = selected.has(g.resourceName);
-        cb.style.width = 'auto';
-
-        const span = document.createElement('span');
-        span.textContent = g.name || '';
-
-        label.append(cb, span);
-        groups.append(label);
-
-      });
 
       if(results){
         results.classList.add('hidden');
