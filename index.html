@@ -6377,7 +6377,7 @@ function done(r){
   const reviewBtn=$('#doneReview');
   if(reviewBtn){
     reviewBtn.classList.toggle('hidden',!(r.review?.length||r.counts?.review));
-    reviewBtn.textContent=`âš ï¸ VÃ©rifier les ${r.review?.length||r.counts?.review||0} fiche(s) Ã  contrÃ´ler`;
+    reviewBtn.textContent = `âš ï¸ VÃ©rifier les ${r.review?.length || r.counts?.review || 0} fiche(s) Ã  contrÃ´ler`;
   }
   show('done');
 }
