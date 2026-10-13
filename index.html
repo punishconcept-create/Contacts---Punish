@@ -6467,37 +6467,111 @@ function crmContactEscape(v){
   return String(v==null?'':v);
 }
 
-function crmRenderContactResults(data){
-  const box=document.getElementById('crmContactResults');
-  const info=document.getElementById('crmContactSearchInfo');
-  crmContactGroupsCache=data.groups||[];
+
+function crmRenderContactResults(data) {
+  const box = document.getElementById('crmContactResults');
+  const info = document.getElementById('crmContactSearchInfo');
+
+  data = data || {};
+  crmContactGroupsCache = data.groups || [];
+
   box.replaceChildren();
-  const list=data.contacts||[];
-  info.textContent=list.length ? `${list.length} r\u00e9sultat(s)` : 'Aucun contact trouv\u00e9.';
-  if(!list.length){ box.classList.add('hidden'); return; }
-  list.forEach(function(c){
-    const row=document.createElement('div');
-    row.className='history-item';
-    row.style.cursor='pointer';
 
-    const left=document.createElement('div');
-    left.style.minWidth='0';
-    const name=document.createElement('strong');
-    name.textContent=((c.first||'')+' '+(c.last||'')).trim()||'Sans nom';
-    const sub=document.createElement('div');
-    sub.className='small';
-    sub.textContent=[c.phone,c.email,(c.labels||[]).map(x=>x.name).join(', ')].filter(Boolean).join(' Â· ');
-    left.append(name,sub);
+  const list = data.contacts || [];
 
-    const open=document.createElement('button');
-    open.type='button';
-    open.className='secondary';
-    open.textContent='Ouvrir';
-    open.onclick=function(){crmOpenContact(c.resourceName);};
+  info.textContent = list.length
+    ? list.length + ' résultat(s)'
+    : 'Aucun contact trouvé.';
 
-    row.append(left,open);
-    box.append(row);
+  if (!list.length) {
+    box.classList.add('hidden');
+    return;
+  }
+
+  list.forEach(function(c) {
+
+    // Fiche individuelle
+    const card = document.createElement('div');
+
+    Object.assign(card.style, {
+      background: '#171a21',
+      border: '1px solid #303640',
+      borderRadius: '14px',
+      padding: '16px',
+      marginBottom: '12px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '8px',
+      minWidth: '0'
+    });
+
+    // Nom
+    const name = document.createElement('strong');
+    name.textContent =
+      ((c.first || '') + ' ' + (c.last || '')).trim()
+      || 'Sans nom';
+
+    Object.assign(name.style, {
+      fontSize: '17px',
+      color: '#ffffff',
+      overflowWrap: 'anywhere'
+    });
+
+    card.append(name);
+
+    // Téléphone
+    if (c.phone) {
+      const phone = document.createElement('div');
+      phone.textContent = '📞 ' + c.phone;
+      phone.style.color = '#d1d5db';
+      phone.style.overflowWrap = 'anywhere';
+      card.append(phone);
+    }
+
+    // E-mail
+    if (c.email) {
+      const email = document.createElement('div');
+      email.textContent = '✉️ ' + c.email;
+      email.style.color = '#d1d5db';
+      email.style.overflowWrap = 'anywhere';
+      card.append(email);
+    }
+
+    // Segments
+    const labels = (c.labels || [])
+      .map(function(x) { return x.name; })
+      .filter(Boolean);
+
+    if (labels.length) {
+      const segments = document.createElement('div');
+      segments.textContent = '🏷️ ' + labels.join(' · ');
+      segments.style.color = '#d6b13b';
+      segments.style.fontSize = '14px';
+      segments.style.overflowWrap = 'anywhere';
+      card.append(segments);
+    }
+
+    // Bouton ouvrir
+    const open = document.createElement('button');
+    open.type = 'button';
+    open.className = 'secondary';
+    open.textContent = 'Ouvrir';
+
+    Object.assign(open.style, {
+      alignSelf: 'flex-start',
+      marginTop: '6px',
+      padding: '10px 20px'
+    });
+
+    open.onclick = function() {
+      crmOpenContact(c.resourceName);
+    };
+
+    card.append(open);
+    box.append(card);
+
   });
+
   box.classList.remove('hidden');
 }
 
