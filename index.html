@@ -6382,49 +6382,68 @@ function done(r){
   show('done');
 }
 
-async function applyInBatches(){
 
-  if(!current)return;
+async function applyInBatches() {
+  if (!current || !current.id) return;
 
-  const id=current.id;rememberImport(id);let previous=-1;
-  try{
-    google.script.run
-      .withSuccessHandler(function(){})
-      .withFailureHandler(function(){})
-      .demarrerImportEnArrierePlan(id);
-  }catch(_){}
+  const id = current.id;
+  rememberImport(id);
 
-  try{
+  const button = $('#apply');
+  button.disabled = true;
+  button.textContent = 'Démarrage en arrière-plan...';
 
-    while(true){
+  try {
+    // Démarrage du traitement sur Google Apps Script.
+    // Aucun applyImport n'est exécuté depuis la PWA.
+    await call('demarrerImportEnArrierePlan', id);
 
-      const r=await call('applyImport',id);
+    $('#busy').classList.remove('hidden');
+    $('#busy').textContent =
+      'Import lancé sur le serveur. Tu peux fermer cette application.';
 
-      if(r.status==='Termin\u00e9'||r.remaining===0){done(r);return}
+    button.textContent = 'Traitement en arrière-plan';
 
-      if(r.remaining===previous){render(r);msg('Ces fiches restent en attente. Le d\u00e9tail de l\u2019erreur est affich\u00e9 au-dessus.');return}
+    // Vérification de l'état, sans traitement de contacts côté téléphone.
+    while (true) {
+      await new Promise(resolve => setTimeout(resolve, 10000));
 
-      previous=r.remaining;current=r;
+      // Le navigateur peut suspendre les vérifications en arrière-plan.
+      // Cela n'arrête pas le traitement Apps Script.
+      if (document.hidden) continue;
 
-      $('#progress').textContent=`${r.applied} fiche(s) trait\u00e9e(s), ${r.remaining} restante(s).`;
+      let r;
+      try {
+        r = await call('getImport', id);
+      } catch (e) {
+        $('#busy').textContent =
+          'Suivi momentanément indisponible. Le traitement serveur peut continuer.';
+        continue;
+      }
 
-      $('#busy').textContent=`Import en cours : ${r.applied} fiche(s) trait\u00e9e(s), ${r.remaining} restante(s)\u2026`;
+      current = r;
 
-      await new Promise(resolve=>setTimeout(resolve,150));
+      $('#progress').textContent =
+        `${r.applied || 0} fiche(s) traitée(s), ${r.remaining || 0} restante(s).`;
 
+      $('#busy').textContent = $('#progress').textContent;
+
+      if (r.status === 'Terminé' || r.remaining === 0) {
+        done(r);
+        break;
+      }
     }
 
-  }catch(e){
-
-    try{const r=await call('getImport',id);render(r);if(r.status==='Termin\u00e9'||r.remaining===0){done(r);return}}
-
-    catch(_){/\* Le bouton de v\u00e9rification reste disponible. \*/}
-
-    msg('Connexion interrompue. Ouvre cet import dans \u00ab Imports r\u00e9cents \u00bb ou appuie sur \u00ab V\u00e9rifier l\u2019\u00e9tat de l\u2019import \u00bb avant de reprendre.');
-
-  }finally{$('#busy').textContent='Traitement en cours\u2026'}
-
+  } catch (e) {
+    msg('Impossible de confirmer le démarrage : ' + getError(e) +
+      '. Vérifie l’état de l’import avant de relancer.');
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Vérifier / reprendre l’import';
+    $('#busy').classList.add('hidden');
+  }
 }
+
 
 $('#doneReview').onclick=()=>{
   if(!current)return;
