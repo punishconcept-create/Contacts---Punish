@@ -1026,14 +1026,14 @@
         id="selectAllImports"
         type="button"
         class="secondary">
-        Tout sélectionner
+        Tout sÃ©lectionner
       </button>
 
       <button
         id="deleteSelectedImports"
         type="button"
         class="danger">
-        Supprimer la sélection
+        Supprimer la sÃ©lection
       </button>
 
     </div>
@@ -1960,7 +1960,7 @@
         response.status +
         ' [' +
         functionName +
-        '] - réponse Google non JSON'
+        '] - rÃ©ponse Google non JSON'
       );
     }
   }
@@ -2048,7 +2048,7 @@
     }
 
     if (!window.google?.accounts?.oauth2) {
-      el.info.textContent = 'Connexion Google indisponible. VÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©rifie le rÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©seau.';
+      el.info.textContent = 'Connexion Google indisponible. VÃ©rifie le rÃ©seau.';
       return null;
     }
 
@@ -2059,12 +2059,12 @@
       scope: scopes.join(' '),
       callback: result => {
         if (result.error) {
-          el.info.textContent = 'Connexion Google refusÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©e ou interrompue.';
+          el.info.textContent = 'Connexion Google refusÃ©e ou interrompue.';
           return;
         }
         accessToken = result.access_token || '';
         if (!accessToken) {
-          el.info.textContent = 'Aucun jeton Google reÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§u.';
+          el.info.textContent = 'Aucun jeton Google reÃ§u.';
           return;
         }
         el.overlay.style.display = 'none';
@@ -2113,11 +2113,11 @@ setTimeout(function () {
       if (!window.google?.accounts?.oauth2 && ++attempts < 30) return;
       clearInterval(timer);
       if (!window.google?.accounts?.oauth2) {
-        el.info.textContent = 'Appuie sur ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â« Se connecter avec Google ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â».';
+        el.info.textContent = 'Appuie sur Â« Se connecter avec Google Â».';
         return;
       }
       try { requestLogin('none'); }
-      catch (_) { el.info.textContent = 'Appuie sur ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â« Se connecter avec Google ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â». '; }
+      catch (_) { el.info.textContent = 'Appuie sur Â« Se connecter avec Google Â». '; }
     }, 250);
   });
 
@@ -2212,7 +2212,7 @@ window.addEventListener("popstate", function() {
   var activePage = document.querySelector(".page.active");
 
   // Si on n'est pas sur l'accueil :
-  // Retour Android = revenir à l'accueil
+  // Retour Android = revenir Ã  l'accueil
   if (activePage && activePage.id !== "home") {
 
     pwaBackToHome = true;
@@ -2229,12 +2229,12 @@ window.addEventListener("popstate", function() {
     return;
   }
 
-  // Si on est déjà sur l'accueil,
+  // Si on est dÃ©jÃ  sur l'accueil,
   // on ne bloque pas le retour suivant.
 });
 
 
-// État initial de la PWA
+// Ã‰tat initial de la PWA
 try {
   history.replaceState(
     { punishCrmPage: "home" },
@@ -2246,7 +2246,7 @@ try {
   /* ============================================================
    NAVIGATION PAR SWIPE
    Gauche  = onglet suivant
-   Droite  = onglet précédent
+   Droite  = onglet prÃ©cÃ©dent
 ============================================================ */
 
 var swipePages = [
@@ -2273,7 +2273,7 @@ document.addEventListener("touchstart", function(e) {
 
   var target = e.target;
 
-  // Ne pas déclencher le swipe depuis un élément interactif
+  // Ne pas dÃ©clencher le swipe depuis un Ã©lÃ©ment interactif
   if (
     target.closest(
       "input, textarea, select, button, label, " +
@@ -2315,7 +2315,7 @@ document.addEventListener("touchend", function(e) {
     return;
   }
 
-  // Évite qu'un scroll vertical soit pris pour un swipe
+  // Ã‰vite qu'un scroll vertical soit pris pour un swipe
   if (Math.abs(diffY) > Math.abs(diffX) * 0.65) {
     return;
   }
@@ -2356,7 +2356,7 @@ document.addEventListener("touchend", function(e) {
 
   // ==========================
   // SWIPE VERS LA DROITE
-  // Onglet précédent
+  // Onglet prÃ©cÃ©dent
   // ==========================
 
   if (diffX > 0) {
@@ -2581,7 +2581,7 @@ function openSegmentMerge() {
   var selectedNames = {};
 
   // =========================
-  // FOND DE LA FENÊTRE
+  // FOND DE LA FENÃŠTRE
   // =========================
 
   var overlay = document.createElement("div");
@@ -2597,7 +2597,7 @@ function openSegmentMerge() {
 
 
   // =========================
-  // FENÊTRE
+  // FENÃŠTRE
   // =========================
 
   var modal = document.createElement("div");
@@ -2618,7 +2618,7 @@ function openSegmentMerge() {
 
   var title = document.createElement("h2");
 
-  title.textContent = "🔀 Fusionner des segments";
+  title.textContent = "ðŸ”€ Fusionner des segments";
   title.style.marginTop = "0";
 
   modal.appendChild(title);
@@ -2627,7 +2627,7 @@ function openSegmentMerge() {
   var intro = document.createElement("p");
 
   intro.textContent =
-    "Sélectionne au moins 2 segments. Les contacts en double ne seront ajoutés qu’une seule fois.";
+    "SÃ©lectionne au moins 2 segments. Les contacts en double ne seront ajoutÃ©s quâ€™une seule fois.";
 
   intro.style.color = "#9ca3af";
   intro.style.fontSize = "14px";
@@ -2709,7 +2709,7 @@ function openSegmentMerge() {
       checkbox.style.flexShrink = "0";
 
 
-      // Conserver la sélection pendant une recherche
+      // Conserver la sÃ©lection pendant une recherche
       checkbox.checked =
         !!selectedNames[name];
 
@@ -2756,7 +2756,7 @@ function openSegmentMerge() {
 
 
   // =========================
-  // COMPTEUR SÉLECTION
+  // COMPTEUR SÃ‰LECTION
   // =========================
 
   var selectionInfo =
@@ -2778,7 +2778,7 @@ function openSegmentMerge() {
       total +
       " segment" +
       (total > 1 ? "s" : "") +
-      " sélectionné" +
+      " sÃ©lectionnÃ©" +
       (total > 1 ? "s" : "");
 
   }
@@ -2847,7 +2847,7 @@ function openSegmentMerge() {
     document.createElement("span");
 
   deleteText.textContent =
-    "Supprimer les anciens segments après la fusion";
+    "Supprimer les anciens segments aprÃ¨s la fusion";
 
 
   deleteLabel.appendChild(deleteCheckbox);
@@ -2860,7 +2860,7 @@ function openSegmentMerge() {
     document.createElement("p");
 
   warning.textContent =
-    "Les contacts eux-mêmes ne seront pas supprimés.";
+    "Les contacts eux-mÃªmes ne seront pas supprimÃ©s.";
 
   warning.style.fontSize = "12px";
   warning.style.color = "#9ca3af";
@@ -2946,7 +2946,7 @@ function openSegmentMerge() {
     if (selected.length < 2) {
 
       status.textContent =
-        "⚠️ Sélectionne au moins 2 segments.";
+        "âš ï¸ SÃ©lectionne au moins 2 segments.";
 
       status.style.color = "#f59e0b";
 
@@ -2957,7 +2957,7 @@ function openSegmentMerge() {
     if (!newName) {
 
       status.textContent =
-        "⚠️ Indique le nom du segment final.";
+        "âš ï¸ Indique le nom du segment final.";
 
       status.style.color = "#f59e0b";
 
@@ -2970,9 +2970,9 @@ function openSegmentMerge() {
       var ok = window.confirm(
         "Les " +
         selected.length +
-        " segments sélectionnés seront fusionnés dans « " +
+        " segments sÃ©lectionnÃ©s seront fusionnÃ©s dans Â« " +
         newName +
-        " » puis les anciens segments seront supprimés.\n\nContinuer ?"
+        " Â» puis les anciens segments seront supprimÃ©s.\n\nContinuer ?"
       );
 
       if (!ok) {
@@ -3004,17 +3004,17 @@ function openSegmentMerge() {
   var mergedCount = Number(result.contacts || 0);
 
   status.textContent =
-    "✅ Fusion terminée : " +
+    "âœ… Fusion terminÃ©e : " +
     mergedCount +
-    " contact(s) dans « " +
+    " contact(s) dans Â« " +
     mergedName +
-    " ».";
+    " Â».";
 
   status.style.color = "#22c55e";
 
 
-  // Si suppression cochée :
-  // retirer immédiatement les anciens segments de l'affichage
+  // Si suppression cochÃ©e :
+  // retirer immÃ©diatement les anciens segments de l'affichage
   if (deleteCheckbox.checked) {
 
     APP.segments = APP.segments.filter(function(s) {
@@ -3036,7 +3036,7 @@ function openSegmentMerge() {
   });
 
 
-  // Mettre son compteur à jour immédiatement
+  // Mettre son compteur Ã  jour immÃ©diatement
   if (mergedSegment) {
 
     mergedSegment.count = mergedCount;
@@ -3075,7 +3075,7 @@ function openSegmentMerge() {
       "Fusionner";
 
     status.textContent =
-      "❌ " + getError(error);
+      "âŒ " + getError(error);
 
     status.style.color = "#ef4444";
 
@@ -3216,7 +3216,7 @@ function renderCampaignSegments() {
     var txt = document.createElement("span");
 
     txt.textContent =
-      (isFavorite ? "⭐ " : "") +
+      (isFavorite ? "â­ " : "") +
       name +
       " (" + count + ")";
 
@@ -3435,7 +3435,7 @@ function renderSegmentPage() {
 
   box.innerHTML = "";
 
-  // Favoris enregistrés sur l'appareil
+  // Favoris enregistrÃ©s sur l'appareil
   var favorites = [];
 
   try {
@@ -3473,7 +3473,7 @@ function renderSegmentPage() {
 
     star.type = "button";
     star.textContent =
-      isFavorite(segmentName) ? "★" : "☆";
+      isFavorite(segmentName) ? "â˜…" : "â˜†";
 star.style.color =
   isFavorite(segmentName)
     ? "#f4c430"
@@ -3497,7 +3497,7 @@ star.style.color =
     // Ajouter aux favoris
     favorites.push(segmentName);
 
-    star.textContent = "★";
+    star.textContent = "â˜…";
     star.style.color = "#f4c430";
 
   } else {
@@ -3505,7 +3505,7 @@ star.style.color =
     // Retirer des favoris
     favorites.splice(index, 1);
 
-    star.textContent = "☆";
+    star.textContent = "â˜†";
     star.style.color = "#777";
 
   }
@@ -3514,7 +3514,7 @@ star.style.color =
 
   // IMPORTANT :
   // on ne recharge PAS la liste ici.
-  // Le segment reste donc à sa place pendant la sélection.
+  // Le segment reste donc Ã  sa place pendant la sÃ©lection.
 };
 
 
@@ -3555,7 +3555,7 @@ star.style.color =
 
   // ==========================================================
   // RECHERCHE
-  // Si on recherche : on affiche directement tous les résultats
+  // Si on recherche : on affiche directement tous les rÃ©sultats
   // ==========================================================
 
   if (q !== "") {
@@ -3613,7 +3613,7 @@ star.style.color =
     document.createElement("div");
 
   favoriteTitle.innerHTML =
-    "⭐ <strong>FAVORIS</strong>";
+    "â­ <strong>FAVORIS</strong>";
 
   favoriteTitle.style.margin =
     "18px 0 8px 0";
@@ -3670,7 +3670,7 @@ star.style.color =
   toggle.style.fontWeight = "600";
 
   toggle.innerHTML =
-    "▶ AUTRES SEGMENTS (" +
+    "â–¶ AUTRES SEGMENTS (" +
     otherSegments.length +
     ")";
 
@@ -3699,7 +3699,7 @@ star.style.color =
 
   if (opened) {
 
-    // On ferme puis on réorganise la page :
+    // On ferme puis on rÃ©organise la page :
     // les nouveaux favoris remontent maintenant.
     renderSegmentPage();
     return;
@@ -3709,7 +3709,7 @@ star.style.color =
   otherBox.style.display = "block";
 
   toggle.innerHTML =
-    "▼ AUTRES SEGMENTS (" +
+    "â–¼ AUTRES SEGMENTS (" +
     otherSegments.length +
     ")";
 
@@ -3730,7 +3730,7 @@ star.style.color =
   mergeBtn.type = "button";
 
   mergeBtn.textContent =
-    "🔀 Fusionner des segments";
+    "ðŸ”€ Fusionner des segments";
 
   mergeBtn.className = "secondary";
 
@@ -4427,7 +4427,7 @@ if (withActions) {
     document.createElement("button");
 
   campaignBtn.className = "gold";
-  campaignBtn.textContent = "📣 Préparer campagne";
+  campaignBtn.textContent = "ðŸ“£ PrÃ©parer campagne";
 
   campaignBtn.onclick = function() {
     prepareCampaign(e);
@@ -5908,7 +5908,7 @@ function restoreRememberedImport(){
   return call('getImport',id).then(r=>{
     if(!r){rememberImport('');return false}
     current=r;
-    if(r.status==='TerminÃƒÆ’Ã‚Â©'||r.remaining===0){
+    if(r.status==='TerminÃ©'||r.remaining===0){
       done(r);
       rememberImport('');
     }else{
@@ -5916,7 +5916,7 @@ function restoreRememberedImport(){
     }
     return true;
   }).catch(()=>{
-    /* On garde l'ID : une reconnexion ultÃƒÆ’Ã‚Â©rieure pourra reprendre. */
+    /* On garde l'ID : une reconnexion ultÃ©rieure pourra reprendre. */
     return false;
   });
 }
@@ -5984,7 +5984,7 @@ function renderHomeImports(imports){
   var selectAll = document.createElement('button');
   selectAll.type = 'button';
   selectAll.className = 'secondary';
-  selectAll.textContent = 'Tout sélectionner';
+  selectAll.textContent = 'Tout sÃ©lectionner';
 
   var deleteBtn = document.createElement('button');
   deleteBtn.type = 'button';
@@ -6025,9 +6025,9 @@ function renderHomeImports(imports){
 
     title.textContent =
       readable(i.event) +
-      ' · ' +
+      ' Â· ' +
       readable(i.label) +
-      ' · ' +
+      ' Â· ' +
       readable(i.status);
 
 
@@ -6045,7 +6045,7 @@ function renderHomeImports(imports){
         .then(function(r){
 
           if (
-            r.status === 'Terminé' &&
+            r.status === 'TerminÃ©' &&
             !(r.review?.length || r.counts?.review)
           ) {
             done(r);
@@ -6081,8 +6081,8 @@ function renderHomeImports(imports){
 
     selectAll.textContent =
       allSelected
-        ? 'Tout sélectionner'
-        : 'Tout désélectionner';
+        ? 'Tout sÃ©lectionner'
+        : 'Tout dÃ©sÃ©lectionner';
   };
 
 
@@ -6098,7 +6098,7 @@ function renderHomeImports(imports){
     });
 
     if (!selected.length) {
-      alert('Sélectionne au moins un import.');
+      alert('SÃ©lectionne au moins un import.');
       return;
     }
 
@@ -6191,9 +6191,9 @@ function displayData(d, selected) {
 
     title.textContent =
       readable(i.event) +
-      ' · ' +
+      ' Â· ' +
       readable(i.label) +
-      ' · ' +
+      ' Â· ' +
       readable(i.status);
 
 
@@ -6211,7 +6211,7 @@ function displayData(d, selected) {
         .then(function(r) {
 
           if (
-            r.status === 'Terminé' &&
+            r.status === 'TerminÃ©' &&
             !(r.review?.length || r.counts?.review)
           ) {
             done(r);
@@ -6268,8 +6268,8 @@ function displayData(d, selected) {
 
   this.textContent =
     allSelected
-      ? 'Tout sélectionner'
-      : 'Tout désélectionner';
+      ? 'Tout sÃ©lectionner'
+      : 'Tout dÃ©sÃ©lectionner';
 
 };
 
@@ -6290,7 +6290,7 @@ $('#deleteSelectedImports').onclick = function() {
   if (!selected.length) {
 
     msg({
-      message: 'Sélectionne au moins un import.'
+      message: 'SÃ©lectionne au moins un import.'
     });
 
     return;
@@ -6328,10 +6328,10 @@ $('#deleteSelectedImports').onclick = function() {
 
       button.disabled = false;
       button.textContent =
-        'Supprimer la sélection';
+        'Supprimer la sÃ©lection';
 
       $('#selectAllImports').textContent =
-        'Tout sélectionner';
+        'Tout sÃ©lectionner';
 
     })
 
@@ -6339,7 +6339,7 @@ $('#deleteSelectedImports').onclick = function() {
 
       button.disabled = false;
       button.textContent =
-        'Supprimer la sélection';
+        'Supprimer la sÃ©lection';
 
       msg(e);
 
@@ -6391,25 +6391,25 @@ async function applyInBatches() {
 
   const button = $('#apply');
   button.disabled = true;
-  button.textContent = 'Démarrage en arrière-plan...';
+  button.textContent = 'DÃ©marrage en arriÃ¨re-plan...';
 
   try {
-    // Démarrage du traitement sur Google Apps Script.
-    // Aucun applyImport n'est exécuté depuis la PWA.
+    // DÃ©marrage du traitement sur Google Apps Script.
+    // Aucun applyImport n'est exÃ©cutÃ© depuis la PWA.
     await call('demarrerImportEnArrierePlan', id);
 
     $('#busy').classList.remove('hidden');
     $('#busy').textContent =
-      'Import lancé sur le serveur. Tu peux fermer cette application.';
+      'Import lancÃ© sur le serveur. Tu peux fermer cette application.';
 
-    button.textContent = 'Traitement en arrière-plan';
+    button.textContent = 'Traitement en arriÃ¨re-plan';
 
-    // Vérification de l'état, sans traitement de contacts côté téléphone.
+    // VÃ©rification de l'Ã©tat, sans traitement de contacts cÃ´tÃ© tÃ©lÃ©phone.
     while (true) {
       await new Promise(resolve => setTimeout(resolve, 10000));
 
-      // Le navigateur peut suspendre les vérifications en arrière-plan.
-      // Cela n'arrête pas le traitement Apps Script.
+      // Le navigateur peut suspendre les vÃ©rifications en arriÃ¨re-plan.
+      // Cela n'arrÃªte pas le traitement Apps Script.
       if (document.hidden) continue;
 
       let r;
@@ -6417,29 +6417,29 @@ async function applyInBatches() {
         r = await call('getImport', id);
       } catch (e) {
         $('#busy').textContent =
-          'Suivi momentanément indisponible. Le traitement serveur peut continuer.';
+          'Suivi momentanÃ©ment indisponible. Le traitement serveur peut continuer.';
         continue;
       }
 
       current = r;
 
       $('#progress').textContent =
-        `${r.applied || 0} fiche(s) traitée(s), ${r.remaining || 0} restante(s).`;
+        `${r.applied || 0} fiche(s) traitÃ©e(s), ${r.remaining || 0} restante(s).`;
 
       $('#busy').textContent = $('#progress').textContent;
 
-      if (r.status === 'Terminé' || r.remaining === 0) {
+      if (r.status === 'TerminÃ©' || r.remaining === 0) {
         done(r);
         break;
       }
     }
 
   } catch (e) {
-    msg('Impossible de confirmer le démarrage : ' + getError(e) +
-      '. Vérifie l’état de l’import avant de relancer.');
+    msg('Impossible de confirmer le dÃ©marrage : ' + getError(e) +
+      '. VÃ©rifie lâ€™Ã©tat de lâ€™import avant de relancer.');
   } finally {
     button.disabled = false;
-    button.textContent = 'Vérifier / reprendre l’import';
+    button.textContent = 'VÃ©rifier / reprendre lâ€™import';
     $('#busy').classList.add('hidden');
   }
 }
@@ -6499,8 +6499,8 @@ function crmRenderContactResults(data) {
   const list = data.contacts || [];
 
   info.textContent = list.length
-    ? list.length + ' résultat(s)'
-    : 'Aucun contact trouvé.';
+    ? list.length + ' rÃ©sultat(s)'
+    : 'Aucun contact trouvÃ©.';
 
   if (!list.length) {
     box.classList.add('hidden');
@@ -6538,10 +6538,10 @@ function crmRenderContactResults(data) {
 
     card.append(name);
 
-    // Téléphone
+    // TÃ©lÃ©phone
     if (c.phone) {
       const phone = document.createElement('div');
-      phone.textContent = '📞 ' + c.phone;
+      phone.textContent = 'ðŸ“ž ' + c.phone;
       phone.style.color = '#d1d5db';
       phone.style.overflowWrap = 'anywhere';
       card.append(phone);
@@ -6550,7 +6550,7 @@ function crmRenderContactResults(data) {
     // E-mail
     if (c.email) {
       const email = document.createElement('div');
-      email.textContent = '✉️ ' + c.email;
+      email.textContent = 'âœ‰ï¸ ' + c.email;
       email.style.color = '#d1d5db';
       email.style.overflowWrap = 'anywhere';
       card.append(email);
@@ -6563,7 +6563,7 @@ function crmRenderContactResults(data) {
 
     if (labels.length) {
       const segments = document.createElement('div');
-      segments.textContent = '🏷️ ' + labels.join(' · ');
+      segments.textContent = 'ðŸ·ï¸ ' + labels.join(' Â· ');
       segments.style.color = '#d6b13b';
       segments.style.fontSize = '14px';
       segments.style.overflowWrap = 'anywhere';
@@ -6599,7 +6599,7 @@ function crmSearchContact() {
   const info = document.getElementById('crmContactSearchInfo');
 
   if (q.length < 2) {
-    info.textContent = 'Saisis au moins 2 caractères.';
+    info.textContent = 'Saisis au moins 2 caractÃ¨res.';
     return;
   }
 
@@ -6633,7 +6633,7 @@ function crmOpenContact(resource){
 
       if(!data || !data.contact){
         if(info){
-          info.textContent = 'ERREUR : aucune fiche contact reçue.';
+          info.textContent = 'ERREUR : aucune fiche contact reÃ§ue.';
         }
         return;
       }
@@ -6736,7 +6736,7 @@ toggle.style.marginTop = '14px';
 
 groups.append(toggle);
 
-/* ZONE MASQUÉE */
+/* ZONE MASQUÃ‰E */
 const extraBox = document.createElement('div');
 extraBox.style.display = 'none';
 extraBox.style.marginTop = '12px';
@@ -6770,7 +6770,7 @@ toggle.onclick = function(){
   extraBox.style.display = opening ? 'block' : 'none';
 
   toggle.textContent = opening
-    ? '− Masquer les autres segments'
+    ? 'âˆ’ Masquer les autres segments'
     : '+ Ajouter / modifier les segments';
 
 };
@@ -6886,7 +6886,7 @@ function crmSaveContact(){
   .withSuccessHandler(function(response){
 
     result.textContent =
-      '✓ Contact mis à jour dans Google Contacts.';
+      'âœ“ Contact mis Ã  jour dans Google Contacts.';
 
     const resource =
       document.getElementById('crmContactResource').value;
@@ -6961,7 +6961,7 @@ function openSegmentManager(name) {
   var membersBox = document.getElementById('segmentMembers');
 
   // IMPORTANT :
-  // on vide immédiatement l'ancien segment.
+  // on vide immÃ©diatement l'ancien segment.
   currentSegment = null;
   currentSegmentMembers = [];
 
@@ -6975,7 +6975,7 @@ function openSegmentManager(name) {
   panel.classList.remove('hidden');
 
   document.getElementById('segmentManagerTitle').textContent =
-    name + ' · 0';
+    name + ' Â· 0';
 
   document.getElementById('segmentRename').value = name;
 
@@ -7012,7 +7012,7 @@ function openSegmentManager(name) {
 
       document.getElementById('segmentManagerTitle').textContent =
         (seg.name || name) +
-        ' · ' +
+        ' Â· ' +
         (seg.count || 0);
 
       message.textContent = '';
@@ -7048,13 +7048,13 @@ function openSegmentManager(name) {
       document.getElementById('segmentRename').value = name;
 
       document.getElementById('segmentManagerTitle').textContent =
-        name + ' · 0';
+        name + ' Â· 0';
 
       membersBox.innerHTML =
         '<span class="muted">Aucun contact.</span>';
 
       message.textContent =
-        'Segment prêt pour un prochain import.';
+        'Segment prÃªt pour un prochain import.';
 
       panel.scrollIntoView({
         behavior: 'smooth',
