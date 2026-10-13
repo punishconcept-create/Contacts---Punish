@@ -7114,7 +7114,7 @@ function searchSegmentAdd(){
       const row=document.createElement('div'); row.className='segment-member';
       const main=document.createElement('div'); main.className='segment-member-main';
       const strong=document.createElement('strong'); strong.textContent=((c.first||'')+' '+(c.last||'')).trim()||'Sans nom';
-      const sub=document.createElement('div'); sub.className='small'; sub.textContent=[c.phone,c.email].filter(Boolean).join(' Â· ');
+      const sub=document.createElement('div'); sub.className='small'; sub.textContent=[c.phone,c.email].filter(Boolean).join(' | ');
       main.append(strong,sub);
       const add=document.createElement('button'); add.type='button'; add.className='secondary'; add.textContent='Ajouter';
       add.onclick=function(){
