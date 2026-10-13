@@ -6501,15 +6501,27 @@ function crmRenderContactResults(data){
   box.classList.remove('hidden');
 }
 
-function crmSearchContact(){
-  const q=document.getElementById('crmContactSearch').value.trim();
-  const info=document.getElementById('crmContactSearchInfo');
-  if(q.length<2){info.textContent='Saisis au moins 2 caract\u00e8res.';return;}
-  info.textContent='Recherche...';
-  call('crmSearchContacts',q).then(crmRenderContactResults).catch(function(e){
-    info.textContent='';
-    msg(e);
-  });
+function crmSearchContact() {
+  const q = document.getElementById('crmContactSearch').value.trim();
+  const info = document.getElementById('crmContactSearchInfo');
+
+  if (q.length < 2) {
+    info.textContent = 'Saisis au moins 2 caractères.';
+    return;
+  }
+
+  info.textContent = 'Recherche...';
+
+  google.script.run
+    .withSuccessHandler(function(result) {
+      info.textContent = '';
+      crmRenderContactResults(result);
+    })
+    .withFailureHandler(function(error) {
+      info.textContent = 'Erreur : ' + getError(error);
+      console.error('Recherche contacts :', error);
+    })
+    .crmSearchContacts(q);
 }
 
 function crmOpenContact(resource){
